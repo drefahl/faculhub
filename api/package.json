@@ -23,7 +23,8 @@
     "docker:test:up": "docker compose -f docker/docker-compose.test.yml up -d --remove-orphans --wait",
     "docker:test:down": "docker compose -f docker/docker-compose.test.yml down",
     "generate-swagger": "ts-node -r tsconfig-paths/register --transpile-only scripts/generate-swagger.ts",
-    "before-commit": "run-s lint format build test"
+    "before-commit": "run-s lint format build test",
+    "prisma:seed": "prisma db seed"
   },
   "keywords": [],
   "author": "",
@@ -62,5 +63,8 @@
     "typescript": "^5.8.2",
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^3.1.1"
+  },
+  "prisma": {
+    "seed": "ts-node ./prisma/seed.ts"
   }
 }
