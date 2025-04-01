@@ -1,12 +1,12 @@
 import { hashPassword } from "@/lib/utils/crypto.utils"
 import { UserRepository } from "@/repositories/user.repository"
-import { createUserSchema } from "@/schemas/user.schema"
-import type { user } from "@prisma/client"
+import { createUserSchema, updateUserSchema } from "@/schemas/user.schema"
+import type { Prisma, user } from "@prisma/client"
 
 export class UserService {
   constructor(private readonly userRepository: UserRepository = new UserRepository()) {}
 
-  async createUser(data: unknown): Promise<user> {
+  async createUser(data: Prisma.userCreateInput): Promise<user> {
     const userData = createUserSchema.parse(data)
 
     const emailExists = await this.userRepository.getUserByEmail(userData.email)
@@ -14,16 +14,27 @@ export class UserService {
       throw new Error("Email already exists")
     }
 
-    const hashedPassword = userData.password ? await hashPassword(userData.password) : null
+    const hashedPassword = await hashPassword(userData?.password.toString())
+    userData.password = hashedPassword
 
-    return this.userRepository.createUser({ ...userData, password: hashedPassword })
+    return this.userRepository.createUser(userData)
   }
 
-  async getUserById(userId: number): Promise<user | null> {
+  async getUserById(userId: number): Promise<Omit<user, "password"> | null> {
     return this.userRepository.getUserById(userId)
   }
 
-  async updateUser(userId: number, data: unknown): Promise<user> {
-    return this.userRepository.updateUser(userId, data as Partial<user>)
+  async getUserByEmail(email: string): Promise<user | null> {
+    return this.userRepository.getUserByEmail(email)
+  }
+
+  async updateUser(userId: number, data: Prisma.userUpdateInput): Promise<user> {
+    const userData = updateUserSchema.parse(data)
+
+    if (userData.password) {
+      userData.password = await hashPassword(userData.password.toString())
+    }
+
+    return this.userRepository.updateUser(userId, userData)
   }
 }

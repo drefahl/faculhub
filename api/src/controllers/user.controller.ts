@@ -1,11 +1,11 @@
-import type { UpdateUserInput } from "@/schemas/user.schema"
 import type { UserService } from "@/services/user.service"
+import type { Prisma } from "@prisma/client"
 import type { FastifyReply, FastifyRequest } from "fastify"
 
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  async createUser(request: FastifyRequest<{ Body: UpdateUserInput }>, reply: FastifyReply) {
+  async createUser(request: FastifyRequest<{ Body: Prisma.userCreateInput }>, reply: FastifyReply) {
     const user = await this.userService.createUser(request.body)
 
     return reply.code(201).send(user)
@@ -18,7 +18,7 @@ export class UserController {
     return reply.send(user)
   }
 
-  async updateUserProfile(request: FastifyRequest<{ Body: UpdateUserInput }>, reply: FastifyReply) {
+  async updateUserProfile(request: FastifyRequest<{ Body: Prisma.userUpdateInput }>, reply: FastifyReply) {
     const user = await this.userService.updateUser(request.user.id, request.body)
 
     return reply.send(user)
