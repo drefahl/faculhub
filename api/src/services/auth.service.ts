@@ -8,7 +8,7 @@ export class AuthService {
 
   async login(email: string, password: string) {
     const user = await this.userRepository.getUserByEmail(email)
-    if (!user) {
+    if (!user || !user.password) {
       throw new InvalidCredentialsError("Invalid credentials")
     }
 

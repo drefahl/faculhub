@@ -1,7 +1,7 @@
 import "@fastify/jwt"
 
 export interface JWTPayload {
-  id: string
+  id: number
   email: string
 }
 

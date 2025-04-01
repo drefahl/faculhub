@@ -3,7 +3,7 @@ import { SignJWT, decodeJwt, jwtVerify } from "jose"
 
 const secret = new TextEncoder().encode(env.JWT_SECRET)
 
-type TokenPayload = { id: string; email: string }
+type TokenPayload = { id: number; email: string }
 
 export async function createToken(payload: TokenPayload) {
   const jwt = await new SignJWT(payload)
