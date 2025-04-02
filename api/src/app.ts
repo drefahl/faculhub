@@ -1,3 +1,4 @@
+import fastifyCors from "@fastify/cors"
 import fastifyJwt from "@fastify/jwt"
 import { fastifyMultipart } from "@fastify/multipart"
 import { fastify } from "fastify"
@@ -9,9 +10,13 @@ import { swaggerConfig } from "./config/swagger.config"
 import { registerRoutes } from "./routes/index.routes"
 
 export async function createServer() {
-  const app = fastify({
-    logger: envToLogger[env.NODE_ENV] ?? true,
-  }).withTypeProvider<ZodTypeProvider>()
+  const app = fastify({ logger: envToLogger[env.NODE_ENV] ?? true }).withTypeProvider<ZodTypeProvider>()
+
+  app.register(fastifyCors, {
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
 
   // Compilers
   app.setValidatorCompiler(validatorCompiler)
