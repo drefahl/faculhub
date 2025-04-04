@@ -1,6 +1,6 @@
 import { hashPassword } from "@/lib/utils/crypto.utils"
 import { UserRepository } from "@/repositories/user.repository"
-import { createUserSchema, updateUserSchema } from "@/schemas/user.schema"
+import { createUserSchema, createUserWithGoogleSchema, updateUserSchema } from "@/schemas/user.schema"
 import type { Prisma, user } from "@prisma/client"
 
 export class UserService {
@@ -14,8 +14,19 @@ export class UserService {
       throw new Error("Email already exists")
     }
 
-    const hashedPassword = await hashPassword(userData?.password.toString())
+    const hashedPassword = await hashPassword(userData.password)
     userData.password = hashedPassword
+
+    return this.userRepository.createUser(userData)
+  }
+
+  async createUserWithGoogle(data: Prisma.userCreateInput): Promise<user> {
+    const userData = createUserWithGoogleSchema.parse(data)
+
+    const emailExists = await this.userRepository.getUserByEmail(userData.email)
+    if (emailExists) {
+      throw new Error("Email already exists")
+    }
 
     return this.userRepository.createUser(userData)
   }
@@ -32,7 +43,7 @@ export class UserService {
     const userData = updateUserSchema.parse(data)
 
     if (userData.password) {
-      userData.password = await hashPassword(userData.password.toString())
+      userData.password = await hashPassword(userData.password)
     }
 
     return this.userRepository.updateUser(userId, userData)

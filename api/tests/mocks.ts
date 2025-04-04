@@ -12,6 +12,8 @@ export const mockConstants = {
     email: "johnDoe@example.com",
     name: "John Doe",
     password: "password",
+    picture: null,
+    googleId: null,
   },
 } as const
 
@@ -22,9 +24,11 @@ export function createUserRepositoryMock(): UserRepository {
     return {
       ...data,
       id: mockConstants.user.id,
+      googleId: data?.googleId ?? null,
       email: data?.email ?? mockConstants.user.email,
       name: mockConstants.user.name,
       password: await hashPassword(mockConstants.user.password),
+      picture: data?.picture ?? null,
       createdAt: new Date(),
       updatedAt: new Date(),
     }
@@ -35,9 +39,11 @@ export function createUserRepositoryMock(): UserRepository {
 
     return {
       id: mockConstants.user.id,
+      googleId: null,
       email: mockConstants.user.email,
       name: mockConstants.user.name,
       password: await hashPassword(mockConstants.user.password),
+      picture: null,
       createdAt: new Date(),
       updatedAt: new Date(),
     }
@@ -48,9 +54,11 @@ export function createUserRepositoryMock(): UserRepository {
 
     return {
       id: mockConstants.user.id,
+      googleId: null,
       email: mockConstants.user.email,
       name: mockConstants.user.name,
       password: await hashPassword(mockConstants.user.password),
+      picture: null,
       createdAt: new Date(),
       updatedAt: new Date(),
     }
@@ -61,9 +69,11 @@ export function createUserRepositoryMock(): UserRepository {
 
     return {
       id: mockConstants.user.id,
+      googleId: null,
       email: typeof data?.email === "string" ? data.email : mockConstants.user.email,
       name: typeof data?.name === "string" ? data.name : mockConstants.user.name,
       password: typeof data?.password === "string" ? data.password : await hashPassword(mockConstants.user.password),
+      picture: typeof data?.picture === "string" ? data.picture : null,
       createdAt: new Date(),
       updatedAt: new Date(),
     }
@@ -80,9 +90,11 @@ export function createUserServiceMock(userRepository: UserRepository = createUse
 
     return {
       id: mockConstants.user.id,
+      googleId: null,
       email: mockConstants.user.email,
       name: mockConstants.user.name,
       password: mockConstants.user.password,
+      picture: null,
       createdAt: new Date(),
       updatedAt: new Date(),
     }
@@ -103,3 +115,22 @@ export function createAuthServiceMock(userService: UserService = createUserServi
 
   return service
 }
+
+vi.mock("google-auth-library", () => {
+  return {
+    OAuth2Client: vi.fn().mockImplementation(() => ({
+      verifyIdToken: vi.fn().mockImplementation(async ({ idToken }) => {
+        if (idToken !== "valid-google-token") throw new Error("Invalid Google token")
+
+        return {
+          getPayload: () => ({
+            email: mockConstants.user.email,
+            name: mockConstants.user.name,
+            picture: "http://example.com/profile.jpg",
+            sub: "google-sub-id",
+          }),
+        }
+      }),
+    })),
+  }
+})

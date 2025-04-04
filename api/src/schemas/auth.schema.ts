@@ -8,6 +8,6 @@ export const RequestBodyAuthSchema = z.object({
 export type RequestBodyAuth = z.infer<typeof RequestBodyAuthSchema>
 
 export const ResponseBodyAuthSchema = {
-  200: z.object({ token: z.string() }),
+  200: z.object({ message: z.literal("Authenticated successfully") }),
   401: z.object({ message: z.string() }),
 }

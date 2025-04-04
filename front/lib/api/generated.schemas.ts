@@ -4,22 +4,45 @@
  * API documentation
  * OpenAPI spec version: 1.0.0
  */
-export type PostApiAuthLoginBody = {
+export type Health200Status = (typeof Health200Status)[keyof typeof Health200Status]
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const Health200Status = {
+  ok: "ok",
+} as const
+
+export type Health200 = {
+  status: Health200Status
+  time: string
+  uptime: number
+}
+
+export type LoginBody = {
   email: string
   password: string
 }
 
-export type PostApiAuthLogin200 = {
+export type Login200 = {
   token: string
 }
 
-export type PostApiAuthLogin401 = {
+export type Login401 = {
+  message: string
+}
+
+export type GetApiLoginGoogleCallback200 = {
+  token: string
+}
+
+export type GetApiLoginGoogleCallback401 = {
   message: string
 }
 
 export type CreateUserBody = {
   email: string
   name: string
+  /** @nullable */
+  picture?: string | null
   /** @minLength 6 */
   password: string
 }
@@ -31,6 +54,7 @@ export type GetUserProfile200 = {
   id: number
   email: string
   name: string
+  picture?: string
   createdAt: string
   updatedAt: string
 } | null
@@ -38,6 +62,8 @@ export type GetUserProfile200 = {
 export type UpdateUserProfileBody = {
   name?: string
   email?: string
+  /** @nullable */
+  picture?: string | null
   /** @minLength 6 */
   password?: string
 }
@@ -49,6 +75,7 @@ export type UpdateUserProfile200 = {
   id: number
   email: string
   name: string
+  picture?: string
   createdAt: string
   updatedAt: string
 } | null

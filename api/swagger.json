@@ -8,8 +8,12 @@
     "schemas": {}
   },
   "paths": {
-    "/api/health": {
+    "/api/login/google": {
       "get": {
+        "operationId": "googleLogin",
+        "tags": [
+          "Auth"
+        ],
         "responses": {
           "200": {
             "description": "Default Response"
@@ -17,8 +21,52 @@
         }
       }
     },
-    "/api/auth/login": {
+    "/api/health": {
+      "get": {
+        "operationId": "health",
+        "tags": [
+          "Health"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "ok"
+                      ]
+                    },
+                    "time": {
+                      "type": "string"
+                    },
+                    "uptime": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "status",
+                    "time",
+                    "uptime"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/login": {
       "post": {
+        "operationId": "login",
+        "tags": [
+          "Auth"
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -85,6 +133,53 @@
         }
       }
     },
+    "/api/login/google/callback": {
+      "get": {
+        "tags": [
+          "Auth"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "token": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "token"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/users/": {
       "post": {
         "operationId": "createUser",
@@ -104,6 +199,11 @@
                   },
                   "name": {
                     "type": "string"
+                  },
+                  "picture": {
+                    "type": "string",
+                    "format": "uri",
+                    "nullable": true
                   },
                   "password": {
                     "type": "string",
@@ -152,6 +252,9 @@
                     "name": {
                       "type": "string"
                     },
+                    "picture": {
+                      "type": "string"
+                    },
                     "createdAt": {
                       "type": "string",
                       "format": "date-time"
@@ -195,6 +298,11 @@
                     "type": "string",
                     "format": "email"
                   },
+                  "picture": {
+                    "type": "string",
+                    "format": "uri",
+                    "nullable": true
+                  },
                   "password": {
                     "type": "string",
                     "minLength": 6
@@ -220,6 +328,9 @@
                       "type": "string"
                     },
                     "name": {
+                      "type": "string"
+                    },
+                    "picture": {
                       "type": "string"
                     },
                     "createdAt": {

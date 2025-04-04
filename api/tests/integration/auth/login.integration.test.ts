@@ -21,16 +21,17 @@ describe("Login API Integration Tests", () => {
     await app.close()
   })
 
-  describe("POST /api/auth/login", () => {
+  describe("POST /api/login", () => {
     it("should login with valid credentials and return a valid token", async () => {
-      const response = await request(app.server).post("/api/auth/login").send({ email, password })
+      const response = await request(app.server).post("/api/login").send({ email, password })
 
       expect(response.status).toBe(200)
-      expect(response.body).toHaveProperty("token")
+      expect(response.headers["set-cookie"]).toBeDefined()
+      expect(response.headers["set-cookie"][0]).toContain("authToken")
     })
 
     it("should throw an error with invalid credentials", async () => {
-      const response = await request(app.server).post("/api/auth/login").send({ email, password: "invalid-password" })
+      const response = await request(app.server).post("/api/login").send({ email, password: "invalid-password" })
 
       expect(response.status).toBe(401)
       expect(response.body.message).toBe("Invalid credentials")

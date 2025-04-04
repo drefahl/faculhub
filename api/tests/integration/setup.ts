@@ -2,17 +2,18 @@ import { execSync } from "node:child_process"
 import { randomUUID } from "node:crypto"
 import path from "node:path"
 import { config } from "dotenv"
-import dotenvExpand from "dotenv-expand"
 import { afterAll, beforeAll } from "vitest"
 
 const projectRoot = path.resolve(__dirname, "../../")
-const env = config({ path: path.join(projectRoot, ".env.test"), override: true })
-dotenvExpand.expand(env)
-
-import { prisma } from "@/lib/prisma"
+config({
+  override: true,
+  path: path.join(projectRoot, ".env.development"),
+})
 
 const schema = randomUUID()
 if (!process.env.DATABASE_URL) throw new Error("DATABASE_URL not defined")
+
+import { prisma } from "@/lib/prisma"
 
 const url = new URL(process.env.DATABASE_URL)
 url.searchParams.set("schema", schema)

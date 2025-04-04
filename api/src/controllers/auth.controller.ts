@@ -1,4 +1,5 @@
 import { InvalidCredentialsError } from "@/errors/InvalidCredentialsError"
+import { createCookieOptions } from "@/lib/utils/cookie.utils"
 import type { RequestBodyAuth } from "@/schemas/auth.schema"
 import type { AuthService } from "@/services/auth.service"
 import type { FastifyReply, FastifyRequest } from "fastify"
@@ -12,7 +13,7 @@ export class AuthController {
 
       const token = await this.authService.login(email, password)
 
-      reply.send({ token })
+      reply.setCookie("authToken", token, createCookieOptions()).send({ message: "Authenticated successfully" })
     } catch (error) {
       if (error instanceof InvalidCredentialsError) {
         reply.code(401).send({ message: error.message })
