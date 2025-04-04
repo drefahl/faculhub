@@ -1,4 +1,3 @@
-import cookie from "@fastify/cookie"
 import fastifyJwt from "@fastify/jwt"
 import { fastify } from "fastify"
 import { type ZodTypeProvider, serializerCompiler, validatorCompiler } from "fastify-type-provider-zod"
@@ -21,7 +20,6 @@ export async function createServer() {
   corsConfig(app)
   swaggerConfig(app)
   registerGoogleOAuth(app)
-  app.register(cookie)
   app.register(fastifyJwt, { secret: env.JWT_SECRET, sign: { algorithm: "HS256" } })
 
   // Error Handling
