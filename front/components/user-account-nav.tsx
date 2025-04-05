@@ -11,7 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { signOut } from "@/lib/utils/token.util"
+import { signOut } from "@/lib/utils/token"
 import { LogOut, Settings, User } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useSession } from "./providers/session-provider"
