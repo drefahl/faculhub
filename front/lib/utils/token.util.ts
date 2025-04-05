@@ -1,7 +1,7 @@
 "use server"
 
 import type { Session } from "@/types"
-import { decodeJwt, jwtVerify } from "jose"
+import { decodeJwt } from "jose"
 import { cookies } from "next/headers"
 
 const tokenName = "authToken"
@@ -32,26 +32,9 @@ async function deleteCookieToken() {
   cookieStore.delete(tokenName)
 }
 
-const secret = new TextEncoder().encode("secret")
-
-export async function verifyToken(token: string) {
-  try {
-    const { payload } = await jwtVerify(token, secret)
-
-    return payload
-  } catch (error) {
-    await deleteCookieToken()
-    return null
-  }
-}
-
 export async function decodeToken(token: string) {
   if (!token) return null
   return decodeJwt(token) as Session
-}
-
-export async function isTokenValid(token: string) {
-  return !!(await verifyToken(token))
 }
 
 export async function signOut() {

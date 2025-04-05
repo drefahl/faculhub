@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
-import { isTokenValid } from "./lib/utils/token.util"
 
 const PUBLIC_ROUTES = [
   { pathname: "/", whenAuthenticated: "next" },
@@ -25,14 +24,6 @@ export async function middleware(request: NextRequest) {
 
   if (authToken && publicRoute && publicRoute.whenAuthenticated === "redirect") {
     return NextResponse.redirect(new URL("/", request.url))
-  }
-
-  if (authToken && !publicRoute) {
-    if (!(await isTokenValid(authToken))) {
-      return NextResponse.redirect(new URL(REDIRECT_WHEN_NOT_AUTHENTICATED, request.url))
-    }
-
-    return NextResponse.next()
   }
 
   return NextResponse.next()
