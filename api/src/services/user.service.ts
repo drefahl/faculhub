@@ -1,4 +1,5 @@
-import { hashPassword } from "@/lib/utils/crypto.utils"
+import { InvalidCredentialsError } from "@/errors/InvalidCredentialsError"
+import { comparePassword, hashPassword } from "@/lib/utils/crypto.utils"
 import { UserRepository } from "@/repositories/user.repository"
 import { createUserSchema, createUserWithGoogleSchema, updateUserSchema } from "@/schemas/user.schema"
 import type { Prisma, user } from "@prisma/client"
@@ -42,8 +43,26 @@ export class UserService {
   async updateUser(userId: number, data: Prisma.userUpdateInput): Promise<user> {
     const userData = updateUserSchema.parse(data)
 
-    if (userData.password) {
-      userData.password = await hashPassword(userData.password)
+    const user = await this.userRepository.getUserById(userId)
+    if (!user) {
+      throw new Error("User not found")
+    }
+
+    if (!user.password) {
+      if (userData.newPassword) {
+        userData.newPassword = await hashPassword(userData.newPassword)
+      }
+    } else {
+      if (userData.currentPassword) {
+        const isPasswordValid = await comparePassword(userData.currentPassword, user.password)
+        if (!isPasswordValid) {
+          throw new InvalidCredentialsError("Invalid current password")
+        }
+
+        if (userData.newPassword) {
+          userData.newPassword = await hashPassword(userData.newPassword)
+        }
+      }
     }
 
     return this.userRepository.updateUser(userId, userData)

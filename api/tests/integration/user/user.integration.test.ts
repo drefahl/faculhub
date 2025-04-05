@@ -1,3 +1,4 @@
+import path from "node:path"
 import { createServer } from "@/app"
 import type { FastifyInstance } from "fastify"
 import request from "supertest"
@@ -78,5 +79,19 @@ describe("User Integration Tests", () => {
 
     expect(response.status).toBe(200)
     expect(response.body.name).toEqual(newName)
+  })
+
+  it("should change the user picture when a new one is provided", async () => {
+    const filePath = path.resolve(__dirname, "../../fixtures/test-image.png")
+
+    const response = await request(app.server)
+      .put("/api/users/profile-image")
+      .set("Authorization", `Bearer ${authToken}`)
+      .attach("file", filePath)
+
+    console.log(response.body)
+
+    expect(response.status).toBe(200)
+    expect(response.body.picture).toMatch(/uploads\/.+\.png/) // TODO:
   })
 })

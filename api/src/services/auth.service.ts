@@ -1,10 +1,11 @@
+import { env } from "@/config/env.config"
 import { InvalidCredentialsError } from "@/errors/InvalidCredentialsError"
 import { createToken } from "@/lib/utils/jwt.utils"
+import { getUserProviders } from "@/lib/utils/user.utls"
+import type { Token } from "@fastify/oauth2"
+import { OAuth2Client } from "google-auth-library"
 import { comparePassword } from "../lib/utils/crypto.utils"
 import { UserService } from "./user.service"
-import { OAuth2Client } from "google-auth-library"
-import { env } from "@/config/env.config"
-import type { Token } from "@fastify/oauth2"
 
 export class AuthService {
   private readonly googleClient: OAuth2Client
@@ -24,7 +25,13 @@ export class AuthService {
       throw new InvalidCredentialsError("Invalid credentials")
     }
 
-    const token = await createToken({ id: user.id, email: user.email })
+    const token = await createToken({
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      picture: user.picture,
+      providers: getUserProviders(user),
+    })
 
     return token
   }
@@ -53,7 +60,13 @@ export class AuthService {
       user = await this.userService.updateUser(user.id, { name, picture })
     }
 
-    const jwtToken = await createToken({ id: user.id, email: user.email })
+    const jwtToken = await createToken({
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      picture: user.picture,
+      providers: getUserProviders(user),
+    })
 
     return jwtToken
   }

@@ -67,6 +67,7 @@ describe("User Unit Tests", () => {
     const updatedUserData = { email, password: "new-password" }
 
     const user = await userService.updateUser(userId, updatedUserData)
+    if (!user || !user.password) throw new Error("User not found")
 
     expect(await comparePassword(updatedUserData.password, user.password)).toBe(true)
     expect(user).toHaveProperty("id")
@@ -82,5 +83,14 @@ describe("User Unit Tests", () => {
 
     expect(user).toHaveProperty("id")
     expect(user.password).not.toEqual(password)
+  })
+
+  it("should change user picture when new picture is provided", async () => {
+    const updatedUserData = { picture: "new-picture-path" }
+
+    const user = await userService.updateUser(userId, updatedUserData)
+
+    expect(user).toHaveProperty("id")
+    expect(user.picture).toEqual(updatedUserData.picture)
   })
 })

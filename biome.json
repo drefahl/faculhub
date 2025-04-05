@@ -38,6 +38,9 @@
       },
       "suspicious": {
         "noExplicitAny": "info"
+      },
+      "performance": {
+        "noAccumulatingSpread": "off"
       }
     }
   },

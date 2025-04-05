@@ -23,10 +23,16 @@ import axios from "axios"
 import type { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios"
 
 import type {
+  CreateUser201,
   CreateUserBody,
+  DeleteProfileImage200,
+  DeleteProfileImage404,
   GetUserProfile200,
   UpdateUserProfile200,
   UpdateUserProfileBody,
+  UploadProfileImage200,
+  UploadProfileImage400,
+  UploadProfileImage500,
 } from "../generated.schemas"
 
 /**
@@ -35,7 +41,7 @@ import type {
 export const createUser = (
   createUserBody: CreateUserBody,
   options?: AxiosRequestConfig,
-): Promise<AxiosResponse<void>> => {
+): Promise<AxiosResponse<CreateUser201>> => {
   return axios.post(`http://localhost:3333/api/users/`, createUserBody, options)
 }
 
@@ -68,6 +74,89 @@ export const useCreateUser = <TError = AxiosError<unknown>, TContext = unknown>(
   axios?: AxiosRequestConfig
 }): UseMutationResult<Awaited<ReturnType<typeof createUser>>, TError, { data: CreateUserBody }, TContext> => {
   const mutationOptions = getCreateUserMutationOptions(options)
+
+  return useMutation(mutationOptions)
+}
+/**
+ * Upload a profile image
+ */
+export const uploadProfileImage = (options?: AxiosRequestConfig): Promise<AxiosResponse<UploadProfileImage200>> => {
+  return axios.put(`http://localhost:3333/api/users/profile-image`, undefined, options)
+}
+
+export const getUploadProfileImageMutationOptions = <
+  TError = AxiosError<UploadProfileImage400 | UploadProfileImage500>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<Awaited<ReturnType<typeof uploadProfileImage>>, TError, void, TContext>
+  axios?: AxiosRequestConfig
+}): UseMutationOptions<Awaited<ReturnType<typeof uploadProfileImage>>, TError, void, TContext> => {
+  const mutationKey = ["uploadProfileImage"]
+  const { mutation: mutationOptions, axios: axiosOptions } = options
+    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, axios: undefined }
+
+  const mutationFn: MutationFunction<Awaited<ReturnType<typeof uploadProfileImage>>, void> = () => {
+    return uploadProfileImage(axiosOptions)
+  }
+
+  return { mutationFn, ...mutationOptions }
+}
+
+export type UploadProfileImageMutationResult = NonNullable<Awaited<ReturnType<typeof uploadProfileImage>>>
+
+export type UploadProfileImageMutationError = AxiosError<UploadProfileImage400 | UploadProfileImage500>
+
+export const useUploadProfileImage = <
+  TError = AxiosError<UploadProfileImage400 | UploadProfileImage500>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<Awaited<ReturnType<typeof uploadProfileImage>>, TError, void, TContext>
+  axios?: AxiosRequestConfig
+}): UseMutationResult<Awaited<ReturnType<typeof uploadProfileImage>>, TError, void, TContext> => {
+  const mutationOptions = getUploadProfileImageMutationOptions(options)
+
+  return useMutation(mutationOptions)
+}
+/**
+ * Delete a profile image
+ */
+export const deleteProfileImage = (options?: AxiosRequestConfig): Promise<AxiosResponse<DeleteProfileImage200>> => {
+  return axios.delete(`http://localhost:3333/api/users/profile-image`, options)
+}
+
+export const getDeleteProfileImageMutationOptions = <
+  TError = AxiosError<DeleteProfileImage404>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<Awaited<ReturnType<typeof deleteProfileImage>>, TError, void, TContext>
+  axios?: AxiosRequestConfig
+}): UseMutationOptions<Awaited<ReturnType<typeof deleteProfileImage>>, TError, void, TContext> => {
+  const mutationKey = ["deleteProfileImage"]
+  const { mutation: mutationOptions, axios: axiosOptions } = options
+    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, axios: undefined }
+
+  const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteProfileImage>>, void> = () => {
+    return deleteProfileImage(axiosOptions)
+  }
+
+  return { mutationFn, ...mutationOptions }
+}
+
+export type DeleteProfileImageMutationResult = NonNullable<Awaited<ReturnType<typeof deleteProfileImage>>>
+
+export type DeleteProfileImageMutationError = AxiosError<DeleteProfileImage404>
+
+export const useDeleteProfileImage = <TError = AxiosError<DeleteProfileImage404>, TContext = unknown>(options?: {
+  mutation?: UseMutationOptions<Awaited<ReturnType<typeof deleteProfileImage>>, TError, void, TContext>
+  axios?: AxiosRequestConfig
+}): UseMutationResult<Awaited<ReturnType<typeof deleteProfileImage>>, TError, void, TContext> => {
+  const mutationOptions = getDeleteProfileImageMutationOptions(options)
 
   return useMutation(mutationOptions)
 }

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
-import { isTokenValid } from "./lib/utils/token.util"
+import { isTokenValid } from "./lib/utils/token.utils"
 
 const PUBLIC_ROUTES = [
   { pathname: "/", whenAuthenticated: "next" },

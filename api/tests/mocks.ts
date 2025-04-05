@@ -110,7 +110,14 @@ export function createAuthServiceMock(userService: UserService = createUserServi
     if (email !== mockConstants.user.email || password !== mockConstants.user.password) {
       throw new InvalidCredentialsError("Invalid credentials")
     }
-    return createToken({ id: mockConstants.user.id, email: mockConstants.user.email })
+
+    return createToken({
+      id: mockConstants.user.id,
+      email: mockConstants.user.email,
+      name: mockConstants.user.name,
+      picture: null,
+      providers: ["credentials"],
+    })
   })
 
   return service

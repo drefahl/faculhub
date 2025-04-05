@@ -16,23 +16,13 @@ export async function getCookieToken() {
   return cookieStore.get(tokenName)?.value || ""
 }
 
-export async function setCookieToken(token: string) {
-  const cookieStore = await cookies()
-
-  cookieStore.set(tokenName, token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
-  })
-}
-
 async function deleteCookieToken() {
   const cookieStore = await cookies()
 
   cookieStore.delete(tokenName)
 }
 
-const secret = new TextEncoder().encode("secret")
+const secret = new TextEncoder().encode("secret") //TODO: move to env
 
 export async function verifyToken(token: string) {
   try {

@@ -11,7 +11,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { signOut } from "@/lib/utils/token.util"
+import { signOut } from "@/lib/utils/token.utils"
+import { getUserInitials } from "@/lib/utils/user.utils"
 import { LogOut, Settings, User } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useSession } from "./providers/session-provider"
@@ -34,12 +35,7 @@ export function UserAccountNav() {
   }
 
   const { name, email } = session
-  const initials = name
-    ? name
-        .split(" ")
-        .map((n) => n[0])
-        .join("")
-    : "U"
+  const initials = getUserInitials(name)
 
   return (
     <DropdownMenu>

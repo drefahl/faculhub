@@ -1,7 +1,6 @@
-import type { user } from "@prisma/client"
 import { z } from "zod"
 
-const pictureSchema = z.string().url().nullable().optional()
+const pictureSchema = z.string().nullable().optional()
 const emailSchema = z.string().email({ message: "E-mail inválido" })
 
 export const createUserSchema = z.object({
@@ -22,14 +21,26 @@ export const createUserWithGoogleSchema = z.object({
 
 export type CreateUserWithGoogleInput = z.infer<typeof createUserWithGoogleSchema>
 
-export const updateUserSchema: z.ZodType<Partial<user>> = z
+export const updateUserSchema = z
   .object({
     name: z.string().optional(),
     email: z.string().email().optional(),
     picture: pictureSchema,
-    password: z.string().min(6).optional(),
+    currentPassword: z.string().optional(),
+    newPassword: z.string().min(6).optional(),
+    confirmPassword: z.string().min(6).optional(),
   })
-  .strict()
+  .refine(
+    (data) => {
+      if (data.newPassword && data.confirmPassword) {
+        return data.newPassword === data.confirmPassword
+      }
+      return true
+    },
+    {
+      message: "As senhas não coincidem",
+    },
+  )
 
 export type UpdateUserInput = z.infer<typeof updateUserSchema>
 
@@ -37,10 +48,8 @@ export const ResponseGetUserSchema = z
   .object({
     id: z.number(),
     email: z.string(),
-    name: z.string(),
+    name: z.string().nullable(),
     picture: pictureSchema,
-    createdAt: z.date(),
-    updatedAt: z.date(),
   })
   .nullable()
 

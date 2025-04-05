@@ -99,12 +99,15 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "token": {
-                      "type": "string"
+                    "message": {
+                      "type": "string",
+                      "enum": [
+                        "Authenticated successfully"
+                      ]
                     }
                   },
                   "required": [
-                    "token"
+                    "message"
                   ],
                   "additionalProperties": false
                 }
@@ -146,12 +149,15 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "token": {
-                      "type": "string"
+                    "message": {
+                      "type": "string",
+                      "enum": [
+                        "Authenticated successfully"
+                      ]
                     }
                   },
                   "required": [
-                    "token"
+                    "message"
                   ],
                   "additionalProperties": false
                 }
@@ -202,7 +208,6 @@
                   },
                   "picture": {
                     "type": "string",
-                    "format": "uri",
                     "nullable": true
                   },
                   "password": {
@@ -222,8 +227,167 @@
           "required": true
         },
         "responses": {
+          "201": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "number"
+                    },
+                    "email": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "picture": {
+                      "type": "string",
+                      "nullable": true
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "email",
+                    "name"
+                  ],
+                  "additionalProperties": false,
+                  "nullable": true
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/profile-image": {
+      "put": {
+        "operationId": "uploadProfileImage",
+        "tags": [
+          "User"
+        ],
+        "description": "Upload a profile image",
+        "responses": {
           "200": {
-            "description": "Default Response"
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "number"
+                    },
+                    "email": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "picture": {
+                      "type": "string",
+                      "nullable": true
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "email",
+                    "name"
+                  ],
+                  "additionalProperties": false,
+                  "nullable": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteProfileImage",
+        "tags": [
+          "User"
+        ],
+        "description": "Delete a profile image",
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
           }
         }
       }
@@ -250,26 +414,18 @@
                       "type": "string"
                     },
                     "name": {
-                      "type": "string"
+                      "type": "string",
+                      "nullable": true
                     },
                     "picture": {
-                      "type": "string"
-                    },
-                    "createdAt": {
                       "type": "string",
-                      "format": "date-time"
-                    },
-                    "updatedAt": {
-                      "type": "string",
-                      "format": "date-time"
+                      "nullable": true
                     }
                   },
                   "required": [
                     "id",
                     "email",
-                    "name",
-                    "createdAt",
-                    "updatedAt"
+                    "name"
                   ],
                   "additionalProperties": false,
                   "nullable": true
@@ -300,10 +456,16 @@
                   },
                   "picture": {
                     "type": "string",
-                    "format": "uri",
                     "nullable": true
                   },
-                  "password": {
+                  "currentPassword": {
+                    "type": "string"
+                  },
+                  "newPassword": {
+                    "type": "string",
+                    "minLength": 6
+                  },
+                  "confirmPassword": {
                     "type": "string",
                     "minLength": 6
                   }
@@ -328,26 +490,18 @@
                       "type": "string"
                     },
                     "name": {
-                      "type": "string"
+                      "type": "string",
+                      "nullable": true
                     },
                     "picture": {
-                      "type": "string"
-                    },
-                    "createdAt": {
                       "type": "string",
-                      "format": "date-time"
-                    },
-                    "updatedAt": {
-                      "type": "string",
-                      "format": "date-time"
+                      "nullable": true
                     }
                   },
                   "required": [
                     "id",
                     "email",
-                    "name",
-                    "createdAt",
-                    "updatedAt"
+                    "name"
                   ],
                   "additionalProperties": false,
                   "nullable": true

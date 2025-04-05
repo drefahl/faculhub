@@ -1,5 +1,5 @@
 import { InvalidCredentialsError } from "@/errors/InvalidCredentialsError"
-import { verifyToken } from "@/lib/utils/jwt.utils"
+import { tokenSchema, verifyToken } from "@/lib/utils/jwt.utils"
 import { createAuthServiceMock, mockConstants } from "tests/mocks"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 
@@ -47,9 +47,7 @@ describe("Google Login", () => {
     expect(token).toBeDefined()
 
     const decoded = await verifyToken(token)
-
-    expect(decoded).toHaveProperty("id")
-    expect(decoded).toHaveProperty("email")
+    tokenSchema.parse(decoded)
   })
 
   it("should throw an error with invalid google credentials", async () => {
