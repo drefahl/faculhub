@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "tsc --noEmit",
-    "format": "biome format --write ."
+    "format": "biome check --linter-enabled=false --write ."
   },
   "dependencies": {
     "@hookform/resolvers": "^4.1.3",

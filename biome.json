@@ -7,20 +7,14 @@
   },
   "files": {
     "ignoreUnknown": false,
-    "ignore": []
+    "ignore": ["node_modules", ".git", "dist", ".next", "swagger.json"]
   },
   "formatter": {
     "enabled": true,
     "formatWithErrors": true,
     "indentStyle": "space",
     "lineEnding": "lf",
-    "lineWidth": 120,
-    "ignore": [
-      "node_modules",
-      ".git",
-      "dist",
-      ".next"
-    ]
+    "lineWidth": 120
   },
   "organizeImports": {
     "enabled": true
