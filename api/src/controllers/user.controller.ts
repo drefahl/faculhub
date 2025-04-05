@@ -1,4 +1,5 @@
 import path from "node:path"
+import type { UpdateUserInput } from "@/schemas/user.schema"
 import type { UserService } from "@/services/user.service"
 import type { Prisma } from "@prisma/client"
 import type { FastifyReply, FastifyRequest } from "fastify"
@@ -20,7 +21,7 @@ export class UserController {
     return reply.send(user)
   }
 
-  async updateUserProfile(request: FastifyRequest<{ Body: Prisma.userUpdateInput }>, reply: FastifyReply) {
+  async updateUserProfile(request: FastifyRequest<{ Body: UpdateUserInput }>, reply: FastifyReply) {
     const user = await this.userService.updateUser(request.user.id, request.body)
 
     return reply.send(user)
@@ -35,9 +36,8 @@ export class UserController {
 
     const uploadDir = path.join(__dirname, "../../public/uploads")
     try {
-      const filePath = await saveFileToDisk(data.file, data.filename, uploadDir)
+      await saveFileToDisk(data.file, data.filename, uploadDir)
     } catch (error) {
-      console.error("Error saving file:", error)
       return reply.code(500).send({ message: "Failed to save file" })
     }
 
@@ -60,7 +60,6 @@ export class UserController {
     try {
       await deleteFileFromDisk(filePath)
     } catch (error) {
-      console.error("Error deleting file:", error)
       return reply.code(500).send({ message: "Failed to delete file" })
     }
 
