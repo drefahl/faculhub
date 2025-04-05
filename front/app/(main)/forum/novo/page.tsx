@@ -1,5 +1,5 @@
-import type { Metadata } from "next"
 import { CreatePostForm } from "@/components/forum/create-post-form"
+import type { Metadata } from "next"
 
 export const metadata: Metadata = {
   title: "Nova Discussão - FaculHub",
