@@ -19,9 +19,6 @@ import type {
   UseQueryResult,
 } from "@tanstack/react-query"
 
-import axios from "axios"
-import type { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios"
-
 import type {
   GetApiLoginGoogleCallback200,
   GetApiLoginGoogleCallback401,
@@ -30,27 +27,32 @@ import type {
   LoginBody,
 } from "../generated.schemas"
 
-export const googleLogin = (options?: AxiosRequestConfig): Promise<AxiosResponse<void>> => {
-  return axios.get(`http://localhost:3333/api/login/google`, options)
+import { makeRequest } from "../../utils/axios"
+import type { ErrorType } from "../../utils/axios"
+
+type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1]
+
+export const googleLogin = (options?: SecondParameter<typeof makeRequest>, signal?: AbortSignal) => {
+  return makeRequest<void>({ url: `/api/login/google`, method: "GET", signal }, options)
 }
 
 export const getGoogleLoginQueryKey = () => {
-  return [`http://localhost:3333/api/login/google`] as const
+  return [`/api/login/google`] as const
 }
 
 export const getGoogleLoginQueryOptions = <
   TData = Awaited<ReturnType<typeof googleLogin>>,
-  TError = AxiosError<unknown>,
+  TError = ErrorType<unknown>,
 >(options?: {
   query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof googleLogin>>, TError, TData>>
-  axios?: AxiosRequestConfig
+  request?: SecondParameter<typeof makeRequest>
 }) => {
-  const { query: queryOptions, axios: axiosOptions } = options ?? {}
+  const { query: queryOptions, request: requestOptions } = options ?? {}
 
   const queryKey = queryOptions?.queryKey ?? getGoogleLoginQueryKey()
 
   const queryFn: QueryFunction<Awaited<ReturnType<typeof googleLogin>>> = ({ signal }) =>
-    googleLogin({ signal, ...axiosOptions })
+    googleLogin(requestOptions, signal)
 
   return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
     Awaited<ReturnType<typeof googleLogin>>,
@@ -60,9 +62,9 @@ export const getGoogleLoginQueryOptions = <
 }
 
 export type GoogleLoginQueryResult = NonNullable<Awaited<ReturnType<typeof googleLogin>>>
-export type GoogleLoginQueryError = AxiosError<unknown>
+export type GoogleLoginQueryError = ErrorType<unknown>
 
-export function useGoogleLogin<TData = Awaited<ReturnType<typeof googleLogin>>, TError = AxiosError<unknown>>(options: {
+export function useGoogleLogin<TData = Awaited<ReturnType<typeof googleLogin>>, TError = ErrorType<unknown>>(options: {
   query: Partial<UseQueryOptions<Awaited<ReturnType<typeof googleLogin>>, TError, TData>> &
     Pick<
       DefinedInitialDataOptions<
@@ -72,12 +74,9 @@ export function useGoogleLogin<TData = Awaited<ReturnType<typeof googleLogin>>, 
       >,
       "initialData"
     >
-  axios?: AxiosRequestConfig
+  request?: SecondParameter<typeof makeRequest>
 }): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGoogleLogin<
-  TData = Awaited<ReturnType<typeof googleLogin>>,
-  TError = AxiosError<unknown>,
->(options?: {
+export function useGoogleLogin<TData = Awaited<ReturnType<typeof googleLogin>>, TError = ErrorType<unknown>>(options?: {
   query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof googleLogin>>, TError, TData>> &
     Pick<
       UndefinedInitialDataOptions<
@@ -87,22 +86,16 @@ export function useGoogleLogin<
       >,
       "initialData"
     >
-  axios?: AxiosRequestConfig
+  request?: SecondParameter<typeof makeRequest>
 }): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGoogleLogin<
-  TData = Awaited<ReturnType<typeof googleLogin>>,
-  TError = AxiosError<unknown>,
->(options?: {
+export function useGoogleLogin<TData = Awaited<ReturnType<typeof googleLogin>>, TError = ErrorType<unknown>>(options?: {
   query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof googleLogin>>, TError, TData>>
-  axios?: AxiosRequestConfig
+  request?: SecondParameter<typeof makeRequest>
 }): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
-export function useGoogleLogin<
-  TData = Awaited<ReturnType<typeof googleLogin>>,
-  TError = AxiosError<unknown>,
->(options?: {
+export function useGoogleLogin<TData = Awaited<ReturnType<typeof googleLogin>>, TError = ErrorType<unknown>>(options?: {
   query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof googleLogin>>, TError, TData>>
-  axios?: AxiosRequestConfig
+  request?: SecondParameter<typeof makeRequest>
 }): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
   const queryOptions = getGoogleLoginQueryOptions(options)
 
@@ -113,25 +106,28 @@ export function useGoogleLogin<
   return query
 }
 
-export const login = (loginBody: LoginBody, options?: AxiosRequestConfig): Promise<AxiosResponse<Login200>> => {
-  return axios.post(`http://localhost:3333/api/login`, loginBody, options)
+export const login = (loginBody: LoginBody, options?: SecondParameter<typeof makeRequest>, signal?: AbortSignal) => {
+  return makeRequest<Login200>(
+    { url: `/api/login`, method: "POST", headers: { "Content-Type": "application/json" }, data: loginBody, signal },
+    options,
+  )
 }
 
-export const getLoginMutationOptions = <TError = AxiosError<Login401>, TContext = unknown>(options?: {
+export const getLoginMutationOptions = <TError = ErrorType<Login401>, TContext = unknown>(options?: {
   mutation?: UseMutationOptions<Awaited<ReturnType<typeof login>>, TError, { data: LoginBody }, TContext>
-  axios?: AxiosRequestConfig
+  request?: SecondParameter<typeof makeRequest>
 }): UseMutationOptions<Awaited<ReturnType<typeof login>>, TError, { data: LoginBody }, TContext> => {
   const mutationKey = ["login"]
-  const { mutation: mutationOptions, axios: axiosOptions } = options
+  const { mutation: mutationOptions, request: requestOptions } = options
     ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
       ? options
       : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey }, axios: undefined }
+    : { mutation: { mutationKey }, request: undefined }
 
   const mutationFn: MutationFunction<Awaited<ReturnType<typeof login>>, { data: LoginBody }> = (props) => {
     const { data } = props ?? {}
 
-    return login(data, axiosOptions)
+    return login(data, requestOptions)
   }
 
   return { mutationFn, ...mutationOptions }
@@ -139,39 +135,40 @@ export const getLoginMutationOptions = <TError = AxiosError<Login401>, TContext 
 
 export type LoginMutationResult = NonNullable<Awaited<ReturnType<typeof login>>>
 export type LoginMutationBody = LoginBody
-export type LoginMutationError = AxiosError<Login401>
+export type LoginMutationError = ErrorType<Login401>
 
-export const useLogin = <TError = AxiosError<Login401>, TContext = unknown>(options?: {
+export const useLogin = <TError = ErrorType<Login401>, TContext = unknown>(options?: {
   mutation?: UseMutationOptions<Awaited<ReturnType<typeof login>>, TError, { data: LoginBody }, TContext>
-  axios?: AxiosRequestConfig
+  request?: SecondParameter<typeof makeRequest>
 }): UseMutationResult<Awaited<ReturnType<typeof login>>, TError, { data: LoginBody }, TContext> => {
   const mutationOptions = getLoginMutationOptions(options)
 
   return useMutation(mutationOptions)
 }
-export const getApiLoginGoogleCallback = (
-  options?: AxiosRequestConfig,
-): Promise<AxiosResponse<GetApiLoginGoogleCallback200>> => {
-  return axios.get(`http://localhost:3333/api/login/google/callback`, options)
+export const getApiLoginGoogleCallback = (options?: SecondParameter<typeof makeRequest>, signal?: AbortSignal) => {
+  return makeRequest<GetApiLoginGoogleCallback200>(
+    { url: `/api/login/google/callback`, method: "GET", signal },
+    options,
+  )
 }
 
 export const getGetApiLoginGoogleCallbackQueryKey = () => {
-  return [`http://localhost:3333/api/login/google/callback`] as const
+  return [`/api/login/google/callback`] as const
 }
 
 export const getGetApiLoginGoogleCallbackQueryOptions = <
   TData = Awaited<ReturnType<typeof getApiLoginGoogleCallback>>,
-  TError = AxiosError<GetApiLoginGoogleCallback401>,
+  TError = ErrorType<GetApiLoginGoogleCallback401>,
 >(options?: {
   query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiLoginGoogleCallback>>, TError, TData>>
-  axios?: AxiosRequestConfig
+  request?: SecondParameter<typeof makeRequest>
 }) => {
-  const { query: queryOptions, axios: axiosOptions } = options ?? {}
+  const { query: queryOptions, request: requestOptions } = options ?? {}
 
   const queryKey = queryOptions?.queryKey ?? getGetApiLoginGoogleCallbackQueryKey()
 
   const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiLoginGoogleCallback>>> = ({ signal }) =>
-    getApiLoginGoogleCallback({ signal, ...axiosOptions })
+    getApiLoginGoogleCallback(requestOptions, signal)
 
   return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
     Awaited<ReturnType<typeof getApiLoginGoogleCallback>>,
@@ -181,11 +178,11 @@ export const getGetApiLoginGoogleCallbackQueryOptions = <
 }
 
 export type GetApiLoginGoogleCallbackQueryResult = NonNullable<Awaited<ReturnType<typeof getApiLoginGoogleCallback>>>
-export type GetApiLoginGoogleCallbackQueryError = AxiosError<GetApiLoginGoogleCallback401>
+export type GetApiLoginGoogleCallbackQueryError = ErrorType<GetApiLoginGoogleCallback401>
 
 export function useGetApiLoginGoogleCallback<
   TData = Awaited<ReturnType<typeof getApiLoginGoogleCallback>>,
-  TError = AxiosError<GetApiLoginGoogleCallback401>,
+  TError = ErrorType<GetApiLoginGoogleCallback401>,
 >(options: {
   query: Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiLoginGoogleCallback>>, TError, TData>> &
     Pick<
@@ -196,11 +193,11 @@ export function useGetApiLoginGoogleCallback<
       >,
       "initialData"
     >
-  axios?: AxiosRequestConfig
+  request?: SecondParameter<typeof makeRequest>
 }): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetApiLoginGoogleCallback<
   TData = Awaited<ReturnType<typeof getApiLoginGoogleCallback>>,
-  TError = AxiosError<GetApiLoginGoogleCallback401>,
+  TError = ErrorType<GetApiLoginGoogleCallback401>,
 >(options?: {
   query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiLoginGoogleCallback>>, TError, TData>> &
     Pick<
@@ -211,22 +208,22 @@ export function useGetApiLoginGoogleCallback<
       >,
       "initialData"
     >
-  axios?: AxiosRequestConfig
+  request?: SecondParameter<typeof makeRequest>
 }): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetApiLoginGoogleCallback<
   TData = Awaited<ReturnType<typeof getApiLoginGoogleCallback>>,
-  TError = AxiosError<GetApiLoginGoogleCallback401>,
+  TError = ErrorType<GetApiLoginGoogleCallback401>,
 >(options?: {
   query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiLoginGoogleCallback>>, TError, TData>>
-  axios?: AxiosRequestConfig
+  request?: SecondParameter<typeof makeRequest>
 }): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useGetApiLoginGoogleCallback<
   TData = Awaited<ReturnType<typeof getApiLoginGoogleCallback>>,
-  TError = AxiosError<GetApiLoginGoogleCallback401>,
+  TError = ErrorType<GetApiLoginGoogleCallback401>,
 >(options?: {
   query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiLoginGoogleCallback>>, TError, TData>>
-  axios?: AxiosRequestConfig
+  request?: SecondParameter<typeof makeRequest>
 }): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
   const queryOptions = getGetApiLoginGoogleCallbackQueryOptions(options)
 

@@ -16,31 +16,33 @@ import type {
   UseQueryResult,
 } from "@tanstack/react-query"
 
-import axios from "axios"
-import type { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios"
-
 import type { Health200 } from "../generated.schemas"
 
-export const health = (options?: AxiosRequestConfig): Promise<AxiosResponse<Health200>> => {
-  return axios.get(`http://localhost:3333/api/health`, options)
+import { makeRequest } from "../../utils/axios"
+import type { ErrorType } from "../../utils/axios"
+
+type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1]
+
+export const health = (options?: SecondParameter<typeof makeRequest>, signal?: AbortSignal) => {
+  return makeRequest<Health200>({ url: `/api/health`, method: "GET", signal }, options)
 }
 
 export const getHealthQueryKey = () => {
-  return [`http://localhost:3333/api/health`] as const
+  return [`/api/health`] as const
 }
 
 export const getHealthQueryOptions = <
   TData = Awaited<ReturnType<typeof health>>,
-  TError = AxiosError<unknown>,
+  TError = ErrorType<unknown>,
 >(options?: {
   query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof health>>, TError, TData>>
-  axios?: AxiosRequestConfig
+  request?: SecondParameter<typeof makeRequest>
 }) => {
-  const { query: queryOptions, axios: axiosOptions } = options ?? {}
+  const { query: queryOptions, request: requestOptions } = options ?? {}
 
   const queryKey = queryOptions?.queryKey ?? getHealthQueryKey()
 
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof health>>> = ({ signal }) => health({ signal, ...axiosOptions })
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof health>>> = ({ signal }) => health(requestOptions, signal)
 
   return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
     Awaited<ReturnType<typeof health>>,
@@ -50,32 +52,32 @@ export const getHealthQueryOptions = <
 }
 
 export type HealthQueryResult = NonNullable<Awaited<ReturnType<typeof health>>>
-export type HealthQueryError = AxiosError<unknown>
+export type HealthQueryError = ErrorType<unknown>
 
-export function useHealth<TData = Awaited<ReturnType<typeof health>>, TError = AxiosError<unknown>>(options: {
+export function useHealth<TData = Awaited<ReturnType<typeof health>>, TError = ErrorType<unknown>>(options: {
   query: Partial<UseQueryOptions<Awaited<ReturnType<typeof health>>, TError, TData>> &
     Pick<
       DefinedInitialDataOptions<Awaited<ReturnType<typeof health>>, TError, Awaited<ReturnType<typeof health>>>,
       "initialData"
     >
-  axios?: AxiosRequestConfig
+  request?: SecondParameter<typeof makeRequest>
 }): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useHealth<TData = Awaited<ReturnType<typeof health>>, TError = AxiosError<unknown>>(options?: {
+export function useHealth<TData = Awaited<ReturnType<typeof health>>, TError = ErrorType<unknown>>(options?: {
   query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof health>>, TError, TData>> &
     Pick<
       UndefinedInitialDataOptions<Awaited<ReturnType<typeof health>>, TError, Awaited<ReturnType<typeof health>>>,
       "initialData"
     >
-  axios?: AxiosRequestConfig
+  request?: SecondParameter<typeof makeRequest>
 }): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useHealth<TData = Awaited<ReturnType<typeof health>>, TError = AxiosError<unknown>>(options?: {
+export function useHealth<TData = Awaited<ReturnType<typeof health>>, TError = ErrorType<unknown>>(options?: {
   query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof health>>, TError, TData>>
-  axios?: AxiosRequestConfig
+  request?: SecondParameter<typeof makeRequest>
 }): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
-export function useHealth<TData = Awaited<ReturnType<typeof health>>, TError = AxiosError<unknown>>(options?: {
+export function useHealth<TData = Awaited<ReturnType<typeof health>>, TError = ErrorType<unknown>>(options?: {
   query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof health>>, TError, TData>>
-  axios?: AxiosRequestConfig
+  request?: SecondParameter<typeof makeRequest>
 }): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
   const queryOptions = getHealthQueryOptions(options)
 
