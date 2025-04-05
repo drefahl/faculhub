@@ -1,42 +1,35 @@
-"use server"
-
 import type { Session } from "@/types"
 import { decodeJwt } from "jose"
-import { cookies } from "next/headers"
 
-const tokenName = "authToken"
+export const tokenName = "authToken"
+
+const isServer = typeof window === "undefined"
+
+async function _dynamicImport() {
+  return isServer ? import("./server") : import("./client")
+}
+
+export async function getTokenCookie() {
+  const { _getTokenCookie } = await _dynamicImport()
+  return _getTokenCookie()
+}
+
+export async function setTokenCookie(token: string) {
+  const { _setTokenCookie } = await _dynamicImport()
+  return _setTokenCookie(token)
+}
 
 export async function getSession(): Promise<Session | null> {
   const session = await decodeToken(await getTokenCookie())
   return session
 }
 
-export async function getTokenCookie() {
-  const cookieStore = await cookies()
-  return cookieStore.get(tokenName)?.value || ""
-}
-
-export async function setTokenCookie(token: string) {
-  const cookieStore = await cookies()
-
-  cookieStore.set(tokenName, token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
-  })
-}
-
-async function deleteTokenCookie() {
-  const cookieStore = await cookies()
-
-  cookieStore.delete(tokenName)
-}
-
-export async function decodeToken(token: string) {
+export async function decodeToken(token: string | undefined) {
   if (!token) return null
   return decodeJwt(token) as Session
 }
 
 export async function signOut() {
-  await deleteTokenCookie()
+  const { _deleteTokenCookie } = await _dynamicImport()
+  await _deleteTokenCookie()
 }
