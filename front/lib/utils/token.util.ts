@@ -7,16 +7,16 @@ import { cookies } from "next/headers"
 const tokenName = "authToken"
 
 export async function getSession(): Promise<Session | null> {
-  const session = await decodeToken(await getCookieToken())
+  const session = await decodeToken(await getTokenCookie())
   return session
 }
 
-export async function getCookieToken() {
+export async function getTokenCookie() {
   const cookieStore = await cookies()
   return cookieStore.get(tokenName)?.value || ""
 }
 
-export async function setCookieToken(token: string) {
+export async function setTokenCookie(token: string) {
   const cookieStore = await cookies()
 
   cookieStore.set(tokenName, token, {
@@ -26,7 +26,7 @@ export async function setCookieToken(token: string) {
   })
 }
 
-async function deleteCookieToken() {
+async function deleteTokenCookie() {
   const cookieStore = await cookies()
 
   cookieStore.delete(tokenName)
@@ -38,5 +38,5 @@ export async function decodeToken(token: string) {
 }
 
 export async function signOut() {
-  await deleteCookieToken()
+  await deleteTokenCookie()
 }
