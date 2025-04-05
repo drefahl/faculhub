@@ -38,24 +38,6 @@ export async function userRoutes(app: FastifyInstance) {
     },
     userController.updateUserProfile.bind(userController),
   )
-}
-
-export async function userPublicRoutes(app: FastifyInstance) {
-  app.post(
-    "/",
-    {
-      schema: {
-        tags: ["User"],
-        operationId: "createUser",
-        description: "Create a new user",
-        body: createUserSchema,
-        response: {
-          201: ResponseGetUserSchema,
-        },
-      },
-    },
-    userController.createUser.bind(userController),
-  )
 
   app.put(
     "/profile-image",
@@ -83,11 +65,29 @@ export async function userPublicRoutes(app: FastifyInstance) {
         operationId: "deleteProfileImage",
         description: "Delete a profile image",
         response: {
-          200: z.object({ message: z.string() }),
+          200: ResponseGetUserSchema,
           404: z.object({ message: z.string() }),
         },
       },
     },
     userController.deleteProfileImage.bind(userController),
+  )
+}
+
+export async function userPublicRoutes(app: FastifyInstance) {
+  app.post(
+    "/",
+    {
+      schema: {
+        tags: ["User"],
+        operationId: "createUser",
+        description: "Create a new user",
+        body: createUserSchema,
+        response: {
+          201: ResponseGetUserSchema,
+        },
+      },
+    },
+    userController.createUser.bind(userController),
   )
 }

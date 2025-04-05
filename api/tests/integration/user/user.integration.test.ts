@@ -89,9 +89,23 @@ describe("User Integration Tests", () => {
       .set("Authorization", `Bearer ${authToken}`)
       .attach("file", filePath)
 
-    console.log(response.body)
+    expect(response.status).toBe(200)
+    expect(response.body.picture).toMatch(/uploads\/.+\.png/)
+  })
+
+  it("should delete the user profile image", async () => {
+    const filePath = path.resolve(__dirname, "../../fixtures/test-image.png")
+
+    await request(app.server)
+      .put("/api/users/profile-image")
+      .set("Authorization", `Bearer ${authToken}`)
+      .attach("file", filePath)
+
+    const response = await request(app.server)
+      .delete("/api/users/profile-image")
+      .set("Authorization", `Bearer ${authToken}`)
 
     expect(response.status).toBe(200)
-    expect(response.body.picture).toMatch(/uploads\/.+\.png/) // TODO:
+    expect(response.body.picture).toBeNull()
   })
 })

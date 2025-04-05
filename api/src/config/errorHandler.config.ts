@@ -71,8 +71,6 @@ export function errorHandler(err: FastifyError, request: FastifyRequest, reply: 
     })
   }
 
-  console.error("Unhandled error:", err)
-
   return reply.status(500).send({
     error: "Internal Server Error",
     message: "Something went wrong",
