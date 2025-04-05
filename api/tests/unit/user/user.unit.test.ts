@@ -1,5 +1,5 @@
 import { comparePassword } from "@/lib/utils/crypto.utils"
-import type { CreateUserInput } from "@/schemas/user.schema"
+import type { CreateUserInput, UpdateUserInput } from "@/schemas/user.schema"
 import { createUserServiceMock, mockConstants } from "tests/mocks"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 import { ZodError } from "zod"
@@ -64,13 +64,44 @@ describe("User Unit Tests", () => {
   })
 
   it("should change user password when new password is provided", async () => {
-    const updatedUserData = { email, password: "new-password" }
+    const updatedUserData: UpdateUserInput = {
+      email,
+      currentPassword: password,
+      newPassword: "new-password",
+      confirmPassword: "new-password",
+    }
+
+    if (!updatedUserData.newPassword) {
+      throw new Error("New password is required")
+    }
 
     const user = await userService.updateUser(userId, updatedUserData)
     if (!user || !user.password) throw new Error("User not found")
 
-    expect(await comparePassword(updatedUserData.password, user.password)).toBe(true)
+    expect(await comparePassword(updatedUserData.newPassword, user.password)).toBe(true)
     expect(user).toHaveProperty("id")
+  })
+
+  it("should throw error when current password is incorrect", async () => {
+    const updatedUserData: UpdateUserInput = {
+      email,
+      currentPassword: "wrong-password",
+      newPassword: "new-password",
+      confirmPassword: "new-password",
+    }
+
+    await expect(userService.updateUser(userId, updatedUserData)).rejects.toThrow("Invalid current password")
+  })
+
+  it("should throw error when new password and confirm password do not match", async () => {
+    const updatedUserData: UpdateUserInput = {
+      email,
+      currentPassword: password,
+      newPassword: "new-password",
+      confirmPassword: "different-password",
+    }
+
+    await expect(userService.updateUser(userId, updatedUserData)).rejects.toThrow("Passwords do not match")
   })
 
   it("should not change user password when password is not provided", async () => {

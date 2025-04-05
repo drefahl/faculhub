@@ -32,13 +32,13 @@ export const updateUserSchema = z
   })
   .refine(
     (data) => {
-      if (data.newPassword && data.confirmPassword) {
+      if (data.newPassword && data.newPassword !== data.confirmPassword) {
         return data.newPassword === data.confirmPassword
       }
       return true
     },
     {
-      message: "As senhas não coincidem",
+      message: "Passwords do not match",
     },
   )
 
