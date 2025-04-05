@@ -12,7 +12,6 @@ export async function _setTokenCookie(token: string) {
   const cookieStore = await cookies()
 
   cookieStore.set(tokenName, token, {
-    httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "strict",
   })
