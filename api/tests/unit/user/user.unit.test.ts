@@ -68,7 +68,7 @@ describe("User Unit Tests", () => {
 
     const user = await userService.updateUser(userId, updatedUserData)
 
-    expect(await comparePassword(updatedUserData.password, user.password)).toBe(true)
+    expect(await comparePassword(updatedUserData.password, user.password ?? "")).toBe(true)
     expect(user).toHaveProperty("id")
   })
 
