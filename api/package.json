@@ -20,7 +20,8 @@
     "docker:down": "docker compose down",
     "generate-swagger": "ts-node -r tsconfig-paths/register --transpile-only scripts/generate-swagger.ts",
     "before-commit": "run-s lint format build test",
-    "prisma:seed": "prisma db seed"
+    "prisma:seed": "prisma db seed",
+    "prisma:generate": "prisma generate"
   },
   "keywords": [],
   "author": "",
