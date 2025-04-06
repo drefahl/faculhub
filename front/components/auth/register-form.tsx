@@ -26,18 +26,12 @@ export function RegisterForm() {
 
   async function onSubmit({ name, email, password }: RegistrationFormData) {
     try {
-      const registrationResponse = await createUser({ name, email, password })
-
-      if (registrationResponse.status !== 201) {
-        toast.error("Erro ao criar conta", { description: "Verifique os dados e tente novamente." })
-        return
-      }
-
+      await createUser({ name, email, password })
       toast.success("Conta criada com sucesso!", { description: "Você já pode fazer login." })
       router.push("/login")
     } catch (error) {
-      toast.error("Erro inesperado", { description: "Tente novamente mais tarde." })
-      console.error("Error during registration:", error)
+      toast.error("Erro ao criar conta", { description: "Verifique os dados e tente novamente." })
+      return
     }
   }
 
