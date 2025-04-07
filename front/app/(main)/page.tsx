@@ -1,6 +1,6 @@
-import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { BookOpen, Car, MessageSquare, Users, Building } from "lucide-react"
+import { BookOpen, Building, Car, MessageSquare, Users } from "lucide-react"
+import Link from "next/link"
 
 export default function HomePage() {
   const features = [

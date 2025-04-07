@@ -19,9 +19,6 @@ import type {
   UseQueryResult,
 } from "@tanstack/react-query"
 
-import axios from "axios"
-import type { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios"
-
 import type {
   CreateUser201,
   CreateUserBody,
@@ -35,31 +32,46 @@ import type {
   UploadProfileImage500,
 } from "../generated.schemas"
 
+import { makeRequest } from "../../utils/axios"
+import type { ErrorType } from "../../utils/axios"
+
+type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1]
+
 /**
  * Create a new user
  */
 export const createUser = (
   createUserBody: CreateUserBody,
-  options?: AxiosRequestConfig,
-): Promise<AxiosResponse<CreateUser201>> => {
-  return axios.post(`http://localhost:3333/api/users/`, createUserBody, options)
+  options?: SecondParameter<typeof makeRequest>,
+  signal?: AbortSignal,
+) => {
+  return makeRequest<CreateUser201>(
+    {
+      url: `/api/users/`,
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      data: createUserBody,
+      signal,
+    },
+    options,
+  )
 }
 
-export const getCreateUserMutationOptions = <TError = AxiosError<unknown>, TContext = unknown>(options?: {
+export const getCreateUserMutationOptions = <TError = ErrorType<unknown>, TContext = unknown>(options?: {
   mutation?: UseMutationOptions<Awaited<ReturnType<typeof createUser>>, TError, { data: CreateUserBody }, TContext>
-  axios?: AxiosRequestConfig
+  request?: SecondParameter<typeof makeRequest>
 }): UseMutationOptions<Awaited<ReturnType<typeof createUser>>, TError, { data: CreateUserBody }, TContext> => {
   const mutationKey = ["createUser"]
-  const { mutation: mutationOptions, axios: axiosOptions } = options
+  const { mutation: mutationOptions, request: requestOptions } = options
     ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
       ? options
       : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey }, axios: undefined }
+    : { mutation: { mutationKey }, request: undefined }
 
   const mutationFn: MutationFunction<Awaited<ReturnType<typeof createUser>>, { data: CreateUserBody }> = (props) => {
     const { data } = props ?? {}
 
-    return createUser(data, axiosOptions)
+    return createUser(data, requestOptions)
   }
 
   return { mutationFn, ...mutationOptions }
@@ -67,123 +79,40 @@ export const getCreateUserMutationOptions = <TError = AxiosError<unknown>, TCont
 
 export type CreateUserMutationResult = NonNullable<Awaited<ReturnType<typeof createUser>>>
 export type CreateUserMutationBody = CreateUserBody
-export type CreateUserMutationError = AxiosError<unknown>
+export type CreateUserMutationError = ErrorType<unknown>
 
-export const useCreateUser = <TError = AxiosError<unknown>, TContext = unknown>(options?: {
+export const useCreateUser = <TError = ErrorType<unknown>, TContext = unknown>(options?: {
   mutation?: UseMutationOptions<Awaited<ReturnType<typeof createUser>>, TError, { data: CreateUserBody }, TContext>
-  axios?: AxiosRequestConfig
+  request?: SecondParameter<typeof makeRequest>
 }): UseMutationResult<Awaited<ReturnType<typeof createUser>>, TError, { data: CreateUserBody }, TContext> => {
   const mutationOptions = getCreateUserMutationOptions(options)
 
   return useMutation(mutationOptions)
 }
 /**
- * Upload a profile image
- */
-export const uploadProfileImage = (options?: AxiosRequestConfig): Promise<AxiosResponse<UploadProfileImage200>> => {
-  return axios.put(`http://localhost:3333/api/users/profile-image`, undefined, options)
-}
-
-export const getUploadProfileImageMutationOptions = <
-  TError = AxiosError<UploadProfileImage400 | UploadProfileImage500>,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<Awaited<ReturnType<typeof uploadProfileImage>>, TError, void, TContext>
-  axios?: AxiosRequestConfig
-}): UseMutationOptions<Awaited<ReturnType<typeof uploadProfileImage>>, TError, void, TContext> => {
-  const mutationKey = ["uploadProfileImage"]
-  const { mutation: mutationOptions, axios: axiosOptions } = options
-    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey }, axios: undefined }
-
-  const mutationFn: MutationFunction<Awaited<ReturnType<typeof uploadProfileImage>>, void> = () => {
-    return uploadProfileImage(axiosOptions)
-  }
-
-  return { mutationFn, ...mutationOptions }
-}
-
-export type UploadProfileImageMutationResult = NonNullable<Awaited<ReturnType<typeof uploadProfileImage>>>
-
-export type UploadProfileImageMutationError = AxiosError<UploadProfileImage400 | UploadProfileImage500>
-
-export const useUploadProfileImage = <
-  TError = AxiosError<UploadProfileImage400 | UploadProfileImage500>,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<Awaited<ReturnType<typeof uploadProfileImage>>, TError, void, TContext>
-  axios?: AxiosRequestConfig
-}): UseMutationResult<Awaited<ReturnType<typeof uploadProfileImage>>, TError, void, TContext> => {
-  const mutationOptions = getUploadProfileImageMutationOptions(options)
-
-  return useMutation(mutationOptions)
-}
-/**
- * Delete a profile image
- */
-export const deleteProfileImage = (options?: AxiosRequestConfig): Promise<AxiosResponse<DeleteProfileImage200>> => {
-  return axios.delete(`http://localhost:3333/api/users/profile-image`, options)
-}
-
-export const getDeleteProfileImageMutationOptions = <
-  TError = AxiosError<DeleteProfileImage404>,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<Awaited<ReturnType<typeof deleteProfileImage>>, TError, void, TContext>
-  axios?: AxiosRequestConfig
-}): UseMutationOptions<Awaited<ReturnType<typeof deleteProfileImage>>, TError, void, TContext> => {
-  const mutationKey = ["deleteProfileImage"]
-  const { mutation: mutationOptions, axios: axiosOptions } = options
-    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey }, axios: undefined }
-
-  const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteProfileImage>>, void> = () => {
-    return deleteProfileImage(axiosOptions)
-  }
-
-  return { mutationFn, ...mutationOptions }
-}
-
-export type DeleteProfileImageMutationResult = NonNullable<Awaited<ReturnType<typeof deleteProfileImage>>>
-
-export type DeleteProfileImageMutationError = AxiosError<DeleteProfileImage404>
-
-export const useDeleteProfileImage = <TError = AxiosError<DeleteProfileImage404>, TContext = unknown>(options?: {
-  mutation?: UseMutationOptions<Awaited<ReturnType<typeof deleteProfileImage>>, TError, void, TContext>
-  axios?: AxiosRequestConfig
-}): UseMutationResult<Awaited<ReturnType<typeof deleteProfileImage>>, TError, void, TContext> => {
-  const mutationOptions = getDeleteProfileImageMutationOptions(options)
-
-  return useMutation(mutationOptions)
-}
-/**
  * Get user profile
  */
-export const getUserProfile = (options?: AxiosRequestConfig): Promise<AxiosResponse<GetUserProfile200>> => {
-  return axios.get(`http://localhost:3333/api/users/me`, options)
+export const getUserProfile = (options?: SecondParameter<typeof makeRequest>, signal?: AbortSignal) => {
+  return makeRequest<GetUserProfile200>({ url: `/api/users/me`, method: "GET", signal }, options)
 }
 
 export const getGetUserProfileQueryKey = () => {
-  return [`http://localhost:3333/api/users/me`] as const
+  return [`/api/users/me`] as const
 }
 
 export const getGetUserProfileQueryOptions = <
   TData = Awaited<ReturnType<typeof getUserProfile>>,
-  TError = AxiosError<unknown>,
+  TError = ErrorType<unknown>,
 >(options?: {
   query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getUserProfile>>, TError, TData>>
-  axios?: AxiosRequestConfig
+  request?: SecondParameter<typeof makeRequest>
 }) => {
-  const { query: queryOptions, axios: axiosOptions } = options ?? {}
+  const { query: queryOptions, request: requestOptions } = options ?? {}
 
   const queryKey = queryOptions?.queryKey ?? getGetUserProfileQueryKey()
 
   const queryFn: QueryFunction<Awaited<ReturnType<typeof getUserProfile>>> = ({ signal }) =>
-    getUserProfile({ signal, ...axiosOptions })
+    getUserProfile(requestOptions, signal)
 
   return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
     Awaited<ReturnType<typeof getUserProfile>>,
@@ -193,11 +122,11 @@ export const getGetUserProfileQueryOptions = <
 }
 
 export type GetUserProfileQueryResult = NonNullable<Awaited<ReturnType<typeof getUserProfile>>>
-export type GetUserProfileQueryError = AxiosError<unknown>
+export type GetUserProfileQueryError = ErrorType<unknown>
 
 export function useGetUserProfile<
   TData = Awaited<ReturnType<typeof getUserProfile>>,
-  TError = AxiosError<unknown>,
+  TError = ErrorType<unknown>,
 >(options: {
   query: Partial<UseQueryOptions<Awaited<ReturnType<typeof getUserProfile>>, TError, TData>> &
     Pick<
@@ -208,11 +137,11 @@ export function useGetUserProfile<
       >,
       "initialData"
     >
-  axios?: AxiosRequestConfig
+  request?: SecondParameter<typeof makeRequest>
 }): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetUserProfile<
   TData = Awaited<ReturnType<typeof getUserProfile>>,
-  TError = AxiosError<unknown>,
+  TError = ErrorType<unknown>,
 >(options?: {
   query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getUserProfile>>, TError, TData>> &
     Pick<
@@ -223,22 +152,22 @@ export function useGetUserProfile<
       >,
       "initialData"
     >
-  axios?: AxiosRequestConfig
+  request?: SecondParameter<typeof makeRequest>
 }): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetUserProfile<
   TData = Awaited<ReturnType<typeof getUserProfile>>,
-  TError = AxiosError<unknown>,
+  TError = ErrorType<unknown>,
 >(options?: {
   query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getUserProfile>>, TError, TData>>
-  axios?: AxiosRequestConfig
+  request?: SecondParameter<typeof makeRequest>
 }): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useGetUserProfile<
   TData = Awaited<ReturnType<typeof getUserProfile>>,
-  TError = AxiosError<unknown>,
+  TError = ErrorType<unknown>,
 >(options?: {
   query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getUserProfile>>, TError, TData>>
-  axios?: AxiosRequestConfig
+  request?: SecondParameter<typeof makeRequest>
 }): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
   const queryOptions = getGetUserProfileQueryOptions(options)
 
@@ -254,19 +183,27 @@ export function useGetUserProfile<
  */
 export const updateUserProfile = (
   updateUserProfileBody: UpdateUserProfileBody,
-  options?: AxiosRequestConfig,
-): Promise<AxiosResponse<UpdateUserProfile200>> => {
-  return axios.patch(`http://localhost:3333/api/users/me`, updateUserProfileBody, options)
+  options?: SecondParameter<typeof makeRequest>,
+) => {
+  return makeRequest<UpdateUserProfile200>(
+    {
+      url: `/api/users/me`,
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      data: updateUserProfileBody,
+    },
+    options,
+  )
 }
 
-export const getUpdateUserProfileMutationOptions = <TError = AxiosError<unknown>, TContext = unknown>(options?: {
+export const getUpdateUserProfileMutationOptions = <TError = ErrorType<unknown>, TContext = unknown>(options?: {
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof updateUserProfile>>,
     TError,
     { data: UpdateUserProfileBody },
     TContext
   >
-  axios?: AxiosRequestConfig
+  request?: SecondParameter<typeof makeRequest>
 }): UseMutationOptions<
   Awaited<ReturnType<typeof updateUserProfile>>,
   TError,
@@ -274,18 +211,18 @@ export const getUpdateUserProfileMutationOptions = <TError = AxiosError<unknown>
   TContext
 > => {
   const mutationKey = ["updateUserProfile"]
-  const { mutation: mutationOptions, axios: axiosOptions } = options
+  const { mutation: mutationOptions, request: requestOptions } = options
     ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
       ? options
       : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey }, axios: undefined }
+    : { mutation: { mutationKey }, request: undefined }
 
   const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateUserProfile>>, { data: UpdateUserProfileBody }> = (
     props,
   ) => {
     const { data } = props ?? {}
 
-    return updateUserProfile(data, axiosOptions)
+    return updateUserProfile(data, requestOptions)
   }
 
   return { mutationFn, ...mutationOptions }
@@ -293,16 +230,16 @@ export const getUpdateUserProfileMutationOptions = <TError = AxiosError<unknown>
 
 export type UpdateUserProfileMutationResult = NonNullable<Awaited<ReturnType<typeof updateUserProfile>>>
 export type UpdateUserProfileMutationBody = UpdateUserProfileBody
-export type UpdateUserProfileMutationError = AxiosError<unknown>
+export type UpdateUserProfileMutationError = ErrorType<unknown>
 
-export const useUpdateUserProfile = <TError = AxiosError<unknown>, TContext = unknown>(options?: {
+export const useUpdateUserProfile = <TError = ErrorType<unknown>, TContext = unknown>(options?: {
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof updateUserProfile>>,
     TError,
     { data: UpdateUserProfileBody },
     TContext
   >
-  axios?: AxiosRequestConfig
+  request?: SecondParameter<typeof makeRequest>
 }): UseMutationResult<
   Awaited<ReturnType<typeof updateUserProfile>>,
   TError,
@@ -310,6 +247,89 @@ export const useUpdateUserProfile = <TError = AxiosError<unknown>, TContext = un
   TContext
 > => {
   const mutationOptions = getUpdateUserProfileMutationOptions(options)
+
+  return useMutation(mutationOptions)
+}
+/**
+ * Upload a profile image
+ */
+export const uploadProfileImage = (options?: SecondParameter<typeof makeRequest>) => {
+  return makeRequest<UploadProfileImage200>({ url: `/api/users/profile-image`, method: "PUT" }, options)
+}
+
+export const getUploadProfileImageMutationOptions = <
+  TError = ErrorType<UploadProfileImage400 | UploadProfileImage500>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<Awaited<ReturnType<typeof uploadProfileImage>>, TError, void, TContext>
+  request?: SecondParameter<typeof makeRequest>
+}): UseMutationOptions<Awaited<ReturnType<typeof uploadProfileImage>>, TError, void, TContext> => {
+  const mutationKey = ["uploadProfileImage"]
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined }
+
+  const mutationFn: MutationFunction<Awaited<ReturnType<typeof uploadProfileImage>>, void> = () => {
+    return uploadProfileImage(requestOptions)
+  }
+
+  return { mutationFn, ...mutationOptions }
+}
+
+export type UploadProfileImageMutationResult = NonNullable<Awaited<ReturnType<typeof uploadProfileImage>>>
+
+export type UploadProfileImageMutationError = ErrorType<UploadProfileImage400 | UploadProfileImage500>
+
+export const useUploadProfileImage = <
+  TError = ErrorType<UploadProfileImage400 | UploadProfileImage500>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<Awaited<ReturnType<typeof uploadProfileImage>>, TError, void, TContext>
+  request?: SecondParameter<typeof makeRequest>
+}): UseMutationResult<Awaited<ReturnType<typeof uploadProfileImage>>, TError, void, TContext> => {
+  const mutationOptions = getUploadProfileImageMutationOptions(options)
+
+  return useMutation(mutationOptions)
+}
+/**
+ * Delete a profile image
+ */
+export const deleteProfileImage = (options?: SecondParameter<typeof makeRequest>) => {
+  return makeRequest<DeleteProfileImage200>({ url: `/api/users/profile-image`, method: "DELETE" }, options)
+}
+
+export const getDeleteProfileImageMutationOptions = <
+  TError = ErrorType<DeleteProfileImage404>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<Awaited<ReturnType<typeof deleteProfileImage>>, TError, void, TContext>
+  request?: SecondParameter<typeof makeRequest>
+}): UseMutationOptions<Awaited<ReturnType<typeof deleteProfileImage>>, TError, void, TContext> => {
+  const mutationKey = ["deleteProfileImage"]
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined }
+
+  const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteProfileImage>>, void> = () => {
+    return deleteProfileImage(requestOptions)
+  }
+
+  return { mutationFn, ...mutationOptions }
+}
+
+export type DeleteProfileImageMutationResult = NonNullable<Awaited<ReturnType<typeof deleteProfileImage>>>
+
+export type DeleteProfileImageMutationError = ErrorType<DeleteProfileImage404>
+
+export const useDeleteProfileImage = <TError = ErrorType<DeleteProfileImage404>, TContext = unknown>(options?: {
+  mutation?: UseMutationOptions<Awaited<ReturnType<typeof deleteProfileImage>>, TError, void, TContext>
+  request?: SecondParameter<typeof makeRequest>
+}): UseMutationResult<Awaited<ReturnType<typeof deleteProfileImage>>, TError, void, TContext> => {
+  const mutationOptions = getDeleteProfileImageMutationOptions(options)
 
   return useMutation(mutationOptions)
 }

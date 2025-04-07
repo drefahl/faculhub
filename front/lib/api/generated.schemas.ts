@@ -77,34 +77,6 @@ export type CreateUser201 = {
 /**
  * @nullable
  */
-export type UploadProfileImage200 = {
-  id: number
-  email: string
-  /** @nullable */
-  name: string | null
-  /** @nullable */
-  picture?: string | null
-} | null
-
-export type UploadProfileImage400 = {
-  message: string
-}
-
-export type UploadProfileImage500 = {
-  message: string
-}
-
-export type DeleteProfileImage200 = {
-  message: string
-}
-
-export type DeleteProfileImage404 = {
-  message: string
-}
-
-/**
- * @nullable
- */
 export type GetUserProfile200 = {
   id: number
   email: string
@@ -137,3 +109,39 @@ export type UpdateUserProfile200 = {
   /** @nullable */
   picture?: string | null
 } | null
+
+/**
+ * @nullable
+ */
+export type UploadProfileImage200 = {
+  id: number
+  email: string
+  /** @nullable */
+  name: string | null
+  /** @nullable */
+  picture?: string | null
+} | null
+
+export type UploadProfileImage400 = {
+  message: string
+}
+
+export type UploadProfileImage500 = {
+  message: string
+}
+
+/**
+ * @nullable
+ */
+export type DeleteProfileImage200 = {
+  id: number
+  email: string
+  /** @nullable */
+  name: string | null
+  /** @nullable */
+  picture?: string | null
+} | null
+
+export type DeleteProfileImage404 = {
+  message: string
+}

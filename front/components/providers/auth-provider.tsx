@@ -1,4 +1,4 @@
-import { getSession } from "@/lib/utils/token.utils"
+import { getSession } from "@/lib/utils/token"
 import type React from "react"
 import { SessionProvider } from "./session-provider"
 

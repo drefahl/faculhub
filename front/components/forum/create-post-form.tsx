@@ -1,17 +1,17 @@
 "use client"
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useRouter } from "next/navigation"
+import { useState } from "react"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 
 import { Button } from "@/components/ui/button"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { toast } from "@/components/ui/use-toast"
+import { Textarea } from "@/components/ui/textarea"
+import { toast } from "sonner"
 
 const formSchema = z.object({
   title: z.string().min(5, {
@@ -61,18 +61,15 @@ export function CreatePostForm() {
         throw new Error(data.error || "Erro ao criar discussão")
       }
 
-      toast({
-        title: "Discussão criada com sucesso!",
+      toast.success("Discussão criada com sucesso!", {
         description: "Sua discussão foi publicada no fórum.",
       })
 
       router.push("/forum")
       router.refresh()
     } catch (error) {
-      toast({
-        title: "Erro ao criar discussão",
+      toast.error("Erro ao criar discussão", {
         description: error instanceof Error ? error.message : "Ocorreu um erro inesperado",
-        variant: "destructive",
       })
     } finally {
       setIsLoading(false)

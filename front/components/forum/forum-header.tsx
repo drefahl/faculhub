@@ -1,11 +1,11 @@
 "use client"
 
-import { useState } from "react"
-import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Plus, Search } from "lucide-react"
+import Link from "next/link"
+import { useState } from "react"
 
 export function ForumHeader() {
   const [searchQuery, setSearchQuery] = useState("")

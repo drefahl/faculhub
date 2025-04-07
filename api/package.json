@@ -2,13 +2,13 @@
   "name": "html-to-pdf",
   "version": "1.0.0",
   "description": "",
-  "main": "srd/index.js",
+  "main": "src/index.js",
   "scripts": {
     "dev": "nodemon src/index.ts",
     "start": "cross-env NODE_ENV=production node dist/src/index.js",
-    "build": "rimraf dist && tsc-alias",
+    "build": "rimraf dist && tsc && tsc-alias",
     "lint": "tsc --noEmit",
-    "format": "biome format --write src",
+    "format": "biome check --linter-enabled=false --write src",
     "test:coverage": "vitest run --coverage",
     "test": "run-s test:unit test:integration",
     "test:unit": "vitest run ./tests/unit",
@@ -20,7 +20,8 @@
     "docker:down": "docker compose down",
     "generate-swagger": "ts-node -r tsconfig-paths/register --transpile-only scripts/generate-swagger.ts",
     "before-commit": "run-s lint format build test",
-    "prisma:seed": "prisma db seed"
+    "prisma:seed": "prisma db seed",
+    "prisma:generate": "prisma generate"
   },
   "keywords": [],
   "author": "",

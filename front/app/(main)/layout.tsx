@@ -1,8 +1,8 @@
-import type React from "react"
 import { MainNav } from "@/components/main-nav"
 import { SiteFooter } from "@/components/site-footer"
-import { UserAccountNav } from "@/components/user-account-nav"
 import { ThemeToggle } from "@/components/theme-toggle"
+import { UserAccountNav } from "@/components/user-account-nav"
+import type React from "react"
 
 export default function MainLayout({
   children,

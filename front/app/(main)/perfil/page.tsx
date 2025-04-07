@@ -3,7 +3,7 @@ import { PreferencesForm } from "@/app/(main)/perfil/_components/preferences-for
 import { ProfileForm } from "@/app/(main)/perfil/_components/profile-form"
 import { Separator } from "@/components/ui/separator"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { getSession } from "@/lib/utils/token.utils"
+import { getSession } from "@/lib/utils/token"
 import type { Metadata } from "next"
 import { redirect } from "next/navigation"
 

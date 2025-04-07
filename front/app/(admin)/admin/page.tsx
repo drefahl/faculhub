@@ -1,6 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Users, MessageSquare, FileText, Car, TrendingUp, Activity } from "lucide-react"
+import { Activity, Car, FileText, MessageSquare, TrendingUp, Users } from "lucide-react"
 
 export default function AdminDashboardPage() {
   return (

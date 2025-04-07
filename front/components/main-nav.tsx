@@ -3,9 +3,9 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 
-import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
-import { BookOpen, Car, Home, MessageSquare, Users, Building } from "lucide-react"
+import { cn } from "@/lib/utils"
+import { BookOpen, Building, Car, Home, MessageSquare, Users } from "lucide-react"
 
 export function MainNav() {
   const pathname = usePathname()

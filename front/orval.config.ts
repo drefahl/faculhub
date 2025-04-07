@@ -10,10 +10,16 @@ export default defineConfig({
       target: "./lib/api/generated.ts",
       client: "react-query",
       mode: "tags-split",
-      baseUrl: "http://localhost:3333",
 
       clean: true,
       biome: true,
+
+      override: {
+        mutator: {
+          path: "./lib/utils/axios.ts",
+          name: "makeRequest",
+        },
+      },
     },
 
     hooks: {

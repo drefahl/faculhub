@@ -5,6 +5,7 @@ import { ptBR } from "date-fns/locale"
 import Link from "next/link"
 import { useState } from "react"
 
+import {} from "@/components/ui/avatar"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
