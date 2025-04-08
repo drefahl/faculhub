@@ -1,6 +1,8 @@
 import { comparePassword } from "@/lib/utils/crypto.utils"
-import type { CreateUserInput } from "@/schemas/user.schema"
-import { createUserServiceMock, mockConstants } from "tests/mocks"
+import type { UpdateUserInput } from "@/schemas/user.schema"
+import type { Prisma } from "@prisma/client"
+import { mockConstants } from "tests/mocks/constants"
+import { createMockServices } from "tests/mocks/factories"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 import { ZodError } from "zod"
 
@@ -8,7 +10,7 @@ const {
   user: { id: userId, email, password },
 } = mockConstants
 
-const userService = createUserServiceMock()
+const { userService, fileService } = createMockServices()
 
 describe("User Unit Tests", () => {
   beforeEach(() => {
@@ -16,7 +18,7 @@ describe("User Unit Tests", () => {
   })
 
   it("should create a user with valid data", async () => {
-    const validUserData: CreateUserInput = {
+    const validUserData: Prisma.userCreateInput = {
       email: "another@example.com",
       name: "Test User",
       password,
@@ -64,12 +66,44 @@ describe("User Unit Tests", () => {
   })
 
   it("should change user password when new password is provided", async () => {
-    const updatedUserData = { email, password: "new-password" }
+    const updatedUserData: UpdateUserInput = {
+      email,
+      currentPassword: password,
+      newPassword: "new-password",
+      confirmPassword: "new-password",
+    }
+
+    if (!updatedUserData.newPassword) {
+      throw new Error("New password is required")
+    }
 
     const user = await userService.updateUser(userId, updatedUserData)
+    if (!user || !user.password) throw new Error("User not found")
 
-    expect(await comparePassword(updatedUserData.password, user.password ?? "")).toBe(true)
+    expect(await comparePassword(updatedUserData.newPassword, user.password)).toBe(true)
     expect(user).toHaveProperty("id")
+  })
+
+  it("should throw error when current password is incorrect", async () => {
+    const updatedUserData: UpdateUserInput = {
+      email,
+      currentPassword: "wrong-password",
+      newPassword: "new-password",
+      confirmPassword: "new-password",
+    }
+
+    await expect(userService.updateUser(userId, updatedUserData)).rejects.toThrow("Invalid current password")
+  })
+
+  it("should throw error when new password and confirm password do not match", async () => {
+    const updatedUserData: UpdateUserInput = {
+      email,
+      currentPassword: password,
+      newPassword: "new-password",
+      confirmPassword: "different-password",
+    }
+
+    await expect(userService.updateUser(userId, updatedUserData)).rejects.toThrow("Passwords do not match")
   })
 
   it("should not change user password when password is not provided", async () => {
@@ -82,5 +116,36 @@ describe("User Unit Tests", () => {
 
     expect(user).toHaveProperty("id")
     expect(user.password).not.toEqual(password)
+  })
+
+  it("should change user picture when new picture is provided", async () => {
+    const { filename, mimeType, data } = mockConstants.file
+    const createdFile = await fileService.createFile(filename, mimeType, data)
+
+    const user = await userService.updateUserProfileImage(userId, filename, mimeType, data)
+
+    expect(user).toHaveProperty("id")
+    expect(user.profilePicId).toEqual(createdFile.id)
+  })
+
+  it("should delete user profile picture", async () => {
+    const { filename, mimeType, data } = mockConstants.file
+    const createdFile = await fileService.createFile(filename, mimeType, data)
+
+    const user = await userService.updateUserProfileImage(userId, filename, mimeType, data)
+
+    expect(user).toHaveProperty("id")
+    expect(user.profilePicId).toEqual(createdFile.id)
+
+    await userService.deleteUserProfileImage(userId)
+
+    const updatedUser = await userService.getUserById(userId)
+    expect(updatedUser?.profilePicId).toBeNull()
+  })
+
+  it("should throw error when user is not found", async () => {
+    const { filename, mimeType, data } = mockConstants.file
+
+    await expect(userService.updateUserProfileImage(0, filename, mimeType, data)).rejects.toThrow("User not found")
   })
 })

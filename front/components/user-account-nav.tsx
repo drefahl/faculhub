@@ -12,6 +12,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { signOut } from "@/lib/utils/token"
+import { getUserInitials } from "@/lib/utils/user.utils"
+import { AvatarImage } from "@radix-ui/react-avatar"
 import { LogOut, Settings, User } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useSession } from "./providers/session-provider"
@@ -26,6 +28,7 @@ export function UserAccountNav() {
         <Button variant="ghost" size="sm" asChild>
           <Link href="/login">Entrar</Link>
         </Button>
+
         <Button size="sm" asChild>
           <Link href="/register">Registrar</Link>
         </Button>
@@ -34,18 +37,14 @@ export function UserAccountNav() {
   }
 
   const { name, email } = session
-  const initials = name
-    ? name
-        .split(" ")
-        .map((n) => n[0])
-        .join("")
-    : "U"
+  const initials = getUserInitials(name)
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-8 w-8 rounded-full">
           <Avatar className="h-8 w-8">
+            <AvatarImage src={session.picture || undefined} alt={session.name || "Avatar"} />
             <AvatarFallback>{initials}</AvatarFallback>
           </Avatar>
         </Button>

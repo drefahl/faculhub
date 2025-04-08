@@ -29,3 +29,16 @@ export async function registerUser(app: FastifyInstance) {
 
   return { id: registerRes.body.id, email, password }
 }
+
+export function extractAuthTokenFromHeaders(headers: Record<string, string>): string {
+  const tokenHeader = Object.values(headers).find(
+    (header) => Array.isArray(header) && header[0].startsWith("authToken="),
+  )
+
+  if (!tokenHeader) throw new Error("Token not found in headers")
+
+  const token = tokenHeader[0].split(";")[0].split("=")[1]
+  if (!token) throw new Error("Token not found in headers")
+
+  return token
+}

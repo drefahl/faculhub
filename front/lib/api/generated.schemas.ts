@@ -22,16 +22,31 @@ export type LoginBody = {
   password: string
 }
 
+export type Login200Message = (typeof Login200Message)[keyof typeof Login200Message]
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const Login200Message = {
+  Authenticated_successfully: "Authenticated successfully",
+} as const
+
 export type Login200 = {
-  token: string
+  message: Login200Message
 }
 
 export type Login401 = {
   message: string
 }
 
+export type GetApiLoginGoogleCallback200Message =
+  (typeof GetApiLoginGoogleCallback200Message)[keyof typeof GetApiLoginGoogleCallback200Message]
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GetApiLoginGoogleCallback200Message = {
+  Authenticated_successfully: "Authenticated successfully",
+} as const
+
 export type GetApiLoginGoogleCallback200 = {
-  token: string
+  message: GetApiLoginGoogleCallback200Message
 }
 
 export type GetApiLoginGoogleCallback401 = {
@@ -50,13 +65,40 @@ export type CreateUserBody = {
 /**
  * @nullable
  */
+export type CreateUser201 = {
+  id: number
+  email: string
+  /** @nullable */
+  name: string | null
+  /** @nullable */
+  picture?: string | null
+} | null
+
+export type Refresh200Message = (typeof Refresh200Message)[keyof typeof Refresh200Message]
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const Refresh200Message = {
+  Authenticated_successfully: "Authenticated successfully",
+} as const
+
+export type Refresh200 = {
+  message: Refresh200Message
+}
+
+export type Refresh401 = {
+  message: string
+}
+
+/**
+ * @nullable
+ */
 export type GetUserProfile200 = {
   id: number
   email: string
-  name: string
-  picture?: string
-  createdAt: string
-  updatedAt: string
+  /** @nullable */
+  name: string | null
+  /** @nullable */
+  picture?: string | null
 } | null
 
 export type UpdateUserProfileBody = {
@@ -64,8 +106,11 @@ export type UpdateUserProfileBody = {
   email?: string
   /** @nullable */
   picture?: string | null
+  currentPassword?: string
   /** @minLength 6 */
-  password?: string
+  newPassword?: string
+  /** @minLength 6 */
+  confirmPassword?: string
 }
 
 /**
@@ -74,8 +119,44 @@ export type UpdateUserProfileBody = {
 export type UpdateUserProfile200 = {
   id: number
   email: string
-  name: string
-  picture?: string
-  createdAt: string
-  updatedAt: string
+  /** @nullable */
+  name: string | null
+  /** @nullable */
+  picture?: string | null
 } | null
+
+/**
+ * @nullable
+ */
+export type UploadProfileImage200 = {
+  id: number
+  email: string
+  /** @nullable */
+  name: string | null
+  /** @nullable */
+  picture?: string | null
+} | null
+
+export type UploadProfileImage400 = {
+  message: string
+}
+
+export type UploadProfileImage500 = {
+  message: string
+}
+
+/**
+ * @nullable
+ */
+export type DeleteProfileImage200 = {
+  id: number
+  email: string
+  /** @nullable */
+  name: string | null
+  /** @nullable */
+  picture?: string | null
+} | null
+
+export type DeleteProfileImage404 = {
+  message: string
+}

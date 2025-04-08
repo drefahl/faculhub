@@ -6,10 +6,26 @@ import { useForm } from "react-hook-form"
 import * as z from "zod"
 
 import { Button } from "@/components/ui/button"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
 import { createUser } from "@/lib/api/user/user"
+import { passwordSchema } from "@/lib/validations/password-schema"
 import { toast } from "sonner"
+import { Input } from "../form/input"
+import { PasswordInput } from "../form/password"
+import { Form } from "../ui/form"
+
+const registrationFormSchema = z
+  .object({
+    name: z.string().min(2, { message: "Nome deve ter pelo menos 2 caracteres." }),
+    email: z.string().email({ message: "Email inválido." }),
+    password: passwordSchema,
+    confirmPassword: z.string().min(1, { message: "Confirme sua senha." }),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "As senhas não coincidem",
+    path: ["confirmPassword"],
+  })
+
+type RegistrationFormData = z.infer<typeof registrationFormSchema>
 
 export function RegisterForm() {
   const router = useRouter()
@@ -40,58 +56,14 @@ export function RegisterForm() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Nome</FormLabel>
-              <FormControl>
-                <Input placeholder="Seu nome completo" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email</FormLabel>
-              <FormControl>
-                <Input placeholder="seu.email@exemplo.com" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="password"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Senha</FormLabel>
-              <FormControl>
-                <Input type="password" placeholder="******" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="confirmPassword"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Confirmar Senha</FormLabel>
-              <FormControl>
-                <Input type="password" placeholder="******" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <Input name="name" label="Nome" placeholder="Seu nome completo" />
+
+        <Input name="email" label="Email" placeholder="seu.email@exemplo.com" />
+
+        <PasswordInput name="password" label="Senha" placeholder="******" />
+
+        <Input name="confirmPassword" label="Confirmar Senha" placeholder="******" type="password" />
+
         <Button type="submit" className="w-full" disabled={isLoading}>
           {isLoading ? "Registrando..." : "Registrar"}
         </Button>
@@ -99,23 +71,3 @@ export function RegisterForm() {
     </Form>
   )
 }
-
-const registrationFormSchema = z
-  .object({
-    name: z.string().min(2, {
-      message: "Nome deve ter pelo menos 2 caracteres.",
-    }),
-    email: z.string().email({
-      message: "Email inválido.",
-    }),
-    password: z.string().min(6, {
-      message: "Senha deve ter pelo menos 6 caracteres.",
-    }),
-    confirmPassword: z.string(),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "As senhas não coincidem",
-    path: ["confirmPassword"],
-  })
-
-type RegistrationFormData = z.infer<typeof registrationFormSchema>

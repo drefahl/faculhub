@@ -1,7 +1,9 @@
+import path from "node:path"
 import { createServer } from "@/app"
 import type { FastifyInstance } from "fastify"
 import request from "supertest"
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest"
+import { extractAuthTokenFromHeaders } from "../utils/get-auth-token.util"
 
 let app: FastifyInstance
 let authToken: string
@@ -31,7 +33,7 @@ describe("User Integration Tests", () => {
       .post("/api/login")
       .send({ email: uniqueEmail, password: "Test@123" })
 
-    authToken = loginResponse.headers["set-cookie"][0].split(";")[0].split("=")[1]
+    authToken = extractAuthTokenFromHeaders(loginResponse.headers)
   })
 
   it("should register a new user", async () => {
@@ -78,5 +80,31 @@ describe("User Integration Tests", () => {
 
     expect(response.status).toBe(200)
     expect(response.body.name).toEqual(newName)
+  })
+
+  it("should change the user picture when a new one is provided", async () => {
+    const filePath = path.resolve(__dirname, "../../fixtures/test-image.png")
+
+    const response = await request(app.server)
+      .put("/api/users/profile-image")
+      .set("Authorization", `Bearer ${authToken}`)
+      .attach("file", filePath)
+
+    expect(response.status).toBe(200)
+  })
+
+  it("should delete the user profile image", async () => {
+    const filePath = path.resolve(__dirname, "../../fixtures/test-image.png")
+
+    await request(app.server)
+      .put("/api/users/profile-image")
+      .set("Authorization", `Bearer ${authToken}`)
+      .attach("file", filePath)
+
+    const response = await request(app.server)
+      .delete("/api/users/profile-image")
+      .set("Authorization", `Bearer ${authToken}`)
+
+    expect(response.status).toBe(200)
   })
 })

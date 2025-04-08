@@ -20,10 +20,16 @@ import type {
 } from "@tanstack/react-query"
 
 import type {
+  CreateUser201,
   CreateUserBody,
+  DeleteProfileImage200,
+  DeleteProfileImage404,
   GetUserProfile200,
   UpdateUserProfile200,
   UpdateUserProfileBody,
+  UploadProfileImage200,
+  UploadProfileImage400,
+  UploadProfileImage500,
 } from "../generated.schemas"
 
 import { makeRequest } from "../../utils/axios"
@@ -39,7 +45,7 @@ export const createUser = (
   options?: SecondParameter<typeof makeRequest>,
   signal?: AbortSignal,
 ) => {
-  return makeRequest<void>(
+  return makeRequest<CreateUser201>(
     {
       url: `/api/users/`,
       method: "POST",
@@ -241,6 +247,89 @@ export const useUpdateUserProfile = <TError = ErrorType<unknown>, TContext = unk
   TContext
 > => {
   const mutationOptions = getUpdateUserProfileMutationOptions(options)
+
+  return useMutation(mutationOptions)
+}
+/**
+ * Upload a profile image
+ */
+export const uploadProfileImage = (options?: SecondParameter<typeof makeRequest>) => {
+  return makeRequest<UploadProfileImage200>({ url: `/api/users/profile-image`, method: "PUT" }, options)
+}
+
+export const getUploadProfileImageMutationOptions = <
+  TError = ErrorType<UploadProfileImage400 | UploadProfileImage500>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<Awaited<ReturnType<typeof uploadProfileImage>>, TError, void, TContext>
+  request?: SecondParameter<typeof makeRequest>
+}): UseMutationOptions<Awaited<ReturnType<typeof uploadProfileImage>>, TError, void, TContext> => {
+  const mutationKey = ["uploadProfileImage"]
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined }
+
+  const mutationFn: MutationFunction<Awaited<ReturnType<typeof uploadProfileImage>>, void> = () => {
+    return uploadProfileImage(requestOptions)
+  }
+
+  return { mutationFn, ...mutationOptions }
+}
+
+export type UploadProfileImageMutationResult = NonNullable<Awaited<ReturnType<typeof uploadProfileImage>>>
+
+export type UploadProfileImageMutationError = ErrorType<UploadProfileImage400 | UploadProfileImage500>
+
+export const useUploadProfileImage = <
+  TError = ErrorType<UploadProfileImage400 | UploadProfileImage500>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<Awaited<ReturnType<typeof uploadProfileImage>>, TError, void, TContext>
+  request?: SecondParameter<typeof makeRequest>
+}): UseMutationResult<Awaited<ReturnType<typeof uploadProfileImage>>, TError, void, TContext> => {
+  const mutationOptions = getUploadProfileImageMutationOptions(options)
+
+  return useMutation(mutationOptions)
+}
+/**
+ * Delete a profile image
+ */
+export const deleteProfileImage = (options?: SecondParameter<typeof makeRequest>) => {
+  return makeRequest<DeleteProfileImage200>({ url: `/api/users/profile-image`, method: "DELETE" }, options)
+}
+
+export const getDeleteProfileImageMutationOptions = <
+  TError = ErrorType<DeleteProfileImage404>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<Awaited<ReturnType<typeof deleteProfileImage>>, TError, void, TContext>
+  request?: SecondParameter<typeof makeRequest>
+}): UseMutationOptions<Awaited<ReturnType<typeof deleteProfileImage>>, TError, void, TContext> => {
+  const mutationKey = ["deleteProfileImage"]
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined }
+
+  const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteProfileImage>>, void> = () => {
+    return deleteProfileImage(requestOptions)
+  }
+
+  return { mutationFn, ...mutationOptions }
+}
+
+export type DeleteProfileImageMutationResult = NonNullable<Awaited<ReturnType<typeof deleteProfileImage>>>
+
+export type DeleteProfileImageMutationError = ErrorType<DeleteProfileImage404>
+
+export const useDeleteProfileImage = <TError = ErrorType<DeleteProfileImage404>, TContext = unknown>(options?: {
+  mutation?: UseMutationOptions<Awaited<ReturnType<typeof deleteProfileImage>>, TError, void, TContext>
+  request?: SecondParameter<typeof makeRequest>
+}): UseMutationResult<Awaited<ReturnType<typeof deleteProfileImage>>, TError, void, TContext> => {
+  const mutationOptions = getDeleteProfileImageMutationOptions(options)
 
   return useMutation(mutationOptions)
 }

@@ -1,10 +1,15 @@
-import { hashPassword } from "@/lib/utils/crypto.utils"
+import { InvalidCredentialsError } from "@/errors/InvalidCredentialsError"
+import { comparePassword, hashPassword } from "@/lib/utils/crypto.utils"
 import { UserRepository } from "@/repositories/user.repository"
 import { createUserSchema, createUserWithGoogleSchema, updateUserSchema } from "@/schemas/user.schema"
 import type { Prisma, user } from "@prisma/client"
+import { FileService } from "./file.service"
 
 export class UserService {
-  constructor(private readonly userRepository: UserRepository = new UserRepository()) {}
+  constructor(
+    private readonly userRepository: UserRepository = new UserRepository(),
+    private readonly fileService: FileService = new FileService(),
+  ) {}
 
   async createUser(data: Prisma.userCreateInput): Promise<user> {
     const userData = createUserSchema.parse(data)
@@ -31,7 +36,7 @@ export class UserService {
     return this.userRepository.createUser(userData)
   }
 
-  async getUserById(userId: number): Promise<Omit<user, "password"> | null> {
+  async getUserById(userId: number): Promise<user | null> {
     return this.userRepository.getUserById(userId)
   }
 
@@ -40,12 +45,60 @@ export class UserService {
   }
 
   async updateUser(userId: number, data: Prisma.userUpdateInput): Promise<user> {
-    const userData = updateUserSchema.parse(data)
+    const validatedData = updateUserSchema.parse(data)
 
-    if (userData.password) {
-      userData.password = await hashPassword(userData.password)
+    const user = await this.userRepository.getUserById(userId)
+    if (!user) {
+      throw new Error("User not found")
     }
 
-    return this.userRepository.updateUser(userId, userData)
+    const { currentPassword, newPassword, confirmPassword, ...baseUserData } = validatedData
+
+    const updateData: Prisma.userUpdateInput = { ...baseUserData }
+
+    if (newPassword) {
+      if (!user.password) {
+        updateData.password = await hashPassword(newPassword)
+      } else if (currentPassword) {
+        const isPasswordValid = await comparePassword(currentPassword, user.password)
+        if (!isPasswordValid) {
+          throw new InvalidCredentialsError("Invalid current password")
+        }
+        updateData.password = await hashPassword(newPassword)
+      }
+    }
+
+    return this.userRepository.updateUser(userId, updateData)
+  }
+
+  async updateUserProfileImage(userId: number, filename: string, mimeType: string, data: Buffer) {
+    const user = await this.userRepository.getUserById(userId)
+    if (!user) throw new Error("User not found")
+
+    if (user.profilePicId) {
+      await this.fileService.deleteFile(user.profilePicId)
+    }
+
+    const file = await this.fileService.createFile(filename, mimeType, data)
+
+    return this.userRepository.updateUser(userId, {
+      profilePic: { connect: { id: file.id } },
+    })
+  }
+
+  async deleteUserProfileImage(userId: number) {
+    const user = await this.userRepository.getUserById(userId)
+    if (!user) throw new Error("User not found")
+
+    if (!user.profilePicId) throw new Error("No profile image to delete")
+
+    const file = await this.fileService.getFileById(user.profilePicId)
+    if (!file) throw new Error("File not found")
+
+    await this.fileService.deleteFile(file.id)
+
+    return this.userRepository.updateUser(userId, {
+      profilePic: { disconnect: true },
+    })
   }
 }

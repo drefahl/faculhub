@@ -7,7 +7,13 @@
   },
   "files": {
     "ignoreUnknown": false,
-    "ignore": ["node_modules", ".git", "dist", ".next", "swagger.json"]
+    "ignore": [
+      "node_modules",
+      ".git",
+      "dist",
+      ".next",
+      "swagger.json"
+    ]
   },
   "formatter": {
     "enabled": true,
@@ -32,6 +38,10 @@
       },
       "suspicious": {
         "noExplicitAny": "info"
+      },
+      "performance": {
+        "noAccumulatingSpread": "off",
+        "noDelete": "off"
       }
     }
   },

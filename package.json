@@ -1,0 +1,8 @@
+{
+  "name": "faculhub",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "swagger:generate": "cd api && pnpm generate-swagger && cd ../front && pnpm orval && cd .."
+  }
+}

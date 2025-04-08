@@ -2,7 +2,7 @@ import { createServer } from "@/app"
 import type { FastifyInstance } from "fastify"
 import request from "supertest"
 import { afterAll, beforeAll, describe, expect, it } from "vitest"
-import { registerUser } from "../utils/get-auth-token.util"
+import { extractAuthTokenFromHeaders, registerUser } from "../utils/get-auth-token.util"
 
 let app: FastifyInstance
 let email: string
@@ -35,6 +35,18 @@ describe("Login API Integration Tests", () => {
 
       expect(response.status).toBe(401)
       expect(response.body.message).toBe("Invalid credentials")
+    })
+
+    it("should refresh the token", async () => {
+      const loginResponse = await request(app.server).post("/api/login").send({ email, password })
+      const token = extractAuthTokenFromHeaders(loginResponse.headers)
+
+      const refreshResponse = await request(app.server).get("/api/refresh").set("Authorization", `Bearer ${token}`)
+
+      expect(refreshResponse.status).toBe(200)
+      expect(refreshResponse.headers["set-cookie"]).toBeDefined()
+      expect(refreshResponse.headers["set-cookie"][0]).toContain("authToken")
+      expect(refreshResponse.body.message).toBe("Authenticated successfully")
     })
   })
 })
