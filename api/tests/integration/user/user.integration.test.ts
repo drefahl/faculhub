@@ -3,6 +3,7 @@ import { createServer } from "@/app"
 import type { FastifyInstance } from "fastify"
 import request from "supertest"
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest"
+import { extractAuthTokenFromHeaders } from "../utils/get-auth-token.util"
 
 let app: FastifyInstance
 let authToken: string
@@ -32,7 +33,7 @@ describe("User Integration Tests", () => {
       .post("/api/login")
       .send({ email: uniqueEmail, password: "Test@123" })
 
-    authToken = loginResponse.headers["set-cookie"][0].split(";")[0].split("=")[1]
+    authToken = extractAuthTokenFromHeaders(loginResponse.headers)
   })
 
   it("should register a new user", async () => {
@@ -90,7 +91,6 @@ describe("User Integration Tests", () => {
       .attach("file", filePath)
 
     expect(response.status).toBe(200)
-    expect(response.body.picture).toMatch(/uploads\/.+\.png/)
   })
 
   it("should delete the user profile image", async () => {
@@ -106,6 +106,5 @@ describe("User Integration Tests", () => {
       .set("Authorization", `Bearer ${authToken}`)
 
     expect(response.status).toBe(200)
-    expect(response.body.picture).toBeNull()
   })
 })

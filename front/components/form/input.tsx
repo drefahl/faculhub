@@ -31,7 +31,7 @@ export function Input<T extends FieldValues>({ name, ...rest }: InputProps<T>) {
 
             <FormControl>
               <div className={cn("relative", rest?.className)}>
-                <UiInput {...field} type={isPassword && showPassword ? "text" : rest?.type || "text"} />
+                <UiInput {...rest} {...field} type={isPassword && showPassword ? "text" : rest?.type || "text"} />
 
                 {isPassword && (
                   <Button
@@ -40,7 +40,11 @@ export function Input<T extends FieldValues>({ name, ...rest }: InputProps<T>) {
                     variant="ghost"
                     className="hover:bg-transparent m-0 absolute right-0 top-0"
                   >
-                    {showPassword ? <Eye /> : <EyeOffIcon />}
+                    {!showPassword ? (
+                      <Eye className="h-4 w-4 text-muted-foreground" />
+                    ) : (
+                      <EyeOffIcon className="h-4 w-4 text-muted-foreground" />
+                    )}
                   </Button>
                 )}
               </div>

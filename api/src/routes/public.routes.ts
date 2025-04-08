@@ -1,12 +1,15 @@
 import { healthCheckSchema } from "@/schemas/health.schema"
 import type { FastifyInstance } from "fastify"
-import { authRoutes } from "./auth.route"
+import { authPublicRoutes } from "./auth.route"
+import { filePublicRoutes } from "./file.route"
 import { userPublicRoutes } from "./user.route"
 
 export async function publicRoutes(app: FastifyInstance) {
-  app.register(authRoutes)
+  app.register(authPublicRoutes)
 
   app.register(userPublicRoutes, { prefix: "/users" })
+
+  app.register(filePublicRoutes, { prefix: "/files" })
 
   app.get(
     "/health",

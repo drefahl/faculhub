@@ -1,6 +1,8 @@
 import { comparePassword } from "@/lib/utils/crypto.utils"
-import type { CreateUserInput, UpdateUserInput } from "@/schemas/user.schema"
-import { createUserServiceMock, mockConstants } from "tests/mocks"
+import type { UpdateUserInput } from "@/schemas/user.schema"
+import type { Prisma } from "@prisma/client"
+import { mockConstants } from "tests/mocks/constants"
+import { createMockServices } from "tests/mocks/factories"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 import { ZodError } from "zod"
 
@@ -8,7 +10,7 @@ const {
   user: { id: userId, email, password },
 } = mockConstants
 
-const userService = createUserServiceMock()
+const { userService, fileService } = createMockServices()
 
 describe("User Unit Tests", () => {
   beforeEach(() => {
@@ -16,7 +18,7 @@ describe("User Unit Tests", () => {
   })
 
   it("should create a user with valid data", async () => {
-    const validUserData: CreateUserInput = {
+    const validUserData: Prisma.userCreateInput = {
       email: "another@example.com",
       name: "Test User",
       password,
@@ -117,11 +119,33 @@ describe("User Unit Tests", () => {
   })
 
   it("should change user picture when new picture is provided", async () => {
-    const updatedUserData = { picture: "new-picture-path" }
+    const { filename, mimeType, data } = mockConstants.file
+    const createdFile = await fileService.createFile(filename, mimeType, data)
 
-    const user = await userService.updateUser(userId, updatedUserData)
+    const user = await userService.updateUserProfileImage(userId, filename, mimeType, data)
 
     expect(user).toHaveProperty("id")
-    expect(user.picture).toEqual(updatedUserData.picture)
+    expect(user.profilePicId).toEqual(createdFile.id)
+  })
+
+  it("should delete user profile picture", async () => {
+    const { filename, mimeType, data } = mockConstants.file
+    const createdFile = await fileService.createFile(filename, mimeType, data)
+
+    const user = await userService.updateUserProfileImage(userId, filename, mimeType, data)
+
+    expect(user).toHaveProperty("id")
+    expect(user.profilePicId).toEqual(createdFile.id)
+
+    await userService.deleteUserProfileImage(userId)
+
+    const updatedUser = await userService.getUserById(userId)
+    expect(updatedUser?.profilePicId).toBeNull()
+  })
+
+  it("should throw error when user is not found", async () => {
+    const { filename, mimeType, data } = mockConstants.file
+
+    await expect(userService.updateUserProfileImage(0, filename, mimeType, data)).rejects.toThrow("User not found")
   })
 })

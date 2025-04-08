@@ -4,6 +4,9 @@ import type { OAuth2Namespace } from "@fastify/oauth2"
 export interface JWTPayload {
   id: number
   email: string
+  name: string
+  picture: string | null
+  providers: ["google"] | ["credentials"] | ["google", "credentials"]
 }
 
 declare module "@fastify/jwt" {

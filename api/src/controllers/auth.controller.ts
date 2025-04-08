@@ -7,9 +7,9 @@ import type { FastifyReply, FastifyRequest } from "fastify"
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  async login(req: FastifyRequest<{ Body: RequestBodyAuth }>, reply: FastifyReply) {
+  async login(request: FastifyRequest<{ Body: RequestBodyAuth }>, reply: FastifyReply) {
     try {
-      const { email, password } = req.body
+      const { email, password } = request.body
 
       const token = await this.authService.login(email, password)
 
@@ -22,5 +22,11 @@ export class AuthController {
 
       reply.code(500).send({ message: "Internal Server Error" })
     }
+  }
+
+  async refresh(request: FastifyRequest, reply: FastifyReply) {
+    const token = await this.authService.refresh(request.user.id)
+
+    reply.setCookie("authToken", token, createCookieOptions()).send({ message: "Authenticated successfully" })
   }
 }

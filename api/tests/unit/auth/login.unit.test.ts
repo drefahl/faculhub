@@ -1,13 +1,14 @@
 import { InvalidCredentialsError } from "@/errors/InvalidCredentialsError"
 import { tokenSchema, verifyToken } from "@/lib/utils/jwt.utils"
-import { createAuthServiceMock, mockConstants } from "tests/mocks"
+import { mockConstants } from "tests/mocks/constants"
+import { createMockServices } from "tests/mocks/factories"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 
 const {
   user: { email, password },
 } = mockConstants
 
-const authService = createAuthServiceMock()
+const { authService } = createMockServices()
 
 describe("Credentials Login", () => {
   beforeEach(() => {
@@ -60,5 +61,22 @@ describe("Google Login", () => {
         token_type: "Bearer",
       }),
     ).rejects.toThrow(InvalidCredentialsError)
+  })
+
+  it("should refresh the token", async () => {
+    const token = await authService.login(email, password)
+
+    const decoded = await verifyToken(token)
+    const newToken = await authService.refresh(decoded.id)
+    const newDecoded = await verifyToken(newToken)
+
+    expect(newDecoded).toHaveProperty("id")
+    expect(newDecoded).toHaveProperty("email")
+    expect(newDecoded.id).toEqual(decoded.id)
+    expect(newDecoded.email).toEqual(decoded.email)
+  })
+
+  it("should throw an error when refreshing with an invalid token", async () => {
+    await expect(authService.refresh(0)).rejects.toThrow(InvalidCredentialsError)
   })
 })

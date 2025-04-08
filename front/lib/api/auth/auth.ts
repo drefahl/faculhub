@@ -25,6 +25,8 @@ import type {
   Login200,
   Login401,
   LoginBody,
+  Refresh200,
+  Refresh401,
 } from "../generated.schemas"
 
 import { makeRequest } from "../../utils/axios"
@@ -226,6 +228,71 @@ export function useGetApiLoginGoogleCallback<
   request?: SecondParameter<typeof makeRequest>
 }): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
   const queryOptions = getGetApiLoginGoogleCallbackQueryOptions(options)
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+  query.queryKey = queryOptions.queryKey
+
+  return query
+}
+
+export const refresh = (options?: SecondParameter<typeof makeRequest>, signal?: AbortSignal) => {
+  return makeRequest<Refresh200>({ url: `/api/refresh`, method: "GET", signal }, options)
+}
+
+export const getRefreshQueryKey = () => {
+  return [`/api/refresh`] as const
+}
+
+export const getRefreshQueryOptions = <
+  TData = Awaited<ReturnType<typeof refresh>>,
+  TError = ErrorType<Refresh401>,
+>(options?: {
+  query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof refresh>>, TError, TData>>
+  request?: SecondParameter<typeof makeRequest>
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {}
+
+  const queryKey = queryOptions?.queryKey ?? getRefreshQueryKey()
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof refresh>>> = ({ signal }) => refresh(requestOptions, signal)
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof refresh>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type RefreshQueryResult = NonNullable<Awaited<ReturnType<typeof refresh>>>
+export type RefreshQueryError = ErrorType<Refresh401>
+
+export function useRefresh<TData = Awaited<ReturnType<typeof refresh>>, TError = ErrorType<Refresh401>>(options: {
+  query: Partial<UseQueryOptions<Awaited<ReturnType<typeof refresh>>, TError, TData>> &
+    Pick<
+      DefinedInitialDataOptions<Awaited<ReturnType<typeof refresh>>, TError, Awaited<ReturnType<typeof refresh>>>,
+      "initialData"
+    >
+  request?: SecondParameter<typeof makeRequest>
+}): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useRefresh<TData = Awaited<ReturnType<typeof refresh>>, TError = ErrorType<Refresh401>>(options?: {
+  query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof refresh>>, TError, TData>> &
+    Pick<
+      UndefinedInitialDataOptions<Awaited<ReturnType<typeof refresh>>, TError, Awaited<ReturnType<typeof refresh>>>,
+      "initialData"
+    >
+  request?: SecondParameter<typeof makeRequest>
+}): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useRefresh<TData = Awaited<ReturnType<typeof refresh>>, TError = ErrorType<Refresh401>>(options?: {
+  query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof refresh>>, TError, TData>>
+  request?: SecondParameter<typeof makeRequest>
+}): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useRefresh<TData = Awaited<ReturnType<typeof refresh>>, TError = ErrorType<Refresh401>>(options?: {
+  query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof refresh>>, TError, TData>>
+  request?: SecondParameter<typeof makeRequest>
+}): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  const queryOptions = getRefreshQueryOptions(options)
 
   const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 

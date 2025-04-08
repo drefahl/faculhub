@@ -5,10 +5,10 @@ import { RequestBodyAuthSchema, ResponseBodyAuthSchema } from "@/schemas/auth.sc
 import { AuthService } from "@/services/auth.service"
 import type { FastifyInstance } from "fastify"
 
-export async function authRoutes(app: FastifyInstance) {
-  const authService = new AuthService()
-  const authController = new AuthController(authService)
+const authService = new AuthService()
+const authController = new AuthController(authService)
 
+export async function authPublicRoutes(app: FastifyInstance) {
   app.post(
     "/login",
     {
@@ -37,5 +37,19 @@ export async function authRoutes(app: FastifyInstance) {
 
       return reply.setCookie("authToken", authToken, createCookieOptions()).redirect(env.FRONTEND_URL)
     },
+  )
+}
+
+export async function authRoutes(app: FastifyInstance) {
+  app.get(
+    "/refresh",
+    {
+      schema: {
+        tags: ["Auth"],
+        operationId: "refresh",
+        response: ResponseBodyAuthSchema,
+      },
+    },
+    authController.refresh.bind(authController),
   )
 }

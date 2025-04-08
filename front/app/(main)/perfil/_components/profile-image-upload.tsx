@@ -1,22 +1,20 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { useDeleteProfileImage, useUploadProfileImage } from "@/lib/api/user/user"
+import { refresh } from "@/lib/api/auth/auth"
+import { uploadProfileImage, useDeleteProfileImage } from "@/lib/api/user/user"
 import { Trash2, Upload } from "lucide-react"
 import { useRouter } from "next/navigation"
 import type React from "react"
-import { useRef } from "react"
+import { useRef, useState } from "react"
 import { toast } from "sonner"
 
-interface ProfileImageUploadProps {
-  userId: string
-}
+export function ProfileImageUpload() {
+  const [isUploading, setIsUploading] = useState(false)
 
-export function ProfileImageUpload({ userId }: ProfileImageUploadProps) {
   const router = useRouter()
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  const { mutate: uploadImage, isPending: isUploading } = useUploadProfileImage()
   const { mutate: removeImage, isPending: isRemoving } = useDeleteProfileImage()
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -39,27 +37,29 @@ export function ProfileImageUpload({ userId }: ProfileImageUploadProps) {
     const formData = new FormData()
     formData.append("file", file)
 
-    uploadImage(formData, {
-      onSuccess: () => {
-        toast.success("Imagem atualizada", { description: "Sua foto de perfil foi atualizada com sucesso." })
-        router.refresh()
+    try {
+      setIsUploading(true)
 
-        // Limpar o input de arquivo
-        if (fileInputRef.current) {
-          fileInputRef.current.value = ""
-        }
-      },
-      onError: (error) => {
-        toast.error("Erro ao fazer upload", {
-          description: error.message || "Erro ao fazer upload da imagem",
-        })
-      },
-    })
+      await uploadProfileImage({ data: formData })
+      await refresh({ withCredentials: true })
+      toast.success("Imagem atualizada", { description: "Sua foto de perfil foi atualizada com sucesso." })
+
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ""
+      }
+
+      router.refresh()
+    } catch (error) {
+      toast.error("Erro ao fazer upload", { description: "Erro ao fazer upload da imagem" })
+    } finally {
+      setIsUploading(false)
+    }
   }
 
   const handleRemoveImage = () => {
     removeImage(undefined, {
-      onSuccess: () => {
+      onSuccess: async () => {
+        await refresh({ withCredentials: true })
         toast.success("Imagem removida", { description: "Sua foto de perfil foi removida com sucesso." })
         router.refresh()
       },

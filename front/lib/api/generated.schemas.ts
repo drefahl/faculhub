@@ -74,6 +74,21 @@ export type CreateUser201 = {
   picture?: string | null
 } | null
 
+export type Refresh200Message = (typeof Refresh200Message)[keyof typeof Refresh200Message]
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const Refresh200Message = {
+  Authenticated_successfully: "Authenticated successfully",
+} as const
+
+export type Refresh200 = {
+  message: Refresh200Message
+}
+
+export type Refresh401 = {
+  message: string
+}
+
 /**
  * @nullable
  */

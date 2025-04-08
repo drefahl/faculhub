@@ -15,10 +15,13 @@ axiosInstance.interceptors.request.use(async (config) => {
 export const makeRequest = async <T>(config: AxiosRequestConfig, options?: AxiosRequestConfig): Promise<T> => {
   const source = Axios.CancelToken.source()
 
-  const promise = axiosInstance({
-    ...config,
-    ...options,
-  }).then(({ data }) => data)
+  const mergedConfig = { ...config, ...options }
+
+  if (mergedConfig.data instanceof FormData) {
+    delete mergedConfig.headers?.["Content-Type"]
+  }
+
+  const promise = axiosInstance(mergedConfig).then(({ data }) => data)
 
   // @ts-ignore
   promise.cancel = () => {

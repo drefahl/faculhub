@@ -5,7 +5,7 @@ const emailSchema = z.string().email({ message: "E-mail inválido" })
 
 export const createUserSchema = z.object({
   email: emailSchema,
-  name: z.string(),
+  name: z.string().trim(),
   picture: pictureSchema,
   password: z.string().min(6, "A senha deve ter no mínimo 6 caracteres"),
 })

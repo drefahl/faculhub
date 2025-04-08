@@ -1,16 +1,15 @@
 import { InvalidCredentialsError } from "@/errors/InvalidCredentialsError"
 import { comparePassword, hashPassword } from "@/lib/utils/crypto.utils"
 import { UserRepository } from "@/repositories/user.repository"
-import {
-  type UpdateUserInput,
-  createUserSchema,
-  createUserWithGoogleSchema,
-  updateUserSchema,
-} from "@/schemas/user.schema"
+import { createUserSchema, createUserWithGoogleSchema, updateUserSchema } from "@/schemas/user.schema"
 import type { Prisma, user } from "@prisma/client"
+import { FileService } from "./file.service"
 
 export class UserService {
-  constructor(private readonly userRepository: UserRepository = new UserRepository()) {}
+  constructor(
+    private readonly userRepository: UserRepository = new UserRepository(),
+    private readonly fileService: FileService = new FileService(),
+  ) {}
 
   async createUser(data: Prisma.userCreateInput): Promise<user> {
     const userData = createUserSchema.parse(data)
@@ -37,7 +36,7 @@ export class UserService {
     return this.userRepository.createUser(userData)
   }
 
-  async getUserById(userId: number): Promise<Omit<user, "password"> | null> {
+  async getUserById(userId: number): Promise<user | null> {
     return this.userRepository.getUserById(userId)
   }
 
@@ -45,7 +44,7 @@ export class UserService {
     return this.userRepository.getUserByEmail(email)
   }
 
-  async updateUser(userId: number, data: UpdateUserInput): Promise<user> {
+  async updateUser(userId: number, data: Prisma.userUpdateInput): Promise<user> {
     const validatedData = updateUserSchema.parse(data)
 
     const user = await this.userRepository.getUserById(userId)
@@ -70,5 +69,36 @@ export class UserService {
     }
 
     return this.userRepository.updateUser(userId, updateData)
+  }
+
+  async updateUserProfileImage(userId: number, filename: string, mimeType: string, data: Buffer) {
+    const user = await this.userRepository.getUserById(userId)
+    if (!user) throw new Error("User not found")
+
+    if (user.profilePicId) {
+      await this.fileService.deleteFile(user.profilePicId)
+    }
+
+    const file = await this.fileService.createFile(filename, mimeType, data)
+
+    return this.userRepository.updateUser(userId, {
+      profilePic: { connect: { id: file.id } },
+    })
+  }
+
+  async deleteUserProfileImage(userId: number) {
+    const user = await this.userRepository.getUserById(userId)
+    if (!user) throw new Error("User not found")
+
+    if (!user.profilePicId) throw new Error("No profile image to delete")
+
+    const file = await this.fileService.getFileById(user.profilePicId)
+    if (!file) throw new Error("File not found")
+
+    await this.fileService.deleteFile(file.id)
+
+    return this.userRepository.updateUser(userId, {
+      profilePic: { disconnect: true },
+    })
   }
 }

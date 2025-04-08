@@ -3,15 +3,24 @@
 import { Button } from "@/components/ui/button"
 import { Form } from "@/components/ui/form"
 import { login } from "@/lib/api/auth/auth"
+import { passwordSchema } from "@/lib/validations/password-schema"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useRouter } from "next/navigation"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 import * as z from "zod"
 import { Input } from "../form/input"
+import { PasswordInput } from "../form/password"
 import { GoogleIcon } from "../icons/google-icon"
 import { SubmitButton } from "../submit-button"
 import { Separator } from "../ui/separator"
+
+const loginFormValidationSchema = z.object({
+  email: z.string().email({ message: "Email inválido." }),
+  password: passwordSchema,
+})
+
+type LoginFormValues = z.infer<typeof loginFormValidationSchema>
 
 export function LoginForm() {
   const router = useRouter()
@@ -36,7 +45,7 @@ export function LoginForm() {
   }
 
   const handleGoogleSignIn = () => {
-    window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/login/google`
+    window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/api/login/google`
   }
 
   return (
@@ -61,7 +70,7 @@ export function LoginForm() {
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <Input name="email" type="email" label="Email" placeholder="seu.email@exemplo.com" />
 
-          <Input name="password" type="password" label="Senha" placeholder="******" />
+          <PasswordInput name="password" label="Nova Senha" placeholder="••••••••" />
 
           <SubmitButton className="w-full" pendingCallback={() => "Entrando"}>
             Entrar
@@ -71,10 +80,3 @@ export function LoginForm() {
     </div>
   )
 }
-
-const loginFormValidationSchema = z.object({
-  email: z.string().email({ message: "Email inválido." }),
-  password: z.string().min(6, { message: "Senha deve ter pelo menos 6 caracteres." }),
-})
-
-type LoginFormValues = z.infer<typeof loginFormValidationSchema>

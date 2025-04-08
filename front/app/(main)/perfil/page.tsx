@@ -1,5 +1,4 @@
 import { PasswordForm } from "@/app/(main)/perfil/_components/password-form"
-import { PreferencesForm } from "@/app/(main)/perfil/_components/preferences-form"
 import { ProfileForm } from "@/app/(main)/perfil/_components/profile-form"
 import { Separator } from "@/components/ui/separator"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -20,19 +19,15 @@ export default async function ProfilePage() {
         </div>
         <Separator />
         <Tabs defaultValue="personal" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 md:grid-cols-3">
+          <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="personal">Informações Pessoais</TabsTrigger>
             <TabsTrigger value="password">Senha</TabsTrigger>
-            <TabsTrigger value="preferences">Preferências</TabsTrigger>
           </TabsList>
           <TabsContent value="personal" className="space-y-6 py-4">
             <ProfileForm session={session} />
           </TabsContent>
           <TabsContent value="password" className="space-y-6 py-4">
             <PasswordForm session={session} />
-          </TabsContent>
-          <TabsContent value="preferences" className="space-y-6 py-4">
-            <PreferencesForm />
           </TabsContent>
         </Tabs>
       </div>

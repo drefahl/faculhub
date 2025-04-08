@@ -1,4 +1,5 @@
 import type { user } from "@prisma/client"
+import { buildApiUrl } from "./app.utils"
 
 export function getUserProviders(user: user): Array<"google" | "credentials"> {
   const providers: Array<"google" | "credentials"> = []
@@ -11,4 +12,8 @@ export function getUserProviders(user: user): Array<"google" | "credentials"> {
   }
 
   return providers
+}
+
+export function getProfilePictureUrl(profilePicId: string | null): string | null {
+  return profilePicId ? `${buildApiUrl()}/api/files/${profilePicId}` : null
 }
