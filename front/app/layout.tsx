@@ -21,7 +21,7 @@ export default async function RootLayout({
     <html lang="pt-BR" suppressHydrationWarning>
       <body className={`${inter.className} min-h-screen flex flex-col`}>
         <Providers>
-          <div className="flex flex-col min-h-screen mx-auto">{children}</div>
+          <div className="flex flex-col min-h-screen container mx-auto overflow-x-hidden">{children}</div>
         </Providers>
       </body>
     </html>
