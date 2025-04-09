@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { login } from "@/lib/api/auth/auth"
+import { setTokenCookie } from "@/lib/utils/token"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useRouter } from "next/navigation"
 import { useForm } from "react-hook-form"
@@ -25,7 +26,8 @@ export function LoginForm() {
 
   async function onSubmit({ email, password }: LoginFormValues) {
     try {
-      await login({ email, password }, { withCredentials: true })
+      const { token } = await login({ email, password })
+      await setTokenCookie(token)
       toast.success("Login realizado com sucesso!", { description: "Bem-vindo de volta!" })
       router.push("/")
     } catch (error) {
