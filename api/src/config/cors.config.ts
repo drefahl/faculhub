@@ -4,7 +4,7 @@ import { env } from "./env.config"
 
 export function corsConfig(app: FastifyInstance) {
   app.register(fastifyCors, {
-    origin: env.FRONTEND_URL,
+    origin: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
