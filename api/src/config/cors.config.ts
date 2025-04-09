@@ -3,7 +3,7 @@ import type { FastifyInstance } from "fastify"
 
 export function corsConfig(app: FastifyInstance) {
   app.register(fastifyCors, {
-    origin: "*",
+    origin: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
