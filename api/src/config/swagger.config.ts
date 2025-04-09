@@ -13,7 +13,7 @@ export function swaggerConfig(app: FastifyInstance) {
       },
       servers: [
         {
-          url: `http${env.NODE_ENV === "production" ? "s" : ""}://${env.HOST}:${env.PORT}`,
+          url: `http${env.NODE_ENV === "production" ? "s" : ""}://${env.HOSTNAME}:${env.PORT}`,
         },
       ],
     },

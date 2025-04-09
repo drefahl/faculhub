@@ -13,7 +13,7 @@ const start = async () => {
   try {
     const app = await createServer()
 
-    await app.listen({ port: env.PORT, host: env.HOST })
+    await app.listen({ port: env.PORT, host: env.HOSTNAME })
 
     console.log(`Server running at ${app.server.address()}`)
   } catch (err) {
