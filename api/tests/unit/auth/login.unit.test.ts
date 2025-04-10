@@ -1,8 +1,8 @@
 import { InvalidCredentialsError } from "@/errors/InvalidCredentialsError"
 import { tokenSchema, verifyToken } from "@/lib/utils/jwt.utils"
-import { mockConstants } from "tests/mocks/constants"
-import { createMockServices } from "tests/mocks/factories"
 import { beforeEach, describe, expect, it, vi } from "vitest"
+import { mockConstants } from "../mocks/constants"
+import { createMockServices } from "../mocks/factories"
 
 const {
   user: { email, password },

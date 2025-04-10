@@ -1,17 +1,24 @@
 import { InvalidCredentialsError } from "@/errors/InvalidCredentialsError"
 import { comparePassword, hashPassword } from "@/lib/utils/crypto.utils"
-import { UserRepository } from "@/repositories/user.repository"
-import { createUserSchema, createUserWithGoogleSchema, updateUserSchema } from "@/schemas/user.schema"
+import type { UserRepository } from "@/repositories/user.repository"
+import {
+  type CreateUserInput,
+  type CreateUserWithGoogleInput,
+  type UpdateUserInput,
+  createUserSchema,
+  createUserWithGoogleSchema,
+  updateUserSchema,
+} from "@/schemas/user.schema"
 import type { Prisma, user } from "@prisma/client"
-import { FileService } from "./file.service"
+import type { FileService } from "./file.service"
 
 export class UserService {
   constructor(
-    private readonly userRepository: UserRepository = new UserRepository(),
-    private readonly fileService: FileService = new FileService(),
+    private readonly userRepository: UserRepository,
+    private readonly fileService: FileService,
   ) {}
 
-  async createUser(data: Prisma.userCreateInput): Promise<user> {
+  async createUser(data: CreateUserInput): Promise<user> {
     const userData = createUserSchema.parse(data)
 
     const emailExists = await this.userRepository.getUserByEmail(userData.email)
@@ -25,7 +32,7 @@ export class UserService {
     return this.userRepository.createUser(userData)
   }
 
-  async createUserWithGoogle(data: Prisma.userCreateInput): Promise<user> {
+  async createUserWithGoogle(data: CreateUserWithGoogleInput): Promise<user> {
     const userData = createUserWithGoogleSchema.parse(data)
 
     const emailExists = await this.userRepository.getUserByEmail(userData.email)
@@ -44,7 +51,7 @@ export class UserService {
     return this.userRepository.getUserByEmail(email)
   }
 
-  async updateUser(userId: number, data: Prisma.userUpdateInput): Promise<user> {
+  async updateUser(userId: number, data: UpdateUserInput): Promise<user> {
     const validatedData = updateUserSchema.parse(data)
 
     const user = await this.userRepository.getUserById(userId)
@@ -81,9 +88,7 @@ export class UserService {
 
     const file = await this.fileService.createFile(filename, mimeType, data)
 
-    return this.userRepository.updateUser(userId, {
-      profilePic: { connect: { id: file.id } },
-    })
+    return this.userRepository.updateUser(userId, { profilePic: { connect: { id: file.id } } })
   }
 
   async deleteUserProfileImage(userId: number) {
@@ -97,8 +102,6 @@ export class UserService {
 
     await this.fileService.deleteFile(file.id)
 
-    return this.userRepository.updateUser(userId, {
-      profilePic: { disconnect: true },
-    })
+    return this.userRepository.updateUser(userId, { profilePic: { disconnect: true } })
   }
 }

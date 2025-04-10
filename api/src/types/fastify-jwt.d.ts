@@ -1,5 +1,6 @@
 import "@fastify/jwt"
 import type { OAuth2Namespace } from "@fastify/oauth2"
+import type { Server } from "socket.io"
 
 export interface JWTPayload {
   id: number
@@ -23,5 +24,6 @@ declare module "@fastify/jwt" {
 declare module "fastify" {
   interface FastifyInstance {
     googleOAuth2: OAuth2Namespace
+    io: Server
   }
 }

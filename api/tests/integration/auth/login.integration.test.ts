@@ -2,19 +2,15 @@ import { createServer } from "@/app"
 import type { FastifyInstance } from "fastify"
 import request from "supertest"
 import { afterAll, beforeAll, describe, expect, it } from "vitest"
-import { extractAuthTokenFromHeaders, registerUser } from "../utils/get-auth-token.util"
+import { extractAuthTokenFromHeaders } from "../utils/get-auth-token.util"
 
 let app: FastifyInstance
-let email: string
-let password: string
+
+const { email, password } = { email: "admin@example.com", password: "admin123" }
 
 describe("Login API Integration Tests", () => {
   beforeAll(async () => {
     app = await createServer()
-
-    const data = await registerUser(app)
-    email = data.email
-    password = data.password
   })
 
   afterAll(async () => {

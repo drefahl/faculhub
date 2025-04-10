@@ -8,15 +8,17 @@ datasource db {
 }
 
 model user {
-  id           Int      @id(map: "user_pk") @default(autoincrement())
-  googleId     String?  @unique
-  email        String   @unique(map: "user_unique") @db.VarChar
-  name         String?  @db.VarChar
-  password     String?  @db.VarChar
-  profilePic   file?    @relation(fields: [profilePicId], references: [id])
+  id           Int       @id(map: "user_pk") @default(autoincrement())
+  googleId     String?   @unique
+  email        String    @unique(map: "user_unique") @db.VarChar
+  name         String?   @db.VarChar
+  password     String?   @db.VarChar
+  profilePic   file?     @relation(fields: [profilePicId], references: [id])
   profilePicId String?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  thread       thread[]
+  comment      comment[]
 }
 
 model file {
@@ -26,4 +28,26 @@ model file {
   data      Bytes
   createdAt DateTime @default(now())
   user      user[]
+}
+
+model thread {
+  id        Int      @id @default(autoincrement())
+  title     String
+  content   String
+  authorId  Int
+  author    user     @relation(fields: [authorId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  comments comment[]
+}
+
+model comment {
+  id        Int      @id @default(autoincrement())
+  threadId  Int
+  content   String
+  authorId  Int
+  author    user     @relation(fields: [authorId], references: [id])
+  thread    thread   @relation(fields: [threadId], references: [id])
+  createdAt DateTime @default(now())
 }

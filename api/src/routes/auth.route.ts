@@ -1,11 +1,11 @@
 import { env } from "@/config/env.config"
 import { AuthController } from "@/controllers/auth.controller"
+import { createAuthService } from "@/factories/serviceFactory"
 import { createCookieOptions } from "@/lib/utils/cookie.utils"
 import { RequestBodyAuthSchema, ResponseBodyAuthSchema } from "@/schemas/auth.schema"
-import { AuthService } from "@/services/auth.service"
 import type { FastifyInstance } from "fastify"
 
-const authService = new AuthService()
+const authService = createAuthService()
 const authController = new AuthController(authService)
 
 export async function authPublicRoutes(app: FastifyInstance) {

@@ -6,15 +6,15 @@ import { createToken } from "@/lib/utils/jwt.utils"
 import { getProfilePictureUrl, getUserProviders } from "@/lib/utils/user.utls"
 import type { Token } from "@fastify/oauth2"
 import { OAuth2Client } from "google-auth-library"
-import { FileService } from "./file.service"
-import { UserService } from "./user.service"
+import type { FileService } from "./file.service"
+import type { UserService } from "./user.service"
 
 export class AuthService {
   private readonly googleClient: OAuth2Client
 
   constructor(
-    private readonly userService: UserService = new UserService(),
-    private readonly fileService: FileService = new FileService(),
+    private readonly userService: UserService,
+    private readonly fileService: FileService,
   ) {
     this.googleClient = new OAuth2Client(env.GOOGLE_CLIENT_ID)
   }

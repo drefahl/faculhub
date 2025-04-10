@@ -1,10 +1,10 @@
 import { comparePassword } from "@/lib/utils/crypto.utils"
 import type { UpdateUserInput } from "@/schemas/user.schema"
 import type { Prisma } from "@prisma/client"
-import { mockConstants } from "tests/mocks/constants"
-import { createMockServices } from "tests/mocks/factories"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 import { ZodError } from "zod"
+import { mockConstants } from "../mocks/constants"
+import { createMockServices } from "../mocks/factories"
 
 const {
   user: { id: userId, email, password },
@@ -130,17 +130,11 @@ describe("User Unit Tests", () => {
 
   it("should delete user profile picture", async () => {
     const { filename, mimeType, data } = mockConstants.file
-    const createdFile = await fileService.createFile(filename, mimeType, data)
+    await userService.updateUserProfileImage(userId, filename, mimeType, data)
 
-    const user = await userService.updateUserProfileImage(userId, filename, mimeType, data)
+    const user = await userService.deleteUserProfileImage(userId)
 
-    expect(user).toHaveProperty("id")
-    expect(user.profilePicId).toEqual(createdFile.id)
-
-    await userService.deleteUserProfileImage(userId)
-
-    const updatedUser = await userService.getUserById(userId)
-    expect(updatedUser?.profilePicId).toBeNull()
+    expect(user?.profilePicId).toBeNull()
   })
 
   it("should throw error when user is not found", async () => {

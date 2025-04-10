@@ -1,39 +1,25 @@
 import path from "node:path"
 import { createServer } from "@/app"
+import type { JWTPayload } from "@/types/fastify-jwt"
 import type { FastifyInstance } from "fastify"
 import request from "supertest"
-import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest"
-import { extractAuthTokenFromHeaders } from "../utils/get-auth-token.util"
+import { afterAll, beforeAll, describe, expect, it } from "vitest"
+import { getAuthToken } from "../utils/get-auth-token.util"
 
 let app: FastifyInstance
 let authToken: string
-let createdUserId: string
+let payload: JWTPayload
 
 describe("User Integration Tests", () => {
   beforeAll(async () => {
     app = await createServer()
+    const response = await getAuthToken(app)
+    authToken = response.token
+    payload = response.payload
   })
 
   afterAll(async () => {
     await app.close()
-  })
-
-  beforeEach(async () => {
-    const uniqueEmail = `testuser+${Date.now()}@example.com`
-
-    const registerResponse = await request(app.server).post("/api/users").send({
-      email: uniqueEmail,
-      name: "Test User",
-      password: "Test@123",
-    })
-
-    createdUserId = registerResponse.body.id
-
-    const loginResponse = await request(app.server)
-      .post("/api/login")
-      .send({ email: uniqueEmail, password: "Test@123" })
-
-    authToken = extractAuthTokenFromHeaders(loginResponse.headers)
   })
 
   it("should register a new user", async () => {
@@ -68,7 +54,7 @@ describe("User Integration Tests", () => {
     const response = await request(app.server).get("/api/users/me").set("Authorization", `Bearer ${authToken}`)
 
     expect(response.status).toBe(200)
-    expect(response.body).toHaveProperty("id", createdUserId)
+    expect(response.body).toHaveProperty("id", payload.id)
   })
 
   it("should update the logged user profile", async () => {

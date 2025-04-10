@@ -1,6 +1,7 @@
 import fastifyJwt from "@fastify/jwt"
 import fastifyMultipart from "@fastify/multipart"
 import { fastify } from "fastify"
+import fastifyIo from "fastify-socket.io"
 import { type ZodTypeProvider, serializerCompiler, validatorCompiler } from "fastify-type-provider-zod"
 import { corsConfig } from "./config/cors.config"
 import { env } from "./config/env.config"
@@ -23,6 +24,7 @@ export async function createServer() {
   registerGoogleOAuth(app)
   app.register(fastifyJwt, { secret: env.JWT_SECRET, sign: { algorithm: "HS256" } })
   app.register(fastifyMultipart, { limits: { fileSize: 5 * 1024 * 1024 } })
+  app.register(fastifyIo, { cors: { origin: env.FRONTEND_URL } })
 
   // Error Handling
   app.setErrorHandler(errorHandler)

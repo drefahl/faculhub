@@ -1,13 +1,12 @@
 import { fileStreamToBuffer } from "@/lib/utils/file.utils"
-import type { UpdateUserInput } from "@/schemas/user.schema"
-import { UserService } from "@/services/user.service"
-import type { Prisma } from "@prisma/client"
+import type { CreateUserInput, UpdateUserInput } from "@/schemas/user.schema"
+import type { UserService } from "@/services/user.service"
 import type { FastifyReply, FastifyRequest } from "fastify"
 
 export class UserController {
-  constructor(private readonly userService: UserService = new UserService()) {}
+  constructor(private readonly userService: UserService) {}
 
-  async createUser(request: FastifyRequest<{ Body: Prisma.userCreateInput }>, reply: FastifyReply) {
+  async createUser(request: FastifyRequest<{ Body: CreateUserInput }>, reply: FastifyReply) {
     const user = await this.userService.createUser(request.body)
 
     return reply.code(201).send(user)

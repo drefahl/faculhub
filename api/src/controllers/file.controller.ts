@@ -1,8 +1,8 @@
-import { FileService } from "@/services/file.service"
+import type { FileService } from "@/services/file.service"
 import type { FastifyReply, FastifyRequest } from "fastify"
 
 export class FileController {
-  constructor(private readonly fileService: FileService = new FileService()) {}
+  constructor(private readonly fileService: FileService) {}
 
   async getFileById(request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) {
     const file = await this.fileService.getFileById(request.params.id)

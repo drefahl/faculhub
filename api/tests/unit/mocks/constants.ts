@@ -16,4 +16,20 @@ export const mockConstants = {
     data: Buffer.from("test"),
     createdAt: new Date(),
   },
+  thread: {
+    id: 1,
+    title: "Mocked Thread",
+    content: "Mocked Content",
+    authorId: 1,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  comment: {
+    id: 1,
+    threadId: 1,
+    content: "This is a comment",
+    authorId: 1,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
 } as const

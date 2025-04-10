@@ -1,10 +1,10 @@
 import { UserController } from "@/controllers/user.controller"
+import { createUserService } from "@/factories/serviceFactory"
 import { ResponseGetUserSchema, createUserSchema, updateUserSchema } from "@/schemas/user.schema"
-import { UserService } from "@/services/user.service"
 import type { FastifyInstance } from "fastify"
 import z from "zod"
 
-const userService = new UserService()
+const userService = createUserService()
 const userController = new UserController(userService)
 
 export async function userRoutes(app: FastifyInstance) {

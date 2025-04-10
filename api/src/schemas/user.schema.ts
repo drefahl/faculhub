@@ -6,7 +6,7 @@ const emailSchema = z.string().email({ message: "E-mail inválido" })
 export const createUserSchema = z.object({
   email: emailSchema,
   name: z.string().trim(),
-  picture: pictureSchema,
+  profilePicId: pictureSchema,
   password: z.string().min(6, "A senha deve ter no mínimo 6 caracteres"),
 })
 
@@ -16,7 +16,7 @@ export const createUserWithGoogleSchema = z.object({
   googleId: z.string(),
   email: emailSchema,
   name: z.string().optional(),
-  picture: pictureSchema,
+  profilePicId: pictureSchema,
 })
 
 export type CreateUserWithGoogleInput = z.infer<typeof createUserWithGoogleSchema>
@@ -25,7 +25,7 @@ export const updateUserSchema = z
   .object({
     name: z.string().optional(),
     email: z.string().email().optional(),
-    picture: pictureSchema,
+    profilePicId: pictureSchema,
     currentPassword: z.string().optional(),
     newPassword: z.string().min(6).optional(),
     confirmPassword: z.string().min(6).optional(),
@@ -49,7 +49,7 @@ export const ResponseGetUserSchema = z
     id: z.number(),
     email: z.string(),
     name: z.string().nullable(),
-    picture: pictureSchema,
+    profilePicId: pictureSchema,
   })
   .nullable()
 

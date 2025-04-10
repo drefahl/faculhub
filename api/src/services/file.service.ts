@@ -1,8 +1,8 @@
-import { FileRepository } from "@/repositories/file.repository"
+import type { FileRepository } from "@/repositories/file.repository"
 import type { file as FileModel } from "@prisma/client"
 
 export class FileService {
-  constructor(private readonly fileRepository: FileRepository = new FileRepository()) {}
+  constructor(private readonly fileRepository: FileRepository) {}
 
   async createFile(filename: string, mimeType: string, data: Buffer): Promise<FileModel> {
     return this.fileRepository.createFile({ filename, mimeType, data })
