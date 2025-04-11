@@ -1,55 +1,64 @@
+import { NotFoundError } from "@/errors/NotFoundError"
 import { CommentRepository } from "@/repositories/comment.repository"
+import type { comment } from "@prisma/client"
 import { vi } from "vitest"
 import { mockConstants } from "./constants"
 
 export function createCommentRepositoryMock(): CommentRepository {
   const repo = new CommentRepository()
 
+  const comments: Map<number, comment> = new Map([
+    [
+      mockConstants.comment.id,
+      {
+        id: mockConstants.comment.id,
+        threadId: mockConstants.thread.id,
+        authorId: mockConstants.user.id,
+        content: mockConstants.comment.content,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+    ],
+  ])
+
   vi.spyOn(repo, "createComment").mockImplementation(async (data) => {
-    return {
-      id: mockConstants.comment.id,
+    const threadId = data?.thread?.connect?.id ?? mockConstants.thread.id
+    const authorId = data?.author?.connect?.id ?? mockConstants.user.id
+
+    const id = Math.floor(Math.random() * 1000)
+    const newComment: comment = {
+      id,
+      threadId,
+      authorId,
       content: data.content,
-      authorId: data?.author?.connect?.id ?? mockConstants.comment.authorId,
-      threadId: data?.thread?.connect?.id ?? mockConstants.comment.threadId,
       createdAt: new Date(),
     }
+    comments.set(id, newComment)
+    return newComment
   })
 
   vi.spyOn(repo, "getCommentById").mockImplementation(async (id) => {
-    if (id !== mockConstants.comment.id) return null
-
-    return {
-      id: mockConstants.comment.id,
-      threadId: mockConstants.comment.threadId,
-      content: mockConstants.comment.content,
-      authorId: mockConstants.comment.authorId,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    }
+    return comments.get(id) ?? null
   })
 
   vi.spyOn(repo, "updateComment").mockImplementation(async (id, data) => {
-    if (id !== mockConstants.comment.id) throw new Error("Comment not found")
+    const existingComment = comments.get(id)
+    if (!existingComment) throw new NotFoundError("Comment not found")
 
-    return {
-      id: mockConstants.comment.id,
-      threadId: mockConstants.comment.threadId,
-      authorId: mockConstants.comment.authorId,
-      content: typeof data?.content === "string" ? data.content : mockConstants.comment.content,
-      createdAt: new Date(),
+    const updatedComment: comment = {
+      ...existingComment,
+      content: typeof data?.content === "string" ? data.content : existingComment.content,
     }
+    comments.set(id, updatedComment)
+    return updatedComment
   })
 
   vi.spyOn(repo, "deleteComment").mockImplementation(async (id) => {
-    if (id !== mockConstants.comment.id) throw new Error("Comment not found")
+    const comment = comments.get(id)
+    if (!comment) throw new NotFoundError("Comment not found")
 
-    return {
-      id: mockConstants.comment.id,
-      threadId: mockConstants.comment.threadId,
-      authorId: mockConstants.comment.authorId,
-      content: mockConstants.comment.content,
-      createdAt: new Date(),
-    }
+    comments.delete(id)
+    return comment
   })
 
   return repo

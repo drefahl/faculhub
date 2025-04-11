@@ -1,14 +1,17 @@
 import { z } from "zod"
+import { passwordSchema } from "./common.schema"
 
 const pictureSchema = z.string().nullable().optional()
-const emailSchema = z.string().email({ message: "E-mail inválido" })
+const emailSchema = z.string().email({ message: "Invalid email" })
 
-export const createUserSchema = z.object({
-  email: emailSchema,
-  name: z.string().trim(),
-  profilePicId: pictureSchema,
-  password: z.string().min(6, "A senha deve ter no mínimo 6 caracteres"),
-})
+export const createUserSchema = z
+  .object({
+    email: emailSchema,
+    name: z.string().trim(),
+    profilePicId: pictureSchema,
+    password: passwordSchema,
+  })
+  .strict()
 
 export type CreateUserInput = z.infer<typeof createUserSchema>
 
@@ -23,12 +26,12 @@ export type CreateUserWithGoogleInput = z.infer<typeof createUserWithGoogleSchem
 
 export const updateUserSchema = z
   .object({
-    name: z.string().optional(),
+    name: z.string().max(255, { message: "Name must be at most 255 characters" }).optional(),
     email: z.string().email().optional(),
     profilePicId: pictureSchema,
-    currentPassword: z.string().optional(),
-    newPassword: z.string().min(6).optional(),
-    confirmPassword: z.string().min(6).optional(),
+    currentPassword: passwordSchema.optional(),
+    newPassword: passwordSchema.optional(),
+    confirmPassword: passwordSchema.optional(),
   })
   .refine(
     (data) => {

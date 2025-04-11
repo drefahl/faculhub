@@ -6,10 +6,10 @@ export const createCommentSchema = z.object({
   content: z.string().min(1, { message: "Content is required" }),
 })
 
-export type CreateCommentSchema = z.infer<typeof createCommentSchema>
+export type CreateCommentInput = z.infer<typeof createCommentSchema>
 
 export const updateCommentSchema = z.object({
   content: z.string().min(1, { message: "Content is required" }).nonempty(),
 })
 
-export type UpdateCommentSchema = z.infer<typeof updateCommentSchema>
+export type UpdateCommentInput = z.infer<typeof updateCommentSchema>

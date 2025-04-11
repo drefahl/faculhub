@@ -1,13 +1,9 @@
 import { z } from "zod"
+import { passwordSchema } from "./common.schema"
 
-export const RequestBodyAuthSchema = z.object({
+export const authSchema = z.object({
   email: z.string({ message: "Username is required" }).trim().email({ message: "Invalid email" }),
-  password: z.string({ message: "Password is required" }),
+  password: passwordSchema,
 })
 
-export type RequestBodyAuth = z.infer<typeof RequestBodyAuthSchema>
-
-export const ResponseBodyAuthSchema = {
-  200: z.object({ message: z.literal("Authenticated successfully") }),
-  401: z.object({ message: z.string() }),
-}
+export type AuthInput = z.infer<typeof authSchema>

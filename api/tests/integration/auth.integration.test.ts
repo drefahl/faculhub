@@ -1,16 +1,21 @@
 import { createServer } from "@/app"
 import type { FastifyInstance } from "fastify"
 import request from "supertest"
-import { afterAll, beforeAll, describe, expect, it } from "vitest"
-import { extractAuthTokenFromHeaders } from "../utils/get-auth-token.util"
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest"
+import { extractAuthTokenFromHeaders } from "./utils/auth.util"
+import { createUser, getRandomUserData } from "./utils/user.util"
 
 let app: FastifyInstance
 
-const { email, password } = { email: "admin@example.com", password: "admin123" }
+const { email, password, name } = getRandomUserData()
 
 describe("Login API Integration Tests", () => {
   beforeAll(async () => {
     app = await createServer()
+  })
+
+  beforeEach(async () => {
+    await createUser(app, { email, password, name })
   })
 
   afterAll(async () => {
@@ -27,7 +32,7 @@ describe("Login API Integration Tests", () => {
     })
 
     it("should throw an error with invalid credentials", async () => {
-      const response = await request(app.server).post("/api/login").send({ email, password: "invalid-password" })
+      const response = await request(app.server).post("/api/login").send({ email, password: "Wr0ngP@ssword" })
 
       expect(response.status).toBe(401)
       expect(response.body.message).toBe("Invalid credentials")
@@ -44,5 +49,21 @@ describe("Login API Integration Tests", () => {
       expect(refreshResponse.headers["set-cookie"][0]).toContain("authToken")
       expect(refreshResponse.body.message).toBe("Authenticated successfully")
     })
+  })
+
+  it("should fail to refresh with an invalid token", async () => {
+    const invalidToken = "invalid.token.here"
+    const response = await request(app.server).get("/api/refresh").set("Authorization", `Bearer ${invalidToken}`)
+
+    expect(response.status).toBe(401)
+  })
+
+  it("should fail to login with non-existent email", async () => {
+    const response = await request(app.server)
+      .post("/api/login")
+      .send({ email: "nonexistent@example.com", password: "R@nd0wPassWord" })
+
+    expect(response.status).toBe(401)
+    expect(response.body.message).toBe("Invalid credentials")
   })
 })

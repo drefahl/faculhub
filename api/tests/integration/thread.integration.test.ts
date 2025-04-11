@@ -1,38 +1,39 @@
 import { createServer } from "@/app"
-import type { CreateThreadSchema } from "@/schemas/thread.schema"
-import type { JWTPayload } from "@/types/fastify-jwt"
+import type { CreateThreadInput } from "@/schemas/thread.schema"
+import type { Session } from "@/types/fastify-jwt"
 import type { FastifyInstance } from "fastify"
 import request from "supertest"
 import { afterAll, beforeAll, describe, expect, it } from "vitest"
-import { createUserAndGetAuthToken, getAuthToken } from "../utils/get-auth-token.util"
+import { createUserAndGetAuthToken, getAuthTokenAsAdmin } from "./utils/auth.util"
+import { constants } from "./utils/constants"
 
 let app: FastifyInstance
 let authToken: string
-let payload: JWTPayload
+let payload: Session
 
-const createThread = async (data: CreateThreadSchema) => {
+const createThread = async (data: CreateThreadInput) => {
   return request(app.server).post("/api/threads").set("Authorization", `Bearer ${authToken}`).send(data)
 }
 
-const getThread = async (threadId: string) => {
+const getThread = async (threadId: number) => {
   return request(app.server).get(`/api/threads/${threadId}`).set("Authorization", `Bearer ${authToken}`)
 }
 
-const updateThread = async (threadId: string, updateData: Partial<CreateThreadSchema>) => {
+const updateThread = async (threadId: number, updateData: Partial<CreateThreadInput>) => {
   return request(app.server)
     .patch(`/api/threads/${threadId}`)
     .set("Authorization", `Bearer ${authToken}`)
     .send(updateData)
 }
 
-const deleteThread = async (threadId: string) => {
+const deleteThread = async (threadId: number) => {
   return request(app.server).delete(`/api/threads/${threadId}`).set("Authorization", `Bearer ${authToken}`)
 }
 
 describe("Thread Integration Tests", () => {
   beforeAll(async () => {
     app = await createServer()
-    const response = await getAuthToken(app)
+    const response = await createUserAndGetAuthToken(app)
     authToken = response.token
     payload = response.payload
   })
@@ -42,7 +43,7 @@ describe("Thread Integration Tests", () => {
   })
 
   it("should create a new thread", async () => {
-    const data: CreateThreadSchema = {
+    const data: CreateThreadInput = {
       title: "Integration Title",
       content: "Integration Content",
       authorId: payload.id,
@@ -55,7 +56,7 @@ describe("Thread Integration Tests", () => {
   })
 
   it("should get a thread by id", async () => {
-    const data: CreateThreadSchema = {
+    const data: CreateThreadInput = {
       title: "Integration Title",
       content: "Integration Content",
       authorId: payload.id,
@@ -71,7 +72,7 @@ describe("Thread Integration Tests", () => {
   })
 
   it("should update a thread", async () => {
-    const data: CreateThreadSchema = {
+    const data: CreateThreadInput = {
       title: "Integration Title",
       content: "Integration Content",
       authorId: payload.id,
@@ -91,7 +92,7 @@ describe("Thread Integration Tests", () => {
   })
 
   it("should delete a thread", async () => {
-    const data: CreateThreadSchema = {
+    const data: CreateThreadInput = {
       title: "Integration Title",
       content: "Integration Content",
       authorId: payload.id,
@@ -119,7 +120,7 @@ describe("Thread Integration Tests", () => {
     const secondUserResponse = await createUserAndGetAuthToken(app, {
       email: `another-${new Date().getTime()}@email.com`,
       name: "Another User",
-      password: "password123",
+      password: constants.user.password,
     })
 
     const secondUserToken = secondUserResponse.token
@@ -136,5 +137,51 @@ describe("Thread Integration Tests", () => {
       .set("Authorization", `Bearer ${secondUserToken}`)
 
     expect(deleteResponse.status).toBe(403)
+  })
+
+  it("should be possible to update another user's thread as an ADMIN", async () => {
+    const data = {
+      title: "Thread Title",
+      content: "Thread Content",
+      authorId: payload.id,
+    }
+
+    const createResponse = await createThread(data)
+    const threadId = createResponse.body.id
+
+    const adminUserToken = (await getAuthTokenAsAdmin(app)).token
+
+    const updateResponse = await request(app.server)
+      .patch(`/api/threads/${threadId}`)
+      .set("Authorization", `Bearer ${adminUserToken}`)
+      .send({ title: "Admin Update" })
+
+    expect(updateResponse.status).toBe(200)
+    expect(updateResponse.body).toHaveProperty("title", "Admin Update")
+  })
+
+  it("should fail to create a thread with empty title", async () => {
+    const data: CreateThreadInput = { title: "", content: "Valid Content", authorId: payload.id }
+    const response = await createThread(data)
+
+    expect(response.status).toBe(400)
+  })
+
+  it("should return 404 for a non-existent thread", async () => {
+    const response = await getThread(0)
+
+    expect(response.status).toBe(404)
+  })
+
+  it("should partially update a thread", async () => {
+    const data: CreateThreadInput = { title: "Original Title", content: "Original Content", authorId: payload.id }
+    const createResponse = await createThread(data)
+    const threadId = createResponse.body.id
+
+    const updateResponse = await updateThread(threadId, { title: "Updated Title" })
+
+    expect(updateResponse.status).toBe(200)
+    expect(updateResponse.body.title).toBe("Updated Title")
+    expect(updateResponse.body.content).toBe("Original Content")
   })
 })

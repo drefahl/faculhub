@@ -1,4 +1,5 @@
 import { InvalidCredentialsError } from "@/errors/InvalidCredentialsError"
+import { NotFoundError } from "@/errors/NotFoundError"
 import { comparePassword, hashPassword } from "@/lib/utils/crypto.utils"
 import type { UserRepository } from "@/repositories/user.repository"
 import {
@@ -29,7 +30,7 @@ export class UserService {
     const hashedPassword = await hashPassword(userData.password)
     userData.password = hashedPassword
 
-    return this.userRepository.createUser(userData)
+    return this.userRepository.createUser({ ...userData, role: "USER" })
   }
 
   async createUserWithGoogle(data: CreateUserWithGoogleInput): Promise<user> {
@@ -40,7 +41,7 @@ export class UserService {
       throw new Error("Email already exists")
     }
 
-    return this.userRepository.createUser(userData)
+    return this.userRepository.createUser({ ...userData, role: "USER" })
   }
 
   async getUserById(userId: number): Promise<user | null> {
@@ -56,7 +57,7 @@ export class UserService {
 
     const user = await this.userRepository.getUserById(userId)
     if (!user) {
-      throw new Error("User not found")
+      throw new NotFoundError("User not found")
     }
 
     const { currentPassword, newPassword, confirmPassword, ...baseUserData } = validatedData
@@ -75,12 +76,12 @@ export class UserService {
       }
     }
 
-    return this.userRepository.updateUser(userId, updateData)
+    return this.userRepository.updateUser(userId, { ...updateData, role: "USER" })
   }
 
   async updateUserProfileImage(userId: number, filename: string, mimeType: string, data: Buffer) {
     const user = await this.userRepository.getUserById(userId)
-    if (!user) throw new Error("User not found")
+    if (!user) throw new NotFoundError("User not found")
 
     if (user.profilePicId) {
       await this.fileService.deleteFile(user.profilePicId)
@@ -93,12 +94,12 @@ export class UserService {
 
   async deleteUserProfileImage(userId: number) {
     const user = await this.userRepository.getUserById(userId)
-    if (!user) throw new Error("User not found")
+    if (!user) throw new NotFoundError("User not found")
 
     if (!user.profilePicId) throw new Error("No profile image to delete")
 
     const file = await this.fileService.getFileById(user.profilePicId)
-    if (!file) throw new Error("File not found")
+    if (!file) throw new NotFoundError("File not found")
 
     await this.fileService.deleteFile(file.id)
 

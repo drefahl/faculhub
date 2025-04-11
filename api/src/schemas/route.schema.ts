@@ -1,3 +1,3 @@
 import z from "zod"
 
-export const idParametersSchema = z.object({ id: z.coerce.number() })
+export const routeIdParametersSchema = z.object({ id: z.coerce.number() })

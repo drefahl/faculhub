@@ -1,3 +1,4 @@
+import { NotFoundError } from "@/errors/NotFoundError"
 import { Prisma } from "@prisma/client"
 import type { FastifyError, FastifyReply, FastifyRequest } from "fastify"
 import { hasZodFastifySchemaValidationErrors, isResponseSerializationError } from "fastify-type-provider-zod"
@@ -52,6 +53,19 @@ export function errorHandler(err: FastifyError, request: FastifyRequest, reply: 
       statusCode: 400,
       details: {
         issues: err.validation,
+        method: request.method,
+        path: request.url,
+      },
+    })
+  }
+
+  if (err instanceof NotFoundError) {
+    return reply.code(404).send({
+      error: "Not Found",
+      message: err.message,
+      statusCode: 404,
+      details: {
+        issues: err.cause,
         method: request.method,
         path: request.url,
       },

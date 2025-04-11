@@ -1,37 +1,50 @@
-import { APP_CONSTANTS } from "@/constants"
 import type { CreateUserInput } from "@/schemas/user.schema"
-import type { JWTPayload } from "@/types/fastify-jwt"
+import type { Session } from "@/types/fastify-jwt"
 import type { FastifyInstance } from "fastify"
 import { decodeJwt } from "jose"
 import request from "supertest"
+import { constants } from "./constants"
+import { createUser, getRandomUserData } from "./user.util"
 
 export async function getAuthToken(app: FastifyInstance) {
-  const loginRes = await request(app.server).post("/api/login").send({
-    email: APP_CONSTANTS.DEFAULT_USER.email,
-    password: APP_CONSTANTS.DEFAULT_USER.password,
-  })
+  const { email, password } = getRandomUserData()
 
+  const loginRes = await request(app.server).post("/api/login").send({ email, password })
   if (loginRes.status !== 200) throw new Error("Error logging in user")
 
   const token = extractAuthTokenFromHeaders(loginRes.headers)
 
   return {
     token,
-    payload: decodeJwt(token) as JWTPayload,
+    payload: decodeJwt(token) as Session,
   }
 }
 
-export async function createUserAndGetAuthToken(app: FastifyInstance, userData: CreateUserInput) {
-  const registerRes = await request(app.server).post("/api/users").send(userData)
-  if (registerRes.status !== 201) throw new Error("Error registering user")
+export async function createUserAndGetAuthToken(app: FastifyInstance, userData: CreateUserInput = getRandomUserData()) {
+  await createUser(app, userData)
 
   const loginRes = await request(app.server).post("/api/login").send(userData)
   if (loginRes.status !== 200) throw new Error("Error logging in user")
+
   const token = extractAuthTokenFromHeaders(loginRes.headers)
 
   return {
     token,
-    payload: decodeJwt(token) as JWTPayload,
+    payload: decodeJwt(token) as Session,
+  }
+}
+
+export async function getAuthTokenAsAdmin(app: FastifyInstance) {
+  const loginRes = await request(app.server)
+    .post("/api/login")
+    .send({ email: constants.admin.email, password: constants.admin.password })
+
+  if (loginRes.status !== 200) throw new Error("Error logging in user as admin")
+  const token = extractAuthTokenFromHeaders(loginRes.headers)
+
+  return {
+    token,
+    payload: decodeJwt(token) as Session,
   }
 }
 

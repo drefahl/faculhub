@@ -2,8 +2,9 @@ import { env } from "@/config/env.config"
 import { AuthController } from "@/controllers/auth.controller"
 import { createAuthService } from "@/factories/serviceFactory"
 import { createCookieOptions } from "@/lib/utils/cookie.utils"
-import { RequestBodyAuthSchema, ResponseBodyAuthSchema } from "@/schemas/auth.schema"
+
 import type { FastifyInstance } from "fastify"
+import z from "zod"
 
 const authService = createAuthService()
 const authController = new AuthController(authService)
@@ -15,8 +16,11 @@ export async function authPublicRoutes(app: FastifyInstance) {
       schema: {
         tags: ["Auth"],
         operationId: "login",
-        body: RequestBodyAuthSchema,
-        response: ResponseBodyAuthSchema,
+        body: z.object({ email: z.string(), password: z.string() }),
+        response: {
+          200: z.object({ message: z.literal("Authenticated successfully") }),
+          401: z.object({ message: z.string() }),
+        },
       },
     },
     authController.login.bind(authController),
@@ -27,7 +31,10 @@ export async function authPublicRoutes(app: FastifyInstance) {
     {
       schema: {
         tags: ["Auth"],
-        response: ResponseBodyAuthSchema,
+        response: {
+          200: z.object({ message: z.literal("Authenticated successfully") }),
+          401: z.object({ message: z.string() }),
+        },
       },
     },
     async (request, reply) => {
@@ -47,7 +54,10 @@ export async function authRoutes(app: FastifyInstance) {
       schema: {
         tags: ["Auth"],
         operationId: "refresh",
-        response: ResponseBodyAuthSchema,
+        response: {
+          200: z.object({ message: z.literal("Authenticated successfully") }),
+          401: z.object({ message: z.string() }),
+        },
       },
     },
     authController.refresh.bind(authController),

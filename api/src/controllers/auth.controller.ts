@@ -1,13 +1,13 @@
 import { InvalidCredentialsError } from "@/errors/InvalidCredentialsError"
 import { createCookieOptions } from "@/lib/utils/cookie.utils"
-import type { RequestBodyAuth } from "@/schemas/auth.schema"
+import type { AuthInput } from "@/schemas/auth.schema"
 import type { AuthService } from "@/services/auth.service"
 import type { FastifyReply, FastifyRequest } from "fastify"
 
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  async login(request: FastifyRequest<{ Body: RequestBodyAuth }>, reply: FastifyReply) {
+  async login(request: FastifyRequest<{ Body: AuthInput }>, reply: FastifyReply) {
     try {
       const { email, password } = request.body
 

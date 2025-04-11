@@ -6,12 +6,13 @@ const secret = new TextEncoder().encode(env.JWT_SECRET)
 
 export const tokenSchema = z
   .object({
-    id: z.number(),
-    email: z.string().email(),
+    id: z.number().int().positive(),
+    email: z.string().email({ message: "Invalid email" }),
     name: z.string().nullable(),
-    picture: z.string().nullable(),
+    picture: z.string().url({ message: "Invalid URL" }).nullable(),
+    role: z.enum(["USER", "ADMIN"]),
     providers: z.array(z.enum(["google", "credentials"])),
-    exp: z.number().optional(),
+    exp: z.number().int().positive().optional(),
   })
   .strict()
 

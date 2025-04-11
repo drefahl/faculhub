@@ -1,11 +1,12 @@
-import type { CreateCommentSchema, UpdateCommentSchema } from "@/schemas/comment.schema"
+import { isUserAdmin } from "@/lib/utils/user.utls"
+import type { CreateCommentInput, UpdateCommentInput } from "@/schemas/comment.schema"
 import type { CommentService } from "@/services/comment.service"
 import type { FastifyReply, FastifyRequest } from "fastify"
 
 export class CommentController {
   constructor(private readonly commentService: CommentService) {}
 
-  async create(request: FastifyRequest<{ Body: CreateCommentSchema }>, reply: FastifyReply) {
+  async create(request: FastifyRequest<{ Body: CreateCommentInput }>, reply: FastifyReply) {
     const comment = await this.commentService.create(request.body)
 
     return reply.code(201).send(comment)
@@ -18,9 +19,9 @@ export class CommentController {
     return reply.send(comment)
   }
 
-  async update(request: FastifyRequest<{ Params: { id: number }; Body: UpdateCommentSchema }>, reply: FastifyReply) {
+  async update(request: FastifyRequest<{ Params: { id: number }; Body: UpdateCommentInput }>, reply: FastifyReply) {
     const comment = await this.commentService.getById(+request.params.id)
-    if (!comment || comment.authorId !== request.user.id) {
+    if ((!comment || comment.authorId !== request.user.id) && !isUserAdmin(request.user)) {
       return reply.code(403).send({ message: "Unauthorized" })
     }
 
@@ -31,7 +32,7 @@ export class CommentController {
 
   async delete(request: FastifyRequest<{ Params: { id: number } }>, reply: FastifyReply) {
     const comment = await this.commentService.getById(+request.params.id)
-    if (!comment || comment.authorId !== request.user.id) {
+    if ((!comment || comment.authorId !== request.user.id) && !isUserAdmin(request.user)) {
       return reply.code(403).send({ message: "Unauthorized" })
     }
 

@@ -1,3 +1,4 @@
+import { NotFoundError } from "@/errors/NotFoundError"
 import type { FileRepository } from "@/repositories/file.repository"
 import type { file as FileModel } from "@prisma/client"
 
@@ -13,6 +14,9 @@ export class FileService {
   }
 
   async deleteFile(id: string): Promise<FileModel> {
+    const file = await this.fileRepository.getFileById(id)
+    if (!file) throw new NotFoundError("File not found")
+
     return this.fileRepository.deleteFile(id)
   }
 }

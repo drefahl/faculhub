@@ -15,9 +15,9 @@ export function createMockServices() {
   const userService = new UserService(userRepository, fileService)
   const authService = new AuthService(userService, fileService)
   const threadRepository = createThreadRepositoryMock()
-  const threadService = new ThreadService(threadRepository)
+  const threadService = new ThreadService(threadRepository, userRepository)
   const commentRepository = createCommentRepositoryMock()
-  const commentService = new CommentService(commentRepository)
+  const commentService = new CommentService(commentRepository, threadRepository)
 
   return {
     fileRepository,

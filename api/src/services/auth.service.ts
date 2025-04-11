@@ -4,6 +4,7 @@ import { comparePassword } from "@/lib/utils/crypto.utils"
 import { getFileBytesFromUrl } from "@/lib/utils/file.utils"
 import { createToken } from "@/lib/utils/jwt.utils"
 import { getProfilePictureUrl, getUserProviders } from "@/lib/utils/user.utls"
+import { authSchema } from "@/schemas/auth.schema"
 import type { Token } from "@fastify/oauth2"
 import { OAuth2Client } from "google-auth-library"
 import type { FileService } from "./file.service"
@@ -20,6 +21,8 @@ export class AuthService {
   }
 
   async login(email: string, password: string) {
+    authSchema.parse({ email, password })
+
     const user = await this.userService.getUserByEmail(email)
     if (!user || !user.password) {
       throw new InvalidCredentialsError("Invalid credentials")
@@ -36,6 +39,7 @@ export class AuthService {
       name: user.name,
       picture: getProfilePictureUrl(user.profilePicId),
       providers: getUserProviders(user),
+      role: user.role,
     })
 
     return jwtToken
@@ -80,19 +84,13 @@ export class AuthService {
         email,
         googleId: sub,
         name,
-        profilePic: fileCreationResult
-          ? {
-              connect: { id: fileCreationResult.id },
-            }
-          : undefined,
+        profilePicId: fileCreationResult ? fileCreationResult.id : null,
       })
     } else {
       if (fileCreationResult) {
         user = await this.userService.updateUser(user.id, {
           name,
-          profilePic: {
-            connect: { id: fileCreationResult.id },
-          },
+          profilePicId: fileCreationResult.id,
         })
       } else {
         user = await this.userService.updateUser(user.id, { name })
@@ -105,6 +103,7 @@ export class AuthService {
       name: user.name,
       picture: getProfilePictureUrl(user.profilePicId),
       providers: getUserProviders(user),
+      role: user.role,
     })
 
     return jwtToken
@@ -132,6 +131,7 @@ export class AuthService {
       name: user.name,
       picture: getProfilePictureUrl(user.profilePicId),
       providers: getUserProviders(user),
+      role: user.role,
     })
 
     return jwtToken

@@ -1,5 +1,5 @@
-import { healthCheckSchema } from "@/schemas/health.schema"
 import type { FastifyInstance } from "fastify"
+import z from "zod"
 import { authPublicRoutes } from "./auth.route"
 import { filePublicRoutes } from "./file.route"
 import { userPublicRoutes } from "./user.route"
@@ -18,7 +18,11 @@ export async function publicRoutes(app: FastifyInstance) {
         tags: ["Health"],
         operationId: "health",
         response: {
-          200: healthCheckSchema,
+          200: z.object({
+            status: z.literal("ok"),
+            time: z.string(),
+            uptime: z.number(),
+          }),
         },
       },
     },

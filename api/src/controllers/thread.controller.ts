@@ -1,11 +1,12 @@
+import { isUserAdmin } from "@/lib/utils/user.utls"
 import type { ThreadService } from "@/services/thread.service"
 import type { FastifyReply, FastifyRequest } from "fastify"
-import type { CreateThreadSchema, UpdateThreadSchema } from "../schemas/thread.schema"
+import type { CreateThreadInput, UpdateThreadInput } from "../schemas/thread.schema"
 
 export class ThreadController {
   constructor(private readonly threadService: ThreadService) {}
 
-  async create(request: FastifyRequest<{ Body: CreateThreadSchema }>, reply: FastifyReply) {
+  async create(request: FastifyRequest<{ Body: CreateThreadInput }>, reply: FastifyReply) {
     const thread = await this.threadService.create(request.body)
 
     return reply.code(201).send(thread)
@@ -18,9 +19,9 @@ export class ThreadController {
     return reply.send(thread)
   }
 
-  async update(request: FastifyRequest<{ Params: { id: number }; Body: UpdateThreadSchema }>, reply: FastifyReply) {
+  async update(request: FastifyRequest<{ Params: { id: number }; Body: UpdateThreadInput }>, reply: FastifyReply) {
     const thread = await this.threadService.getById(+request.params.id)
-    if (!thread || thread.authorId !== request.user.id) {
+    if ((!thread || thread.authorId !== request.user.id) && !isUserAdmin(request.user)) {
       return reply.code(403).send({ message: "Unauthorized" })
     }
 
@@ -31,7 +32,7 @@ export class ThreadController {
 
   async delete(request: FastifyRequest<{ Params: { id: number } }>, reply: FastifyReply) {
     const thread = await this.threadService.getById(+request.params.id)
-    if (!thread || thread.authorId !== request.user.id) {
+    if ((!thread || thread.authorId !== request.user.id) && !isUserAdmin(request.user)) {
       return reply.code(403).send({ message: "Unauthorized" })
     }
 

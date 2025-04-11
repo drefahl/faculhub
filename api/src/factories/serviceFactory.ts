@@ -21,9 +21,9 @@ export function createAuthService() {
 }
 
 export function createThreadService() {
-  return new ThreadService(new ThreadRepository())
+  return new ThreadService(new ThreadRepository(), new UserRepository())
 }
 
 export function createCommentService() {
-  return new CommentService(new CommentRepository())
+  return new CommentService(new CommentRepository(), new ThreadRepository())
 }

@@ -1,8 +1,9 @@
 import { InvalidCredentialsError } from "@/errors/InvalidCredentialsError"
 import { tokenSchema, verifyToken } from "@/lib/utils/jwt.utils"
 import { beforeEach, describe, expect, it, vi } from "vitest"
-import { mockConstants } from "../mocks/constants"
-import { createMockServices } from "../mocks/factories"
+import { ZodError } from "zod"
+import { mockConstants } from "./mocks/constants"
+import { createMockServices } from "./mocks/factories"
 
 const {
   user: { email, password },
@@ -27,7 +28,39 @@ describe("Credentials Login", () => {
   })
 
   it("should throw an error with invalid credentials", async () => {
-    await expect(authService.login(email, "invalid-password")).rejects.toThrow(InvalidCredentialsError)
+    await expect(authService.login(email, "wR0ngP@assWord")).rejects.toThrow(InvalidCredentialsError)
+  })
+
+  it("should throw an error with empty email", async () => {
+    await expect(authService.login("", password)).rejects.toThrow(ZodError)
+  })
+
+  it("should throw an error with short password", async () => {
+    await expect(authService.login(email, "123")).rejects.toThrow(ZodError)
+  })
+
+  it("should throw an error with empty password", async () => {
+    await expect(authService.login(email, "")).rejects.toThrow(ZodError)
+  })
+
+  it("should throw an error with password containing only numbers", async () => {
+    await expect(authService.login(email, "1234567890")).rejects.toThrow(ZodError)
+  })
+
+  it("should throw an error with password containing only letters", async () => {
+    await expect(authService.login(email, "abcdefghij")).rejects.toThrow(ZodError)
+  })
+
+  it("should throw an error with password containing only special characters", async () => {
+    await expect(authService.login(email, "!@#$%^&*()")).rejects.toThrow(ZodError)
+  })
+
+  it("should throw an error with password containing only spaces", async () => {
+    await expect(authService.login(email, "          ")).rejects.toThrow(ZodError)
+  })
+
+  it("should throw an error with password containing only letters and numbers", async () => {
+    await expect(authService.login(email, "abcdefghij1234567890")).rejects.toThrow(ZodError)
   })
 })
 

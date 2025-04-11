@@ -6,7 +6,7 @@ export const createThreadSchema = z.object({
   authorId: z.coerce.number().int().positive(),
 })
 
-export type CreateThreadSchema = z.infer<typeof createThreadSchema>
+export type CreateThreadInput = z.infer<typeof createThreadSchema>
 
 export const updateThreadSchema = z
   .object({ title: z.string().optional(), content: z.string().optional() })
@@ -18,4 +18,4 @@ export const updateThreadSchema = z
     { message: "At least one field is required" },
   )
 
-export type UpdateThreadSchema = z.infer<typeof updateThreadSchema>
+export type UpdateThreadInput = z.infer<typeof updateThreadSchema>

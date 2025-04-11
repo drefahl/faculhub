@@ -1,10 +1,10 @@
+import { NotFoundError } from "@/errors/NotFoundError"
 import { comparePassword } from "@/lib/utils/crypto.utils"
-import type { UpdateUserInput } from "@/schemas/user.schema"
-import type { Prisma } from "@prisma/client"
+import type { CreateUserInput, UpdateUserInput } from "@/schemas/user.schema"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 import { ZodError } from "zod"
-import { mockConstants } from "../mocks/constants"
-import { createMockServices } from "../mocks/factories"
+import { mockConstants } from "./mocks/constants"
+import { createMockServices } from "./mocks/factories"
 
 const {
   user: { id: userId, email, password },
@@ -18,10 +18,10 @@ describe("User Unit Tests", () => {
   })
 
   it("should create a user with valid data", async () => {
-    const validUserData: Prisma.userCreateInput = {
+    const validUserData: CreateUserInput = {
       email: "another@example.com",
       name: "Test User",
-      password,
+      password: password,
     }
 
     const user = await userService.createUser(validUserData)
@@ -31,10 +31,10 @@ describe("User Unit Tests", () => {
   })
 
   it("should throw validation error when email is invalid", async () => {
-    const invalidUserData = {
+    const invalidUserData: CreateUserInput = {
       email: "invalid-email",
       name: "Test User",
-      password,
+      password: password,
     }
 
     await expect(userService.createUser(invalidUserData)).rejects.toThrow(ZodError)
@@ -69,8 +69,8 @@ describe("User Unit Tests", () => {
     const updatedUserData: UpdateUserInput = {
       email,
       currentPassword: password,
-      newPassword: "new-password",
-      confirmPassword: "new-password",
+      newPassword: "N3wP@ssword",
+      confirmPassword: "N3wP@ssword",
     }
 
     if (!updatedUserData.newPassword) {
@@ -87,9 +87,9 @@ describe("User Unit Tests", () => {
   it("should throw error when current password is incorrect", async () => {
     const updatedUserData: UpdateUserInput = {
       email,
-      currentPassword: "wrong-password",
-      newPassword: "new-password",
-      confirmPassword: "new-password",
+      currentPassword: "W0r0ngP@ssword",
+      newPassword: "N3wP@ssword",
+      confirmPassword: "N3wP@ssword",
     }
 
     await expect(userService.updateUser(userId, updatedUserData)).rejects.toThrow("Invalid current password")
@@ -99,15 +99,15 @@ describe("User Unit Tests", () => {
     const updatedUserData: UpdateUserInput = {
       email,
       currentPassword: password,
-      newPassword: "new-password",
-      confirmPassword: "different-password",
+      newPassword: "N3wP@ssword",
+      confirmPassword: "DifferentP@ssword",
     }
 
     await expect(userService.updateUser(userId, updatedUserData)).rejects.toThrow("Passwords do not match")
   })
 
   it("should not change user password when password is not provided", async () => {
-    const updatedUserData = {
+    const updatedUserData: UpdateUserInput = {
       email,
       name: "Updated User",
     }
@@ -140,6 +140,33 @@ describe("User Unit Tests", () => {
   it("should throw error when user is not found", async () => {
     const { filename, mimeType, data } = mockConstants.file
 
-    await expect(userService.updateUserProfileImage(0, filename, mimeType, data)).rejects.toThrow("User not found")
+    await expect(userService.updateUserProfileImage(0, filename, mimeType, data)).rejects.toThrow(NotFoundError)
+  })
+
+  it("should return an error when trying to create a user with a role other than USER", async () => {
+    const userData: CreateUserInput & { role: "ADMIN" | "USER" } = {
+      email: mockConstants.user.email,
+      password: mockConstants.user.password,
+      name: mockConstants.user.name,
+      role: "ADMIN",
+    }
+
+    await expect(userService.createUser(userData)).rejects.toThrow(ZodError)
+  })
+
+  it("should throw an error when updating with a very long name", async () => {
+    const updatedUserData: UpdateUserInput = { email, name: "a".repeat(256) }
+
+    await expect(userService.updateUser(userId, updatedUserData)).rejects.toThrow(ZodError)
+  })
+
+  it("should update only the name without affecting other fields", async () => {
+    const userBeforeUpdate = await userService.getUserById(userId)
+    const updatedUserData = { name: "New Name" }
+
+    const user = await userService.updateUser(userId, updatedUserData)
+
+    expect(user.name).toBe("New Name")
+    expect(user.email).toBe(userBeforeUpdate?.email)
   })
 })
