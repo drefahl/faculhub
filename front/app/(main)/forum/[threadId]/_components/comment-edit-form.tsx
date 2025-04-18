@@ -42,7 +42,7 @@ export function CommentEditForm({ comment, onCancel }: CommentEditFormProps) {
 
   const onSubmit = async ({ content }: UpdateCommentFormValues) => {
     try {
-      const response = await updateComment(comment.id, { content })
+      await updateComment(comment.id, { content })
 
       onCancel()
     } catch (error) {

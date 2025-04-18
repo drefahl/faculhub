@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Separator } from "@/components/ui/separator"
-import type { GetThreadById200 } from "@/lib/api/generated.schemas"
+import type { GetThreadById200, GetThreadById200CommentsItem } from "@/lib/api/generated.schemas"
 import { getProfilePicUrl, getUserInitials } from "@/lib/utils/user.utils"
 import { CommentForm } from "./comment-form"
 import { CommentList } from "./comment-list"
@@ -45,13 +45,58 @@ export function ThreadDetail({ thread: initialThread }: ThreadDetailProps) {
       setThread(null)
     }
 
+    const handleCreateComment = (comment: GetThreadById200CommentsItem) => {
+      setThread((prev) => {
+        if (!prev) return null
+
+        return {
+          ...prev,
+          comments: [...(prev.comments || []), comment],
+        }
+      })
+    }
+
+    const handleUpdateComment = (updatedComment: GetThreadById200CommentsItem) => {
+      setThread((prev) => {
+        if (!prev) return null
+
+        const updatedComments = prev.comments?.map((comment) =>
+          comment.id === updatedComment.id ? { ...comment, ...updatedComment } : comment,
+        )
+
+        return {
+          ...prev,
+          comments: updatedComments,
+        }
+      })
+    }
+
+    const handleDeleteComment = (deletedComment: GetThreadById200CommentsItem) => {
+      setThread((prev) => {
+        if (!prev) return null
+
+        const updatedComments = prev.comments?.filter((comment) => comment.id !== deletedComment.id)
+
+        return {
+          ...prev,
+          comments: updatedComments,
+        }
+      })
+    }
+
     socket.on("thread:update", handleUpdate)
     socket.on("thread:delete", handleDelete)
+    socket.on("comment:create", handleCreateComment)
+    socket.on("comment:update", handleUpdateComment)
+    socket.on("comment:delete", handleDeleteComment)
 
     return () => {
       socket.emit("leave:thread", thread.id)
       socket.off("thread:update", handleUpdate)
       socket.off("thread:delete", handleDelete)
+      socket.off("comment:create", handleCreateComment)
+      socket.off("comment:update", handleUpdateComment)
+      socket.off("comment:delete", handleDeleteComment)
     }
   }, [socket, isConnected, thread?.id])
 
@@ -151,11 +196,29 @@ export function ThreadDetail({ thread: initialThread }: ThreadDetailProps) {
       </Card>
 
       <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <h2 className="text-xl font-semibold">Comentários ({thread.comments?.length || 0})</h2>
-        </div>
+        {session ? (
+          <>
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-semibold">Comentários ({thread.comments?.length || 0})</h2>
+            </div>
 
-        <CommentForm threadId={thread.id} session={session} />
+            <CommentForm threadId={thread.id} session={session} />
+          </>
+        ) : (
+          <Card className="bg-muted/50">
+            <CardContent className="flex flex-col items-center justify-center p-6 text-center">
+              <p className="mb-4 text-muted-foreground">Você precisa estar logado para adicionar um comentário.</p>
+              <div className="flex gap-2">
+                <Button variant="outline" asChild>
+                  <a href="/login">Entrar</a>
+                </Button>
+                <Button asChild>
+                  <a href="/register">Registrar</a>
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         <Separator />
 

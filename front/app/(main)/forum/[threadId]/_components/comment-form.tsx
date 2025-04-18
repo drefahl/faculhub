@@ -36,7 +36,9 @@ export function CommentForm({ threadId, session }: CommentFormProps) {
 
   const onSubmit = async ({ content }: CommentFormValues) => {
     try {
-      const response = await createComment({ threadId, content, authorId: currentUserId })
+      await createComment({ threadId, content, authorId: currentUserId })
+
+      form.reset()
     } catch (error) {
       console.error("Failed to create comment:", error)
     }

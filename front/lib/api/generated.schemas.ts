@@ -61,6 +61,7 @@ export type UpdateCommentBody = {
 export type ListThreadsParams = {
   page: number
   take: number
+  search?: string
 }
 
 export type ListThreads200ItemCreatedAt = string | string
