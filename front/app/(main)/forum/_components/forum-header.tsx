@@ -2,14 +2,12 @@
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Plus, Search } from "lucide-react"
 import Link from "next/link"
 import { useState } from "react"
 
 export function ForumHeader() {
   const [searchQuery, setSearchQuery] = useState("")
-  const [category, setCategory] = useState("all")
 
   return (
     <div className="mb-8 space-y-4">
@@ -19,7 +17,7 @@ export function ForumHeader() {
           <p className="text-muted-foreground">Participe de discussões com outros estudantes</p>
         </div>
         <Button asChild>
-          <Link href="/forum/novo">
+          <Link href="/forum/new">
             <Plus className="mr-2 h-4 w-4" />
             Nova Discussão
           </Link>
@@ -36,18 +34,6 @@ export function ForumHeader() {
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
-        <Select value={category} onValueChange={setCategory}>
-          <SelectTrigger className="w-full md:w-[180px]">
-            <SelectValue placeholder="Categoria" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">Todas Categorias</SelectItem>
-            <SelectItem value="geral">Geral</SelectItem>
-            <SelectItem value="academico">Acadêmico</SelectItem>
-            <SelectItem value="eventos">Eventos</SelectItem>
-            <SelectItem value="duvidas">Dúvidas</SelectItem>
-          </SelectContent>
-        </Select>
       </div>
     </div>
   )

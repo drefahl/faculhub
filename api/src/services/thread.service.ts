@@ -44,4 +44,13 @@ export class ThreadService {
 
     return this.threadRepository.deleteThread(id)
   }
+
+  async list({ page, take }: { page: number; take: number }) {
+    if (page < 1) throw new Error("Page must be greater than 0")
+    if (take < 1) throw new Error("Take must be greater than 0")
+
+    const skip = (page - 1) * take
+
+    return this.threadRepository.listThreads({ take, skip })
+  }
 }

@@ -1,10 +1,13 @@
 import { isUserAdmin } from "@/lib/utils/user.utls"
 import type { CreateCommentInput, UpdateCommentInput } from "@/schemas/comment.schema"
 import type { CommentService } from "@/services/comment.service"
-import type { FastifyReply, FastifyRequest } from "fastify"
+import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify"
 
 export class CommentController {
-  constructor(private readonly commentService: CommentService) {}
+  constructor(
+    private readonly commentService: CommentService,
+    private readonly fastify: FastifyInstance,
+  ) {}
 
   async create(request: FastifyRequest<{ Body: CreateCommentInput }>, reply: FastifyReply) {
     const comment = await this.commentService.create(request.body)

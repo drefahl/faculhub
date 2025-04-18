@@ -1,4 +1,5 @@
 import { createServer } from "@/app"
+import { threadResponseArraySchema } from "@/routes/thread.route"
 import type { CreateThreadInput } from "@/schemas/thread.schema"
 import type { Session } from "@/types/fastify-jwt"
 import type { FastifyInstance } from "fastify"
@@ -183,5 +184,21 @@ describe("Thread Integration Tests", () => {
     expect(updateResponse.status).toBe(200)
     expect(updateResponse.body.title).toBe("Updated Title")
     expect(updateResponse.body.content).toBe("Original Content")
+  })
+
+  it("should list threads with pagination", async () => {
+    const data: CreateThreadInput = { title: "Title", content: "Content", authorId: payload.id }
+
+    await createThread(data)
+    await createThread(data)
+    await createThread(data)
+
+    const response = await request(app.server)
+      .get("/api/threads?page=1&take=2")
+      .set("Authorization", `Bearer ${authToken}`)
+
+    expect(response.status).toBe(200)
+    expect(response.body.length).toBe(2)
+    expect(threadResponseArraySchema.safeParse(response.body).success).toBe(true)
   })
 })

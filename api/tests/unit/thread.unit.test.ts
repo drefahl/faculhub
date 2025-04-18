@@ -1,3 +1,4 @@
+import { threadResponseArraySchema } from "@/routes/thread.route"
 import type { ThreadService } from "@/services/thread.service"
 import { beforeEach, describe, expect, it } from "vitest"
 import { ZodError } from "zod"
@@ -71,8 +72,23 @@ describe("Thread Unit Tests", () => {
       threadService.create({
         title: "Valid Title",
         content: "Valid Content",
-        authorId: 999,
+        authorId: 999999,
       }),
     ).rejects.toThrow("Author not found")
+  })
+
+  it("should list threads with pagination", async () => {
+    const threads = await threadService.list({ page: 1, take: 10 })
+
+    expect(threads).toBeDefined()
+    expect(Array.isArray(threads)).toBe(true)
+    expect(threads.length).toBeLessThanOrEqual(10)
+    expect(threadResponseArraySchema.safeParse(threads).success).toBe(true)
+  })
+
+  it("should return empty array for invalid pagination", async () => {
+    await expect(threadService.list({ page: 0, take: 0 })).rejects.toThrow("Page must be greater than 0")
+    await expect(threadService.list({ page: 1, take: 0 })).rejects.toThrow("Take must be greater than 0")
+    await expect(threadService.list({ page: 0, take: 1 })).rejects.toThrow("Page must be greater than 0")
   })
 })

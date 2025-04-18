@@ -21,87 +21,87 @@ import type { ErrorType } from "../../utils/axios"
 
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1]
 
-export const getApiFilesId = (id: string, options?: SecondParameter<typeof makeRequest>, signal?: AbortSignal) => {
+export const getFileById = (id: string, options?: SecondParameter<typeof makeRequest>, signal?: AbortSignal) => {
   return makeRequest<void>({ url: `/api/files/${id}`, method: "GET", signal }, options)
 }
 
-export const getGetApiFilesIdQueryKey = (id: string) => {
+export const getGetFileByIdQueryKey = (id: string) => {
   return [`/api/files/${id}`] as const
 }
 
-export const getGetApiFilesIdQueryOptions = <
-  TData = Awaited<ReturnType<typeof getApiFilesId>>,
+export const getGetFileByIdQueryOptions = <
+  TData = Awaited<ReturnType<typeof getFileById>>,
   TError = ErrorType<unknown>,
 >(
   id: string,
   options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiFilesId>>, TError, TData>>
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getFileById>>, TError, TData>>
     request?: SecondParameter<typeof makeRequest>
   },
 ) => {
   const { query: queryOptions, request: requestOptions } = options ?? {}
 
-  const queryKey = queryOptions?.queryKey ?? getGetApiFilesIdQueryKey(id)
+  const queryKey = queryOptions?.queryKey ?? getGetFileByIdQueryKey(id)
 
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiFilesId>>> = ({ signal }) =>
-    getApiFilesId(id, requestOptions, signal)
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getFileById>>> = ({ signal }) =>
+    getFileById(id, requestOptions, signal)
 
   return { queryKey, queryFn, enabled: !!id, ...queryOptions } as UseQueryOptions<
-    Awaited<ReturnType<typeof getApiFilesId>>,
+    Awaited<ReturnType<typeof getFileById>>,
     TError,
     TData
   > & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
-export type GetApiFilesIdQueryResult = NonNullable<Awaited<ReturnType<typeof getApiFilesId>>>
-export type GetApiFilesIdQueryError = ErrorType<unknown>
+export type GetFileByIdQueryResult = NonNullable<Awaited<ReturnType<typeof getFileById>>>
+export type GetFileByIdQueryError = ErrorType<unknown>
 
-export function useGetApiFilesId<TData = Awaited<ReturnType<typeof getApiFilesId>>, TError = ErrorType<unknown>>(
+export function useGetFileById<TData = Awaited<ReturnType<typeof getFileById>>, TError = ErrorType<unknown>>(
   id: string,
   options: {
-    query: Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiFilesId>>, TError, TData>> &
+    query: Partial<UseQueryOptions<Awaited<ReturnType<typeof getFileById>>, TError, TData>> &
       Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getApiFilesId>>,
+          Awaited<ReturnType<typeof getFileById>>,
           TError,
-          Awaited<ReturnType<typeof getApiFilesId>>
+          Awaited<ReturnType<typeof getFileById>>
         >,
         "initialData"
       >
     request?: SecondParameter<typeof makeRequest>
   },
 ): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApiFilesId<TData = Awaited<ReturnType<typeof getApiFilesId>>, TError = ErrorType<unknown>>(
+export function useGetFileById<TData = Awaited<ReturnType<typeof getFileById>>, TError = ErrorType<unknown>>(
   id: string,
   options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiFilesId>>, TError, TData>> &
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getFileById>>, TError, TData>> &
       Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getApiFilesId>>,
+          Awaited<ReturnType<typeof getFileById>>,
           TError,
-          Awaited<ReturnType<typeof getApiFilesId>>
+          Awaited<ReturnType<typeof getFileById>>
         >,
         "initialData"
       >
     request?: SecondParameter<typeof makeRequest>
   },
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApiFilesId<TData = Awaited<ReturnType<typeof getApiFilesId>>, TError = ErrorType<unknown>>(
+export function useGetFileById<TData = Awaited<ReturnType<typeof getFileById>>, TError = ErrorType<unknown>>(
   id: string,
   options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiFilesId>>, TError, TData>>
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getFileById>>, TError, TData>>
     request?: SecondParameter<typeof makeRequest>
   },
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
-export function useGetApiFilesId<TData = Awaited<ReturnType<typeof getApiFilesId>>, TError = ErrorType<unknown>>(
+export function useGetFileById<TData = Awaited<ReturnType<typeof getFileById>>, TError = ErrorType<unknown>>(
   id: string,
   options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiFilesId>>, TError, TData>>
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getFileById>>, TError, TData>>
     request?: SecondParameter<typeof makeRequest>
   },
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-  const queryOptions = getGetApiFilesIdQueryOptions(id, options)
+  const queryOptions = getGetFileByIdQueryOptions(id, options)
 
   const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 

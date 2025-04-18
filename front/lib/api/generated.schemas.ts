@@ -53,12 +53,219 @@ export type GetApiLoginGoogleCallback401 = {
   message: string
 }
 
+export type UpdateCommentBody = {
+  /** @minLength 1 */
+  content: string
+}
+
+export type ListThreadsParams = {
+  page: number
+  take: number
+}
+
+export type ListThreads200ItemCreatedAt = string | string
+
+export type ListThreads200ItemUpdatedAt = string | string
+
+export type ListThreads200ItemAuthor = {
+  id: number
+  name: string
+  /** @nullable */
+  profilePicId: string | null
+}
+
+export type ListThreads200ItemCommentsItemCreatedAt = string | string
+
+export type ListThreads200ItemCommentsItemAuthor = {
+  id: number
+  name: string
+  /** @nullable */
+  profilePicId: string | null
+}
+
+export type ListThreads200ItemCommentsItem = {
+  id: number
+  content: string
+  createdAt: ListThreads200ItemCommentsItemCreatedAt
+  author: ListThreads200ItemCommentsItemAuthor
+}
+
+export type ListThreads200Item = {
+  id: number
+  title: string
+  content: string
+  createdAt: ListThreads200ItemCreatedAt
+  updatedAt: ListThreads200ItemUpdatedAt
+  author: ListThreads200ItemAuthor
+  comments: ListThreads200ItemCommentsItem[]
+}
+
+export type CreateThreadBody = {
+  /** @minLength 2 */
+  title: string
+  /** @minLength 2 */
+  content: string
+}
+
+export type CreateThread200CreatedAt = string | string
+
+export type CreateThread200UpdatedAt = string | string
+
+export type CreateThread200Author = {
+  id: number
+  name: string
+  /** @nullable */
+  profilePicId: string | null
+}
+
+export type CreateThread200CommentsItemCreatedAt = string | string
+
+export type CreateThread200CommentsItemAuthor = {
+  id: number
+  name: string
+  /** @nullable */
+  profilePicId: string | null
+}
+
+export type CreateThread200CommentsItem = {
+  id: number
+  content: string
+  createdAt: CreateThread200CommentsItemCreatedAt
+  author: CreateThread200CommentsItemAuthor
+}
+
+export type CreateThread200 = {
+  id: number
+  title: string
+  content: string
+  createdAt: CreateThread200CreatedAt
+  updatedAt: CreateThread200UpdatedAt
+  author: CreateThread200Author
+  comments: CreateThread200CommentsItem[]
+}
+
+export type GetThreadById200CreatedAt = string | string
+
+export type GetThreadById200UpdatedAt = string | string
+
+export type GetThreadById200Author = {
+  id: number
+  name: string
+  /** @nullable */
+  profilePicId: string | null
+}
+
+export type GetThreadById200CommentsItemCreatedAt = string | string
+
+export type GetThreadById200CommentsItemAuthor = {
+  id: number
+  name: string
+  /** @nullable */
+  profilePicId: string | null
+}
+
+export type GetThreadById200CommentsItem = {
+  id: number
+  content: string
+  createdAt: GetThreadById200CommentsItemCreatedAt
+  author: GetThreadById200CommentsItemAuthor
+}
+
+export type GetThreadById200 = {
+  id: number
+  title: string
+  content: string
+  createdAt: GetThreadById200CreatedAt
+  updatedAt: GetThreadById200UpdatedAt
+  author: GetThreadById200Author
+  comments: GetThreadById200CommentsItem[]
+}
+
+export type UpdateThreadBody = {
+  title?: string
+  content?: string
+}
+
+export type UpdateThread200CreatedAt = string | string
+
+export type UpdateThread200UpdatedAt = string | string
+
+export type UpdateThread200Author = {
+  id: number
+  name: string
+  /** @nullable */
+  profilePicId: string | null
+}
+
+export type UpdateThread200CommentsItemCreatedAt = string | string
+
+export type UpdateThread200CommentsItemAuthor = {
+  id: number
+  name: string
+  /** @nullable */
+  profilePicId: string | null
+}
+
+export type UpdateThread200CommentsItem = {
+  id: number
+  content: string
+  createdAt: UpdateThread200CommentsItemCreatedAt
+  author: UpdateThread200CommentsItemAuthor
+}
+
+export type UpdateThread200 = {
+  id: number
+  title: string
+  content: string
+  createdAt: UpdateThread200CreatedAt
+  updatedAt: UpdateThread200UpdatedAt
+  author: UpdateThread200Author
+  comments: UpdateThread200CommentsItem[]
+}
+
+export type DeleteThread200CreatedAt = string | string
+
+export type DeleteThread200UpdatedAt = string | string
+
+export type DeleteThread200Author = {
+  id: number
+  name: string
+  /** @nullable */
+  profilePicId: string | null
+}
+
+export type DeleteThread200CommentsItemCreatedAt = string | string
+
+export type DeleteThread200CommentsItemAuthor = {
+  id: number
+  name: string
+  /** @nullable */
+  profilePicId: string | null
+}
+
+export type DeleteThread200CommentsItem = {
+  id: number
+  content: string
+  createdAt: DeleteThread200CommentsItemCreatedAt
+  author: DeleteThread200CommentsItemAuthor
+}
+
+export type DeleteThread200 = {
+  id: number
+  title: string
+  content: string
+  createdAt: DeleteThread200CreatedAt
+  updatedAt: DeleteThread200UpdatedAt
+  author: DeleteThread200Author
+  comments: DeleteThread200CommentsItem[]
+}
+
 export type CreateUserBody = {
   email: string
   name: string
   /** @nullable */
-  picture?: string | null
-  /** @minLength 6 */
+  profilePicId?: string | null
+  /** @minLength 8 */
   password: string
 }
 
@@ -71,7 +278,7 @@ export type CreateUser201 = {
   /** @nullable */
   name: string | null
   /** @nullable */
-  picture?: string | null
+  profilePicId?: string | null
 } | null
 
 export type Refresh200Message = (typeof Refresh200Message)[keyof typeof Refresh200Message]
@@ -98,18 +305,20 @@ export type GetUserProfile200 = {
   /** @nullable */
   name: string | null
   /** @nullable */
-  picture?: string | null
+  profilePicId?: string | null
 } | null
 
 export type UpdateUserProfileBody = {
+  /** @maxLength 255 */
   name?: string
   email?: string
   /** @nullable */
-  picture?: string | null
+  profilePicId?: string | null
+  /** @minLength 8 */
   currentPassword?: string
-  /** @minLength 6 */
+  /** @minLength 8 */
   newPassword?: string
-  /** @minLength 6 */
+  /** @minLength 8 */
   confirmPassword?: string
 }
 
@@ -122,7 +331,7 @@ export type UpdateUserProfile200 = {
   /** @nullable */
   name: string | null
   /** @nullable */
-  picture?: string | null
+  profilePicId?: string | null
 } | null
 
 /**
@@ -134,7 +343,7 @@ export type UploadProfileImage200 = {
   /** @nullable */
   name: string | null
   /** @nullable */
-  picture?: string | null
+  profilePicId?: string | null
 } | null
 
 export type UploadProfileImage400 = {
@@ -154,9 +363,24 @@ export type DeleteProfileImage200 = {
   /** @nullable */
   name: string | null
   /** @nullable */
-  picture?: string | null
+  profilePicId?: string | null
 } | null
 
 export type DeleteProfileImage404 = {
   message: string
+}
+
+export type CreateCommentBody = {
+  /**
+   * @minimum 0
+   * @exclusiveMinimum
+   */
+  threadId: number
+  /**
+   * @minimum 0
+   * @exclusiveMinimum
+   */
+  authorId: number
+  /** @minLength 1 */
+  content: string
 }

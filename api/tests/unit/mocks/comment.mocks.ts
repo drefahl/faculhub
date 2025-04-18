@@ -61,5 +61,21 @@ export function createCommentRepositoryMock(): CommentRepository {
     return comment
   })
 
+  vi.spyOn(repo, "listComments").mockImplementation(async (threadId, { take, skip }) => {
+    const threadComments = Array.from(comments.values()).filter((comment) => comment.threadId === threadId)
+    const paginatedComments = threadComments.slice(skip, skip + take).map((comment) => ({
+      id: comment.id,
+      content: comment.content,
+      createdAt: comment.createdAt,
+      author: {
+        id: comment.authorId,
+        name: mockConstants.user.name,
+        profilePicId: mockConstants.user.profilePicId,
+      },
+    }))
+
+    return paginatedComments
+  })
+
   return repo
 }

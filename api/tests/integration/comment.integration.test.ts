@@ -155,7 +155,7 @@ describe("Comment Integration Tests", () => {
   })
 
   it("should fail to create a comment on a non-existent thread", async () => {
-    const data: CreateCommentInput = { content: "Comment on invalid thread", threadId: 999, authorId: payload.id }
+    const data: CreateCommentInput = { content: "Comment on invalid thread", threadId: 999999, authorId: payload.id }
     const response = await request(app.server)
       .post("/api/comments")
       .set("Authorization", `Bearer ${authToken}`)

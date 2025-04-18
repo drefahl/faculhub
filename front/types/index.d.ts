@@ -3,6 +3,7 @@ export type Session = {
   email: string
   name: string
   picture: string | null
+  role: "USER" | "ADMIN"
   providers: ["google"] | ["credentials"] | ["google", "credentials"]
 }
 
