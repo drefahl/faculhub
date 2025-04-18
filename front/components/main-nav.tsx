@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation"
 
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
-import { BookOpen, Building, Car, Home, MessageSquare, Users } from "lucide-react"
+import { Home, MessageSquare } from "lucide-react"
 
 export function MainNav() {
   const pathname = usePathname()
@@ -23,30 +23,30 @@ export function MainNav() {
       icon: MessageSquare,
       active: pathname === "/forum",
     },
-    {
-      href: "/materiais",
-      label: "Materiais",
-      icon: BookOpen,
-      active: pathname === "/materiais",
-    },
-    {
-      href: "/caronas",
-      label: "Caronas",
-      icon: Car,
-      active: pathname === "/caronas",
-    },
-    {
-      href: "/grupos",
-      label: "Grupos de Estudo",
-      icon: Users,
-      active: pathname === "/grupos",
-    },
-    {
-      href: "/moradia",
-      label: "Moradia",
-      icon: Building,
-      active: pathname === "/moradia",
-    },
+    // {
+    //   href: "/materiais",
+    //   label: "Materiais",
+    //   icon: BookOpen,
+    //   active: pathname === "/materiais",
+    // },
+    // {
+    //   href: "/caronas",
+    //   label: "Caronas",
+    //   icon: Car,
+    //   active: pathname === "/caronas",
+    // },
+    // {
+    //   href: "/grupos",
+    //   label: "Grupos de Estudo",
+    //   icon: Users,
+    //   active: pathname === "/grupos",
+    // },
+    // {
+    //   href: "/moradia",
+    //   label: "Moradia",
+    //   icon: Building,
+    //   active: pathname === "/moradia",
+    // },
   ]
 
   return (

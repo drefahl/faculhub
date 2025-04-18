@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button"
 import { getSession } from "@/lib/utils/token"
-import { BookOpen, Building, Car, MessageSquare, Users } from "lucide-react"
+import { MessageSquare } from "lucide-react"
 import Link from "next/link"
 
 const features = [
@@ -10,30 +10,30 @@ const features = [
     description: "Conecte-se com outros alunos e participe de discussões acadêmicas.",
     href: "/forum",
   },
-  {
-    icon: BookOpen,
-    title: "Materiais de Estudo",
-    description: "Compartilhe e acesse materiais de estudo para suas disciplinas.",
-    href: "/materiais",
-  },
-  {
-    icon: Car,
-    title: "Caronas",
-    description: "Encontre ou ofereça caronas para a faculdade e economize.",
-    href: "/caronas",
-  },
-  {
-    icon: Users,
-    title: "Grupos de Estudo",
-    description: "Crie ou participe de grupos de estudo para aprender em conjunto.",
-    href: "/grupos",
-  },
-  {
-    icon: Building,
-    title: "Moradia Compartilhada",
-    description: "Encontre pessoas para dividir moradia próxima à faculdade.",
-    href: "/moradia",
-  },
+  // {
+  //   icon: BookOpen,
+  //   title: "Materiais de Estudo",
+  //   description: "Compartilhe e acesse materiais de estudo para suas disciplinas.",
+  //   href: "/materiais",
+  // },
+  // {
+  //   icon: Car,
+  //   title: "Caronas",
+  //   description: "Encontre ou ofereça caronas para a faculdade e economize.",
+  //   href: "/caronas",
+  // },
+  // {
+  //   icon: Users,
+  //   title: "Grupos de Estudo",
+  //   description: "Crie ou participe de grupos de estudo para aprender em conjunto.",
+  //   href: "/grupos",
+  // },
+  // {
+  //   icon: Building,
+  //   title: "Moradia Compartilhada",
+  //   description: "Encontre pessoas para dividir moradia próxima à faculdade.",
+  //   href: "/moradia",
+  // },
 ]
 
 export default async function HomePage() {
