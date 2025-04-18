@@ -315,6 +315,14 @@
             "in": "query",
             "name": "take",
             "required": true
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "search",
+            "required": false
           }
         ],
         "responses": {

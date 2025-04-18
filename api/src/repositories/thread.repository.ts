@@ -18,11 +18,17 @@ export class ThreadRepository {
     return prisma.thread.delete({ select, where: { id } })
   }
 
-  async listThreads({ take, skip }: { take: number; skip: number }) {
+  async listThreads({ take, skip, search }: { take: number; skip: number; search?: string }) {
     return prisma.thread.findMany({
       select,
       take,
       skip,
+      where: {
+        title: {
+          contains: search,
+          mode: "insensitive",
+        },
+      },
     })
   }
 }
@@ -56,4 +62,4 @@ const select = {
       },
     },
   },
-}
+} as const

@@ -12,6 +12,8 @@ export class CommentController {
   async create(request: FastifyRequest<{ Body: CreateCommentInput }>, reply: FastifyReply) {
     const comment = await this.commentService.create(request.body)
 
+    this.fastify.io.to(`thread:${comment.threadId}`).emit("comment:create", comment)
+
     return reply.code(201).send(comment)
   }
 
@@ -24,22 +26,26 @@ export class CommentController {
 
   async update(request: FastifyRequest<{ Params: { id: number }; Body: UpdateCommentInput }>, reply: FastifyReply) {
     const comment = await this.commentService.getById(+request.params.id)
-    if ((!comment || comment.authorId !== request.user.id) && !isUserAdmin(request.user)) {
+    if ((!comment || comment.author.id !== request.user.id) && !isUserAdmin(request.user)) {
       return reply.code(403).send({ message: "Unauthorized" })
     }
 
     const updated = await this.commentService.update(+request.params.id, request.body)
+
+    this.fastify.io.to(`thread:${updated.threadId}`).emit("comment:update", updated)
 
     return reply.send(updated)
   }
 
   async delete(request: FastifyRequest<{ Params: { id: number } }>, reply: FastifyReply) {
     const comment = await this.commentService.getById(+request.params.id)
-    if ((!comment || comment.authorId !== request.user.id) && !isUserAdmin(request.user)) {
+    if ((!comment || comment.author.id !== request.user.id) && !isUserAdmin(request.user)) {
       return reply.code(403).send({ message: "Unauthorized" })
     }
 
-    await this.commentService.delete(+request.params.id)
+    const deleted = await this.commentService.delete(+request.params.id)
+
+    this.fastify.io.to(`thread:${deleted.threadId}`).emit("comment:delete", { id: +request.params.id })
 
     return reply.send({ success: true })
   }

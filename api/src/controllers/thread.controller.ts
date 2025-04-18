@@ -58,7 +58,10 @@ export class ThreadController {
     return reply.send(deleted)
   }
 
-  async list(request: FastifyRequest<{ Querystring: { page: number; take: number } }>, reply: FastifyReply) {
+  async list(
+    request: FastifyRequest<{ Querystring: { page: number; take: number; search?: string } }>,
+    reply: FastifyReply,
+  ) {
     const threads = await this.threadService.list(request.query)
 
     return reply.send(threads)

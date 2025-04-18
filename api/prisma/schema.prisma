@@ -55,4 +55,5 @@ model comment {
   author    user     @relation(fields: [authorId], references: [id])
   thread    thread   @relation(fields: [threadId], references: [id])
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

@@ -72,6 +72,7 @@ export async function threadPublicRoutes(app: FastifyInstance) {
         querystring: z.object({
           page: z.coerce.number(),
           take: z.coerce.number(),
+          search: z.string().optional(),
         }),
         response: {
           200: threadResponseArraySchema,

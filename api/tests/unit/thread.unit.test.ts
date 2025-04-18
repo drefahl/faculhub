@@ -91,4 +91,23 @@ describe("Thread Unit Tests", () => {
     await expect(threadService.list({ page: 1, take: 0 })).rejects.toThrow("Take must be greater than 0")
     await expect(threadService.list({ page: 0, take: 1 })).rejects.toThrow("Page must be greater than 0")
   })
+
+  it("should filter threads with search parameter", async () => {
+    const thread = await threadService.create({
+      title: "Searchable Thread",
+      content: "Content",
+      authorId,
+    })
+
+    const threads = await threadService.list({ page: 1, take: 10, search: "Searchable" })
+
+    expect(threads).toHaveLength(1)
+    expect(threads[0].id).toBe(thread.id)
+  })
+
+  it("should return empty array for non-existent search term", async () => {
+    const threads = await threadService.list({ page: 1, take: 10, search: "NonExistent" })
+
+    expect(threads).toHaveLength(0)
+  })
 })

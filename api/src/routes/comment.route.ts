@@ -68,6 +68,7 @@ export const commentListSchema = z.array(
     id: z.number(),
     content: z.string(),
     createdAt: z.date(),
+    updatedAt: z.date().nullable(),
     author: z.object({
       id: z.number(),
       name: z.string(),
