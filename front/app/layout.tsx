@@ -10,6 +10,9 @@ const inter = Inter({ subsets: ["latin"] })
 export const metadata: Metadata = {
   title: "FaculHub - Sua plataforma universitária",
   description: "Conectando estudantes, compartilhando conhecimento",
+  icons: {
+    icon: "/favicon.png",
+  },
 }
 
 export default async function RootLayout({
