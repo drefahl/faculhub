@@ -34,5 +34,15 @@ export async function createServer() {
 
   await app.ready()
 
+  app.io.on("connection", (socket) => {
+    socket.on("join:thread", (threadId: number) => {
+      socket.join(`thread:${threadId}`)
+    })
+
+    socket.on("leave:thread", (threadId: number) => {
+      socket.leave(`thread:${threadId}`)
+    })
+  })
+
   return app
 }

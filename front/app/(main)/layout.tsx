@@ -6,9 +6,9 @@ import type React from "react"
 
 export default function MainLayout({ children }: { children: React.ReactNode }) {
   return (
-    <>
-      <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-16 items-center justify-between py-4 px-4 md:px-6 overflow-x-auto overflow-y-hidden">
+    <div className="flex flex-col min-h-screen">
+      <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur">
+        <div className="container flex h-14 sm:h-16 items-center justify-between py-2 sm:py-4">
           <MainNav />
 
           <div className="flex items-center gap-2 sm:gap-4">
@@ -21,6 +21,6 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
       <main className="flex-1 w-full container">{children}</main>
 
       <SiteFooter />
-    </>
+    </div>
   )
 }

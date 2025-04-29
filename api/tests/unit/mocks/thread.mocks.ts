@@ -33,11 +33,31 @@ export function createThreadRepositoryMock(): ThreadRepository {
     }
 
     threads.set(id, newThread)
-    return newThread
+
+    return {
+      ...newThread,
+      author: {
+        id: newThread.authorId,
+        name: mockConstants.user.name,
+        profilePicId: null,
+      },
+      comments: [],
+    }
   })
 
   vi.spyOn(repo, "getThreadById").mockImplementation(async (id) => {
-    return threads.get(id) ?? null
+    const thread = threads.get(id)
+    if (!thread) return null
+
+    return {
+      ...thread,
+      author: {
+        id: thread.authorId,
+        name: mockConstants.user.name,
+        profilePicId: null,
+      },
+      comments: [],
+    }
   })
 
   vi.spyOn(repo, "updateThread").mockImplementation(async (id, data) => {
@@ -53,7 +73,16 @@ export function createThreadRepositoryMock(): ThreadRepository {
     }
 
     threads.set(id, updatedThread)
-    return updatedThread
+
+    return {
+      ...updatedThread,
+      author: {
+        id: updatedThread.authorId,
+        name: mockConstants.user.name,
+        profilePicId: null,
+      },
+      comments: [],
+    }
   })
 
   vi.spyOn(repo, "deleteThread").mockImplementation(async (id) => {
@@ -61,7 +90,36 @@ export function createThreadRepositoryMock(): ThreadRepository {
     if (!thread) throw new NotFoundError("Thread not found")
 
     threads.delete(id)
-    return thread
+
+    return {
+      ...thread,
+      author: {
+        id: thread.authorId,
+        name: mockConstants.user.name,
+        profilePicId: null,
+      },
+      comments: [],
+    }
+  })
+
+  vi.spyOn(repo, "listThreads").mockImplementation(async ({ take, skip, search }) => {
+    const allThreads = Array.from(threads.values())
+
+    const filteredThreads = search
+      ? allThreads.filter((thread) => thread.title.toLowerCase().includes(search.toLowerCase()))
+      : allThreads
+
+    const paginatedThreads = filteredThreads.slice(skip, skip + take)
+
+    return paginatedThreads.map((thread) => ({
+      ...thread,
+      author: {
+        id: thread.authorId,
+        name: mockConstants.user.name,
+        profilePicId: null,
+      },
+      comments: [],
+    }))
   })
 
   return repo

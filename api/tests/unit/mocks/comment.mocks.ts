@@ -32,13 +32,32 @@ export function createCommentRepositoryMock(): CommentRepository {
       authorId,
       content: data.content,
       createdAt: new Date(),
+      updatedAt: new Date(),
     }
     comments.set(id, newComment)
-    return newComment
+
+    return {
+      ...newComment,
+      author: {
+        id: mockConstants.user.id,
+        name: mockConstants.user.name,
+        profilePicId: mockConstants.user.profilePicId,
+      },
+    }
   })
 
   vi.spyOn(repo, "getCommentById").mockImplementation(async (id) => {
-    return comments.get(id) ?? null
+    const comment = comments.get(id)
+    if (!comment) return null
+
+    return {
+      ...comment,
+      author: {
+        id: mockConstants.user.id,
+        name: mockConstants.user.name,
+        profilePicId: mockConstants.user.profilePicId,
+      },
+    }
   })
 
   vi.spyOn(repo, "updateComment").mockImplementation(async (id, data) => {
@@ -50,7 +69,15 @@ export function createCommentRepositoryMock(): CommentRepository {
       content: typeof data?.content === "string" ? data.content : existingComment.content,
     }
     comments.set(id, updatedComment)
-    return updatedComment
+
+    return {
+      ...updatedComment,
+      author: {
+        id: mockConstants.user.id,
+        name: mockConstants.user.name,
+        profilePicId: mockConstants.user.profilePicId,
+      },
+    }
   })
 
   vi.spyOn(repo, "deleteComment").mockImplementation(async (id) => {
@@ -58,7 +85,15 @@ export function createCommentRepositoryMock(): CommentRepository {
     if (!comment) throw new NotFoundError("Comment not found")
 
     comments.delete(id)
-    return comment
+
+    return {
+      ...comment,
+      author: {
+        id: mockConstants.user.id,
+        name: mockConstants.user.name,
+        profilePicId: mockConstants.user.profilePicId,
+      },
+    }
   })
 
   return repo

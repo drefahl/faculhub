@@ -53,6 +53,7 @@ export function LoginForm() {
       <Button variant="outline" type="button" className="w-full" onClick={handleGoogleSignIn}>
         <span className="flex items-center justify-center gap-2">
           <GoogleIcon className="h-4 w-4" />
+          {/* TODO: Salvar cookie de redirect */}
           Continuar com Google
         </span>
       </Button>

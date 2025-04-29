@@ -1,21 +1,126 @@
 import { ThreadController } from "@/controllers/thread.controller"
 import { createThreadService } from "@/factories/serviceFactory"
 import { routeIdParametersSchema } from "@/schemas/route.schema"
-import { createThreadSchema, updateThreadSchema } from "@/schemas/thread.schema"
 import type { FastifyInstance } from "fastify"
-
-const threadController = new ThreadController(createThreadService())
+import z from "zod"
 
 export async function threadRoutes(app: FastifyInstance) {
-  app.post("/", { schema: { body: createThreadSchema } }, threadController.create.bind(threadController))
+  const threadController = new ThreadController(createThreadService(), app)
 
-  app.get("/:id", { schema: { params: routeIdParametersSchema } }, threadController.getById.bind(threadController))
+  app.post(
+    "/",
+    {
+      schema: {
+        tags: ["Thread"],
+        operationId: "createThread",
+        body: z.object({
+          title: z.string().nonempty().min(2, { message: "Title is required" }),
+          content: z.string().nonempty().min(2, { message: "Content is required" }),
+        }),
+        response: {
+          200: threadSchema,
+        },
+      },
+    },
+    threadController.create.bind(threadController),
+  )
 
   app.patch(
     "/:id",
-    { schema: { params: routeIdParametersSchema, body: updateThreadSchema } },
+    {
+      schema: {
+        tags: ["Thread"],
+        operationId: "updateThread",
+        params: routeIdParametersSchema,
+        body: z.object({
+          title: z.string().optional(),
+          content: z.string().optional(),
+        }),
+        response: {
+          200: threadSchema,
+        },
+      },
+    },
     threadController.update.bind(threadController),
   )
 
-  app.delete("/:id", { schema: { params: routeIdParametersSchema } }, threadController.delete.bind(threadController))
+  app.delete(
+    "/:id",
+    {
+      schema: {
+        tags: ["Thread"],
+        operationId: "deleteThread",
+        params: routeIdParametersSchema,
+        response: {
+          200: threadSchema,
+        },
+      },
+    },
+    threadController.delete.bind(threadController),
+  )
 }
+
+export async function threadPublicRoutes(app: FastifyInstance) {
+  const threadController = new ThreadController(createThreadService(), app)
+
+  app.get(
+    "/",
+    {
+      schema: {
+        tags: ["Thread"],
+        operationId: "listThreads",
+        querystring: z.object({
+          page: z.coerce.number(),
+          take: z.coerce.number(),
+          search: z.string().optional(),
+        }),
+        response: {
+          200: threadResponseArraySchema,
+        },
+      },
+    },
+    threadController.list.bind(threadController),
+  )
+
+  app.get(
+    "/:id",
+    {
+      schema: {
+        tags: ["Thread"],
+        operationId: "getThreadById",
+        params: routeIdParametersSchema,
+        response: {
+          200: threadSchema,
+        },
+      },
+    },
+    threadController.getById.bind(threadController),
+  )
+}
+
+export const threadSchema = z.object({
+  id: z.number(),
+  title: z.string(),
+  content: z.string(),
+  createdAt: z.union([z.string(), z.date()]),
+  updatedAt: z.union([z.string(), z.date()]),
+  author: z.object({
+    id: z.number(),
+    name: z.string(),
+    profilePicId: z.string().nullable(),
+  }),
+  comments: z.array(
+    z.object({
+      id: z.number(),
+      content: z.string(),
+      createdAt: z.union([z.string(), z.date()]),
+      author: z.object({
+        id: z.number(),
+        name: z.string(),
+        profilePicId: z.string().nullable(),
+      }),
+    }),
+  ),
+})
+
+export const threadResponseArraySchema = z.array(threadSchema)

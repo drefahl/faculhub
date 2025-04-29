@@ -77,7 +77,7 @@ describe("Comment Unit Tests", () => {
   it("should throw an error when creating a comment on a non-existent thread", async () => {
     await expect(
       commentService.create({
-        threadId: 999,
+        threadId: 999999,
         authorId,
         content: "Test",
       }),

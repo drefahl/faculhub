@@ -20,3 +20,9 @@ export function isUsingCredentials(providers?: string[]): boolean {
 export function isOnlyUsingCredentials(providers?: string[]): boolean {
   return providers?.length === 1 && providers[0] === "credentials"
 }
+
+export function getProfilePicUrl(profilePicId: string | null | undefined): string | null {
+  if (!profilePicId) return null
+
+  return `${process.env.NEXT_PUBLIC_API_URL}/api/files/${profilePicId}`
+}
