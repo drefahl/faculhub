@@ -5,7 +5,7 @@ config({ path: process.env.NODE_ENV !== "production" ? ".env.development" : ".en
 
 const envSchema = z.object({
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
-  HOST: z.string().default("localhost"),
+  HOSTNAME: z.string().default("localhost"),
   PORT: z.coerce.number().default(3333),
   JWT_SECRET: z.string().trim(),
   GOOGLE_CLIENT_ID: z.string().trim(),

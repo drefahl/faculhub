@@ -2,7 +2,6 @@ import { createServer } from "@/app"
 import type { FastifyInstance } from "fastify"
 import request from "supertest"
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest"
-import { extractAuthTokenFromHeaders } from "./utils/auth.util"
 import { createUser, getRandomUserData } from "./utils/user.util"
 
 let app: FastifyInstance
@@ -27,8 +26,8 @@ describe("Login API Integration Tests", () => {
       const response = await request(app.server).post("/api/login").send({ email, password })
 
       expect(response.status).toBe(200)
-      expect(response.headers["set-cookie"]).toBeDefined()
-      expect(response.headers["set-cookie"][0]).toContain("authToken")
+      expect(response.body).toHaveProperty("token")
+      expect(response.body.token).toBeDefined()
     })
 
     it("should throw an error with invalid credentials", async () => {
@@ -40,14 +39,13 @@ describe("Login API Integration Tests", () => {
 
     it("should refresh the token", async () => {
       const loginResponse = await request(app.server).post("/api/login").send({ email, password })
-      const token = extractAuthTokenFromHeaders(loginResponse.headers)
+      const token = loginResponse.body.token
 
       const refreshResponse = await request(app.server).get("/api/refresh").set("Authorization", `Bearer ${token}`)
 
       expect(refreshResponse.status).toBe(200)
-      expect(refreshResponse.headers["set-cookie"]).toBeDefined()
-      expect(refreshResponse.headers["set-cookie"][0]).toContain("authToken")
-      expect(refreshResponse.body.message).toBe("Authenticated successfully")
+      expect(refreshResponse.body).toHaveProperty("token")
+      expect(refreshResponse.body.token).toBeDefined()
     })
   })
 

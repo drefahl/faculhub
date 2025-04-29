@@ -98,15 +98,12 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "message": {
-                      "type": "string",
-                      "enum": [
-                        "Authenticated successfully"
-                      ]
+                    "token": {
+                      "type": "string"
                     }
                   },
                   "required": [
-                    "message"
+                    "token"
                   ],
                   "additionalProperties": false
                 }
@@ -1165,15 +1162,12 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "message": {
-                      "type": "string",
-                      "enum": [
-                        "Authenticated successfully"
-                      ]
+                    "token": {
+                      "type": "string"
                     }
                   },
                   "required": [
-                    "message"
+                    "token"
                   ],
                   "additionalProperties": false
                 }

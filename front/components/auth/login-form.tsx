@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { Form } from "@/components/ui/form"
 import { login } from "@/lib/api/auth/auth"
+import { setTokenCookie } from "@/lib/utils/token"
 import { passwordSchema } from "@/lib/validations/password-schema"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useRouter } from "next/navigation"
@@ -35,7 +36,8 @@ export function LoginForm() {
 
   async function onSubmit({ email, password }: LoginFormValues) {
     try {
-      await login({ email, password }, { withCredentials: true })
+      const { token } = await login({ email, password })
+      await setTokenCookie(token)
       toast.success("Login realizado com sucesso!", { description: "Bem-vindo de volta!" })
       router.push("/")
     } catch (error) {

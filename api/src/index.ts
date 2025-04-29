@@ -13,7 +13,7 @@ const start = async () => {
   try {
     const app = await createServer()
 
-    await app.listen({ port: env.PORT, host: env.HOST })
+    await app.listen({ port: env.PORT, host: env.HOSTNAME })
   } catch (err) {
     console.error(err)
     process.exit(1)

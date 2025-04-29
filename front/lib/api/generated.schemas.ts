@@ -22,15 +22,8 @@ export type LoginBody = {
   password: string
 }
 
-export type Login200Message = (typeof Login200Message)[keyof typeof Login200Message]
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const Login200Message = {
-  Authenticated_successfully: "Authenticated successfully",
-} as const
-
 export type Login200 = {
-  message: Login200Message
+  token: string
 }
 
 export type Login401 = {
@@ -282,15 +275,8 @@ export type CreateUser201 = {
   profilePicId?: string | null
 } | null
 
-export type Refresh200Message = (typeof Refresh200Message)[keyof typeof Refresh200Message]
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const Refresh200Message = {
-  Authenticated_successfully: "Authenticated successfully",
-} as const
-
 export type Refresh200 = {
-  message: Refresh200Message
+  token: string
 }
 
 export type Refresh401 = {

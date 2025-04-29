@@ -26,7 +26,12 @@ jobs:
         file: api/Dockerfile
         push: true
         build-args: |
-          NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}
+          DATABASE_URL=postgresql://${{ secrets.DB_USER }}:${{ secrets.DB_PASSWORD }}@${{ secrets.DB_HOST }}:5432/faculhub?schema=public
+          JWT_SECRET=${{ secrets.JWT_SECRET }}
+          GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}
+          GOOGLE_CALLBACK_URI=${{ secrets.GOOGLE_CALLBACK_URI }}
+          FRONTEND_URL=${{ secrets.FRONTEND_URL }}
         tags: |
             ${{ env.DOCKER_REGISTRY }}/faculhub-api:${{ github.sha }}
             ${{ env.DOCKER_REGISTRY }}/faculhub-api:latest
@@ -49,12 +54,7 @@ jobs:
         file: front/Dockerfile
         push: true
         build-args: |
-          DATABASE_URL=postgresql://${{ secrets.DB_USER }}:${{ secrets.DB_PASSWORD }}@${{ secrets.DB_HOST }}:5432?schema=public
-          JWT_SECRET=${{ secrets.JWT_SECRET }}
-          GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
-          GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}
-          GOOGLE_CALLBACK_URI=${{ secrets.GOOGLE_CALLBACK_URI }}
-          FRONTEND_URL=${{ secrets.FRONTEND_URL }}
+          NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}
         tags: |
             ${{ env.DOCKER_REGISTRY }}/faculhub-front:${{ github.sha }}
             ${{ env.DOCKER_REGISTRY }}/faculhub-front:latest

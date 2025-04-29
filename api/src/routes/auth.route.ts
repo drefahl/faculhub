@@ -18,7 +18,7 @@ export async function authPublicRoutes(app: FastifyInstance) {
         operationId: "login",
         body: z.object({ email: z.string(), password: z.string() }),
         response: {
-          200: z.object({ message: z.literal("Authenticated successfully") }),
+          200: z.object({ token: z.string() }),
           401: z.object({ message: z.string() }),
         },
       },
@@ -55,7 +55,7 @@ export async function authRoutes(app: FastifyInstance) {
         tags: ["Auth"],
         operationId: "refresh",
         response: {
-          200: z.object({ message: z.literal("Authenticated successfully") }),
+          200: z.object({ token: z.string() }),
           401: z.object({ message: z.string() }),
         },
       },
