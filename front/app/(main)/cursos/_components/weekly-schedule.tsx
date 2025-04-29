@@ -8,7 +8,6 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import {} from "@/components/ui/tabs"
 import type { Disciplina } from "@/types/grade"
 import html2canvas from "html2canvas"
 import { jsPDF } from "jspdf"
@@ -61,7 +60,11 @@ const generateColor = () => {
   return colors[Math.floor(Math.random() * colors.length)]
 }
 
-export default function WeeklySchedule({ selectedDisciplinas, allDisciplinas }: WeeklyScheduleProps) {
+const getStartSlotIndex = (time: string) => TIME_SLOTS.findIndex((slot) => slot.startsWith(time))
+
+const getEndSlotIndex = (time: string) => TIME_SLOTS.findIndex((slot) => slot.endsWith(time))
+
+export function WeeklySchedule({ selectedDisciplinas, allDisciplinas }: WeeklyScheduleProps) {
   const [scheduledClasses, setScheduledClasses] = useState<ScheduledClass[]>([])
   const [isAddClassDialogOpen, setIsAddClassDialogOpen] = useState(false)
   const [currentSchedule, setCurrentSchedule] = useState<ScheduledClass | null>(null)
@@ -203,13 +206,10 @@ export default function WeeklySchedule({ selectedDisciplinas, allDisciplinas }: 
     }
   }
 
-  const getTimeSlotIndex = (time: string) => {
-    return TIME_SLOTS.findIndex((slot) => slot.startsWith(time))
-  }
-
   const calculateRowSpan = (startTime: string, endTime: string) => {
-    const startIndex = getTimeSlotIndex(startTime)
-    const endIndex = TIME_SLOTS.findIndex((slot) => slot.endsWith(endTime))
+    const startIndex = getStartSlotIndex(startTime)
+    const endIndex = getEndSlotIndex(endTime)
+
     return endIndex - startIndex + 1
   }
 
@@ -218,19 +218,15 @@ export default function WeeklySchedule({ selectedDisciplinas, allDisciplinas }: 
     return scheduledClasses.filter((cls) => cls.day === day && cls.startTime === slotStartTime)
   }
 
-  const isPartOfMultiRowClass = (day: string, timeSlotIndex: number) => {
-    for (const cls of scheduledClasses) {
-      if (cls.day !== day) continue
+  const isPartOfMultiRowClass = (day: string, timeSlotIndex: number) =>
+    scheduledClasses.some((cls) => {
+      if (cls.day !== day) return false
 
-      const startIndex = getTimeSlotIndex(cls.startTime)
-      const endIndex = getTimeSlotIndex(cls.endTime) - 1
+      const startIndex = getStartSlotIndex(cls.startTime)
+      const endIndex = getEndSlotIndex(cls.endTime)
 
-      if (timeSlotIndex > startIndex && timeSlotIndex <= endIndex) {
-        return true
-      }
-    }
-    return false
-  }
+      return timeSlotIndex > startIndex && timeSlotIndex <= endIndex
+    })
 
   const availableStartSlots = useMemo<string[]>(() => {
     if (!tempDay) return TIME_SLOTS
