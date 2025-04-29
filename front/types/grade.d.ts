@@ -2,11 +2,7 @@ export interface Disciplina {
   codigo: string
   nome: string
   cargaHoraria: {
-    presencial: number
-    extensaoPesquisa: number
     total: number
-    teorica: number
-    pratica: number
   }
   prerequisitos?: string[]
   corequisitos?: string[]

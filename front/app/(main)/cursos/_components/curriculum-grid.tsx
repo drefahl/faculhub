@@ -21,12 +21,9 @@ function findMaxValues(disciplinas: Disciplina[]) {
     (acc, disciplina) => {
       return {
         total: Math.max(acc.total, disciplina.cargaHoraria.total),
-        teorica: Math.max(acc.teorica, disciplina.cargaHoraria.teorica),
-        pratica: Math.max(acc.pratica, disciplina.cargaHoraria.pratica),
-        extensaoPesquisa: Math.max(acc.extensaoPesquisa, disciplina.cargaHoraria.extensaoPesquisa),
       }
     },
-    { total: 0, teorica: 0, pratica: 0, extensaoPesquisa: 0 },
+    { total: 0 },
   )
 }
 
@@ -35,12 +32,9 @@ function calculateSemesterWorkload(disciplinas: Disciplina[]) {
     (acc, disciplina) => {
       return {
         total: acc.total + disciplina.cargaHoraria.total,
-        teorica: acc.teorica + disciplina.cargaHoraria.teorica,
-        pratica: acc.pratica + disciplina.cargaHoraria.pratica,
-        extensaoPesquisa: acc.extensaoPesquisa + disciplina.cargaHoraria.extensaoPesquisa,
       }
     },
-    { total: 0, teorica: 0, pratica: 0, extensaoPesquisa: 0 },
+    { total: 0 },
   )
 }
 
@@ -59,19 +53,10 @@ export default function CurriculumGrid({ curriculumData }: CurriculumGridProps) 
   const maxValues = useMemo(() => findMaxValues(allDisciplinas), [allDisciplinas])
 
   const [totalWorkloadRange, setTotalWorkloadRange] = useState<[number, number]>([0, maxValues.total])
-  const [theoreticalWorkloadRange, setTheoreticalWorkloadRange] = useState<[number, number]>([0, maxValues.teorica])
-  const [practicalWorkloadRange, setPracticalWorkloadRange] = useState<[number, number]>([0, maxValues.pratica])
-  const [extensionWorkloadRange, setExtensionWorkloadRange] = useState<[number, number]>([
-    0,
-    maxValues.extensaoPesquisa,
-  ])
 
   useEffect(() => {
     const newMaxValues = findMaxValues(allDisciplinas)
     setTotalWorkloadRange([totalWorkloadRange[0], newMaxValues.total])
-    setTheoreticalWorkloadRange([theoreticalWorkloadRange[0], newMaxValues.teorica])
-    setPracticalWorkloadRange([practicalWorkloadRange[0], newMaxValues.pratica])
-    setExtensionWorkloadRange([extensionWorkloadRange[0], newMaxValues.extensaoPesquisa])
 
     setSelectedDisciplinas([])
   }, [curriculumData])
@@ -117,38 +102,12 @@ export default function CurriculumGrid({ curriculumData }: CurriculumGridProps) 
             disciplina.cargaHoraria.total >= totalWorkloadRange[0] &&
             disciplina.cargaHoraria.total <= totalWorkloadRange[1]
 
-          const matchesTheoreticalWorkload =
-            disciplina.cargaHoraria.teorica >= theoreticalWorkloadRange[0] &&
-            disciplina.cargaHoraria.teorica <= theoreticalWorkloadRange[1]
-
-          const matchesPracticalWorkload =
-            disciplina.cargaHoraria.pratica >= practicalWorkloadRange[0] &&
-            disciplina.cargaHoraria.pratica <= practicalWorkloadRange[1]
-
-          const matchesExtensionWorkload =
-            disciplina.cargaHoraria.extensaoPesquisa >= extensionWorkloadRange[0] &&
-            disciplina.cargaHoraria.extensaoPesquisa <= extensionWorkloadRange[1]
-
-          return (
-            matchesSearch &&
-            matchesTotalWorkload &&
-            matchesTheoreticalWorkload &&
-            matchesPracticalWorkload &&
-            matchesExtensionWorkload
-          )
+          return matchesSearch && matchesTotalWorkload
         })
         return { ...semestre, disciplinas: filteredDisciplinas }
       })
       .filter((semestre) => semestre.disciplinas.length > 0)
-  }, [
-    curriculumData,
-    searchTerm,
-    selectedSemesters,
-    totalWorkloadRange,
-    theoreticalWorkloadRange,
-    practicalWorkloadRange,
-    extensionWorkloadRange,
-  ])
+  }, [curriculumData, searchTerm, selectedSemesters, totalWorkloadRange])
 
   const allVisibleDisciplinas = useMemo(() => {
     return filteredSemesters.flatMap((semestre) => semestre.disciplinas.map((d) => d.codigo))
@@ -252,15 +211,6 @@ export default function CurriculumGrid({ curriculumData }: CurriculumGridProps) 
                       <span className="font-medium mr-1">Total:</span> {selectedWorkload.total}h
                     </div>
                     <div className="flex items-center">
-                      <span className="font-medium mr-1">Teórica:</span> {selectedWorkload.teorica}h
-                    </div>
-                    <div className="flex items-center">
-                      <span className="font-medium mr-1">Prática:</span> {selectedWorkload.pratica}h
-                    </div>
-                    <div className="flex items-center">
-                      <span className="font-medium mr-1">Extensão:</span> {selectedWorkload.extensaoPesquisa}h
-                    </div>
-                    <div className="flex items-center">
                       <span className="font-medium mr-1">Disciplinas:</span> {selectedDisciplinas.length}
                     </div>
                   </div>
@@ -334,15 +284,6 @@ export default function CurriculumGrid({ curriculumData }: CurriculumGridProps) 
                   <div className="bg-muted p-2 rounded-md flex flex-wrap gap-3 text-sm">
                     <div className="flex items-center">
                       <span className="font-medium mr-1">Total:</span> {semesterWorkload.total}h
-                    </div>
-                    <div className="flex items-center">
-                      <span className="font-medium mr-1">Teórica:</span> {semesterWorkload.teorica}h
-                    </div>
-                    <div className="flex items-center">
-                      <span className="font-medium mr-1">Prática:</span> {semesterWorkload.pratica}h
-                    </div>
-                    <div className="flex items-center">
-                      <span className="font-medium mr-1">Extensão:</span> {semesterWorkload.extensaoPesquisa}h
                     </div>
                     <div className="flex items-center">
                       <span className="font-medium mr-1">Disciplinas:</span> {semestre.disciplinas.length}
@@ -439,15 +380,6 @@ function CourseCard({
         <div className="grid grid-cols-2 gap-2 text-sm">
           <div>
             <span className="text-muted-foreground">Carga Total:</span> {disciplina.cargaHoraria.total}h
-          </div>
-          <div>
-            <span className="text-muted-foreground">Teórica:</span> {disciplina.cargaHoraria.teorica}h
-          </div>
-          <div>
-            <span className="text-muted-foreground">Prática:</span> {disciplina.cargaHoraria.pratica}h
-          </div>
-          <div>
-            <span className="text-muted-foreground">Extensão:</span> {disciplina.cargaHoraria.extensaoPesquisa}h
           </div>
         </div>
 
