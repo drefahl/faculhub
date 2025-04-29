@@ -94,17 +94,21 @@ export function CurriculumGrid({ curriculumData }: CurriculumGridProps) {
         return selectedSemesters.includes(semestre.numero)
       })
       .map((semestre) => {
-        const filteredDisciplinas = semestre.disciplinas.filter((disciplina) => {
-          const searchLower = searchTerm.toLowerCase()
-          const matchesSearch =
-            disciplina.codigo.toLowerCase().includes(searchLower) || disciplina.nome.toLowerCase().includes(searchLower)
+        const filteredDisciplinas = semestre.disciplinas
+          .filter((disciplina) => {
+            const searchLower = searchTerm.toLowerCase()
+            const matchesSearch =
+              disciplina.codigo.toLowerCase().includes(searchLower) ||
+              disciplina.nome.toLowerCase().includes(searchLower)
 
-          const matchesTotalWorkload =
-            disciplina.cargaHoraria.total >= totalWorkloadRange[0] &&
-            disciplina.cargaHoraria.total <= totalWorkloadRange[1]
+            const matchesTotalWorkload =
+              disciplina.cargaHoraria.total >= totalWorkloadRange[0] &&
+              disciplina.cargaHoraria.total <= totalWorkloadRange[1]
 
-          return matchesSearch && matchesTotalWorkload
-        })
+            return matchesSearch && matchesTotalWorkload
+          })
+          .sort((a, b) => a.nome.localeCompare(b.nome)) // Adiciona ordenação alfabética
+
         return { ...semestre, disciplinas: filteredDisciplinas }
       })
       .filter((semestre) => semestre.disciplinas.length > 0)
