@@ -6,8 +6,8 @@ import {
 } from "@/data/courses/automation-control-engineering"
 import { computerEngineeringCurriculum, computerEngineeringNewCurriculum } from "@/data/courses/computer-engineering"
 import { useState } from "react"
-import CourseSelector from "./_components/course-selector"
-import CurriculumGrid from "./_components/curriculum-grid"
+import { CourseSelector } from "./_components/course-selector"
+import { CurriculumGrid } from "./_components/curriculum-grid"
 
 export default function Home() {
   return (

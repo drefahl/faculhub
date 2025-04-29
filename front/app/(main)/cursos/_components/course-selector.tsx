@@ -21,7 +21,7 @@ interface CourseSelectorProps {
   onSelectCourse: (course: CourseOption) => void
 }
 
-export default function CourseSelector({ courses, selectedCourse, onSelectCourse }: CourseSelectorProps) {
+export function CourseSelector({ courses, selectedCourse, onSelectCourse }: CourseSelectorProps) {
   const [open, setOpen] = useState(false)
 
   return (
