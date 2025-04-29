@@ -5,12 +5,19 @@ import { usePathname } from "next/navigation"
 
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
-import { Home, MessageSquare } from "lucide-react"
+import { Calendar, Home, type LucideProps, MessageSquare } from "lucide-react"
+
+type Route = {
+  href: string
+  label: string
+  icon: React.ComponentType<LucideProps>
+  active: boolean
+}
 
 export function MainNav() {
   const pathname = usePathname()
 
-  const routes = [
+  const routes: Route[] = [
     {
       href: "/",
       label: "Início",
@@ -23,30 +30,12 @@ export function MainNav() {
       icon: MessageSquare,
       active: pathname === "/forum",
     },
-    // {
-    //   href: "/materiais",
-    //   label: "Materiais",
-    //   icon: BookOpen,
-    //   active: pathname === "/materiais",
-    // },
-    // {
-    //   href: "/caronas",
-    //   label: "Caronas",
-    //   icon: Car,
-    //   active: pathname === "/caronas",
-    // },
-    // {
-    //   href: "/grupos",
-    //   label: "Grupos de Estudo",
-    //   icon: Users,
-    //   active: pathname === "/grupos",
-    // },
-    // {
-    //   href: "/moradia",
-    //   label: "Moradia",
-    //   icon: Building,
-    //   active: pathname === "/moradia",
-    // },
+    {
+      href: "/cursos",
+      label: "Horário",
+      icon: Calendar,
+      active: pathname === "/cursos",
+    },
   ]
 
   return (

@@ -1,39 +1,28 @@
 import { Button } from "@/components/ui/button"
 import { getSession } from "@/lib/utils/token"
-import { MessageSquare } from "lucide-react"
+import { Calendar, type LucideProps, MessageSquare } from "lucide-react"
 import Link from "next/link"
 
-const features = [
+type Feature = {
+  icon: React.ComponentType<LucideProps>
+  title: string
+  description: string
+  href: string
+}
+
+const features: Feature[] = [
   {
     icon: MessageSquare,
     title: "Fórum de Discussão",
     description: "Conecte-se com outros alunos e participe de discussões acadêmicas.",
     href: "/forum",
   },
-  // {
-  //   icon: BookOpen,
-  //   title: "Materiais de Estudo",
-  //   description: "Compartilhe e acesse materiais de estudo para suas disciplinas.",
-  //   href: "/materiais",
-  // },
-  // {
-  //   icon: Car,
-  //   title: "Caronas",
-  //   description: "Encontre ou ofereça caronas para a faculdade e economize.",
-  //   href: "/caronas",
-  // },
-  // {
-  //   icon: Users,
-  //   title: "Grupos de Estudo",
-  //   description: "Crie ou participe de grupos de estudo para aprender em conjunto.",
-  //   href: "/grupos",
-  // },
-  // {
-  //   icon: Building,
-  //   title: "Moradia Compartilhada",
-  //   description: "Encontre pessoas para dividir moradia próxima à faculdade.",
-  //   href: "/moradia",
-  // },
+  {
+    icon: Calendar,
+    title: "Monte Seu Horário",
+    description: "Crie e compartilhe seu horário de aulas com facilidade.",
+    href: "/cursos",
+  },
 ]
 
 export default async function HomePage() {
