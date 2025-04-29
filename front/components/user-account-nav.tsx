@@ -14,7 +14,7 @@ import {
 import { signOut } from "@/lib/utils/token"
 import { getUserInitials } from "@/lib/utils/user.utils"
 import { AvatarImage } from "@radix-ui/react-avatar"
-import { LogOut, Settings, User } from "lucide-react"
+import { LogOut, User } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useSession } from "./providers/session-provider"
 
@@ -61,12 +61,6 @@ export function UserAccountNav() {
           <Link href="/perfil" className="flex items-center gap-2">
             <User className="h-4 w-4" />
             <span>Perfil</span>
-          </Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-          <Link href="/configuracoes" className="flex items-center gap-2">
-            <Settings className="h-4 w-4" />
-            <span>Configurações</span>
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />

@@ -29,7 +29,7 @@ export function ForumHeader({ initialQuery = "" }: ForumHeaderProps) {
 
   return (
     <div className="mb-8 space-y-4">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col lg:flex-row space-y-2 lg:space-y-0 items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Fórum de Discussão</h1>
           <p className="text-muted-foreground">Participe de discussões com outros estudantes</p>

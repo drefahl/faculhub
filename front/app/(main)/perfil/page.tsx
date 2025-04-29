@@ -11,7 +11,7 @@ export default async function ProfilePage() {
   if (!session) redirect("/login")
 
   return (
-    <div className="container py-10">
+    <div className="space-y-6 py-4 sm:py-6 md:py-8">
       <div className="mx-auto max-w-4xl space-y-6">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Perfil</h1>

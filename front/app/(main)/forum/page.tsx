@@ -12,7 +12,7 @@ export default async function ForumPage({ searchParams }: ForumPageProps) {
   const threadListResponse = await listThreads({ page: 1, take: 10, search: resolvedSearchParams.search })
 
   return (
-    <div className="w-full px-4 md:px-6 py-4 sm:py-6 md:py-8">
+    <div className="w-full py-4 sm:py-6 md:py-8">
       <ForumHeader />
       <ForumList threads={threadListResponse} />
     </div>

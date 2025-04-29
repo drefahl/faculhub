@@ -347,7 +347,18 @@ export default function WeeklySchedule({ selectedDisciplinas, allDisciplinas }: 
       <Dialog open={isAddClassDialogOpen} onOpenChange={setIsAddClassDialogOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>{currentSchedule ? "Editar Aula" : "Adicionar Aula"}</DialogTitle>
+            <DialogTitle>
+              {currentSchedule ? "Editar Aula" : "Adicionar Aula"}{" "}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => handleRemoveClass(currentSchedule?.id || "")}
+                className="h-8 w-8 p-0 text-destructive"
+              >
+                <span className="sr-only">Remover</span>
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            </DialogTitle>
           </DialogHeader>
           <form onSubmit={handleSaveClass}>
             <div className="grid gap-4 py-4">
@@ -449,20 +460,11 @@ export default function WeeklySchedule({ selectedDisciplinas, allDisciplinas }: 
                 </div>
               </div>
             </div>
-            <DialogFooter>
+            <DialogFooter className="gap-y-2">
               <Button type="button" variant="outline" onClick={() => setIsAddClassDialogOpen(false)}>
                 Cancelar
               </Button>
               <Button type="submit">Salvar</Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => handleRemoveClass(currentSchedule?.id || "")}
-                className="h-8 w-8 p-0 text-destructive"
-              >
-                <span className="sr-only">Remover</span>
-                <Trash2 className="h-4 w-4" />
-              </Button>
             </DialogFooter>
           </form>
         </DialogContent>

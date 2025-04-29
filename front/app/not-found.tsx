@@ -4,7 +4,7 @@ import Link from "next/link"
 
 export default function NotFoundPage() {
   return (
-    <div className="flex flex-col items-center justify-center bg-gradient-to-b">
+    <div className="container flex flex-col items-center justify-center bg-gradient-to-b">
       <div className="flex flex-col items-center justify-center py-16 text-center md:py-24">
         <div className="relative mb-8 h-40 w-40">
           <div className="absolute inset-0 flex items-center justify-center">

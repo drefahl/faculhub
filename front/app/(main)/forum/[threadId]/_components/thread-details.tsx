@@ -122,7 +122,7 @@ export function ThreadDetail({ thread: initialThread }: ThreadDetailProps) {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 py-4 sm:py-6 md:py-8">
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">

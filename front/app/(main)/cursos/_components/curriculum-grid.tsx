@@ -160,18 +160,18 @@ export default function CurriculumGrid({ curriculumData }: CurriculumGridProps) 
               className="pl-8"
             />
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-col lg:flex-row items-center gap-2 w-full lg:w-auto">
             <Button
               variant={isSelectionModeActive ? "default" : "outline"}
               size="sm"
               onClick={() => setIsSelectionModeActive(!isSelectionModeActive)}
-              className="flex items-center gap-1"
+              className="flex items-center gap-1 w-full lg:w-fit"
             >
               <CheckSquare className="h-4 w-4 mr-1" />
               {isSelectionModeActive ? "Desativar Seleção" : "Ativar Seleção"}
             </Button>
             {isSelectionModeActive && (
-              <Button variant="outline" size="sm" onClick={selectAllVisibleDisciplinas}>
+              <Button variant="outline" size="sm" onClick={selectAllVisibleDisciplinas} className="w-full lg:w-fit">
                 {selectedDisciplinas.length === allVisibleDisciplinas.length ? "Desmarcar Todas" : "Selecionar Todas"}
               </Button>
             )}
@@ -180,7 +180,7 @@ export default function CurriculumGrid({ curriculumData }: CurriculumGridProps) 
                 variant={showWeeklySchedule ? "default" : "outline"}
                 size="sm"
                 onClick={() => setShowWeeklySchedule(!showWeeklySchedule)}
-                className="flex items-center gap-1"
+                className="flex items-center gap-1 w-full lg:w-fit"
               >
                 <Calendar className="h-4 w-4 mr-1" />
                 {showWeeklySchedule ? "Ocultar Horário" : "Criar Horário"}
