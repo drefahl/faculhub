@@ -14,6 +14,22 @@ export async function middleware(request: NextRequest) {
   const publicRoute = PUBLIC_ROUTES.find((route) => route.pathname === pathname)
   const authToken = request.cookies.get("authToken")?.value
 
+  if (pathname === "/login" || pathname === "/register") {
+    const referer = request.headers.get("referer") ?? "/"
+
+    const response = NextResponse.next()
+    if (referer.includes("/login") || referer.includes("/register")) return response
+
+    response.cookies.set("redirectTo", referer, {
+      httpOnly: true,
+      path: "/",
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+    })
+
+    return response
+  }
+
   if (!authToken && publicRoute) {
     return NextResponse.next()
   }

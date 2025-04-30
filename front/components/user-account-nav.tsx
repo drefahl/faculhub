@@ -69,7 +69,7 @@ export function UserAccountNav() {
           onSelect={async (event) => {
             event.preventDefault()
             await signOut()
-            router.push("/login")
+            router.refresh()
           }}
         >
           <LogOut className="h-4 w-4" />

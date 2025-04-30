@@ -1,7 +1,6 @@
 import { env } from "@/config/env.config"
 import { AuthController } from "@/controllers/auth.controller"
 import { createAuthService } from "@/factories/serviceFactory"
-import { createCookieOptions } from "@/lib/utils/cookie.utils"
 
 import type { FastifyInstance } from "fastify"
 import z from "zod"
@@ -32,7 +31,6 @@ export async function authPublicRoutes(app: FastifyInstance) {
       schema: {
         tags: ["Auth"],
         response: {
-          200: z.object({ message: z.literal("Authenticated successfully") }),
           401: z.object({ message: z.string() }),
         },
       },
@@ -42,7 +40,7 @@ export async function authPublicRoutes(app: FastifyInstance) {
 
       const authToken = await authService.googleLogin(token)
 
-      return reply.setCookie("authToken", authToken, createCookieOptions()).redirect(env.FRONTEND_URL)
+      return reply.redirect(`${env.FRONTEND_URL}/api/auth/google/callback?token=${authToken}`)
     },
   )
 }

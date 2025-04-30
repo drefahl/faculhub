@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { Form } from "@/components/ui/form"
 import { login } from "@/lib/api/auth/auth"
+import { getCookie } from "@/lib/utils/cookie.utils"
 import { setTokenCookie } from "@/lib/utils/token"
 import { passwordSchema } from "@/lib/validations/password-schema"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -39,7 +40,9 @@ export function LoginForm() {
       const { token } = await login({ email, password })
       await setTokenCookie(token)
       toast.success("Login realizado com sucesso!", { description: "Bem-vindo de volta!" })
-      router.push("/")
+
+      const redirectTo = await getCookie("redirectTo")
+      router.push(redirectTo || "/")
     } catch (error) {
       toast.error("Erro ao fazer login", { description: "Verifique suas credenciais e tente novamente." })
       console.error("Error during login:", error)
@@ -55,7 +58,6 @@ export function LoginForm() {
       <Button variant="outline" type="button" className="w-full" onClick={handleGoogleSignIn}>
         <span className="flex items-center justify-center gap-2">
           <GoogleIcon className="h-4 w-4" />
-          {/* TODO: Salvar cookie de redirect */}
           Continuar com Google
         </span>
       </Button>

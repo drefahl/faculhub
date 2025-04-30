@@ -1,24 +1,16 @@
 "use server"
 
-import { cookies } from "next/headers"
+import { deleteCookie, getCookie, setCookie } from "../cookie.utils"
 import { tokenName } from "./index"
 
 export async function _getTokenCookie() {
-  const cookieStore = await cookies()
-  return cookieStore.get(tokenName)?.value
+  return await getCookie(tokenName)
 }
 
 export async function _setTokenCookie(token: string) {
-  const cookieStore = await cookies()
-
-  cookieStore.set(tokenName, token, {
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
-  })
+  await setCookie(tokenName, token)
 }
 
 export async function _deleteTokenCookie() {
-  const cookieStore = await cookies()
-
-  cookieStore.delete(tokenName)
+  await deleteCookie(tokenName)
 }
