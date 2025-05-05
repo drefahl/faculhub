@@ -5,7 +5,7 @@ import { SubmitButton } from "@/components/submit-button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Form } from "@/components/ui/form"
 import { createComment } from "@/lib/api/comment/comment"
-import { getUserInitials } from "@/lib/utils/user.utils"
+import { getProfilePicUrl, getUserInitials } from "@/lib/utils/user.utils"
 import type { Session } from "@/types"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
@@ -49,7 +49,7 @@ export function CommentForm({ threadId, session }: CommentFormProps) {
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <div className="flex gap-3">
           <Avatar className="h-8 w-8">
-            <AvatarImage src={currentUserProfilePic || ""} alt={currentUserName} />
+            <AvatarImage src={getProfilePicUrl(currentUserProfilePic) || ""} alt={currentUserName} />
             <AvatarFallback>{getUserInitials(currentUserName)}</AvatarFallback>
           </Avatar>
 

@@ -3,7 +3,7 @@ import { InvalidCredentialsError } from "@/errors/InvalidCredentialsError"
 import { comparePassword } from "@/lib/utils/crypto.utils"
 import { getFileBytesFromUrl } from "@/lib/utils/file.utils"
 import { createToken } from "@/lib/utils/jwt.utils"
-import { getProfilePictureUrl, getUserProviders } from "@/lib/utils/user.utls"
+import { getUserProviders } from "@/lib/utils/user.utls"
 import { authSchema } from "@/schemas/auth.schema"
 import type { Token } from "@fastify/oauth2"
 import { OAuth2Client } from "google-auth-library"
@@ -37,7 +37,7 @@ export class AuthService {
       id: user.id,
       email: user.email,
       name: user.name,
-      picture: getProfilePictureUrl(user.profilePicId),
+      picture: user.profilePicId,
       providers: getUserProviders(user),
       role: user.role,
     })
@@ -101,7 +101,7 @@ export class AuthService {
       id: user.id,
       email: user.email,
       name: user.name,
-      picture: getProfilePictureUrl(user.profilePicId),
+      picture: user.profilePicId,
       providers: getUserProviders(user),
       role: user.role,
     })
@@ -129,7 +129,7 @@ export class AuthService {
       id: user.id,
       email: user.email,
       name: user.name,
-      picture: getProfilePictureUrl(user.profilePicId),
+      picture: user.profilePicId,
       providers: getUserProviders(user),
       role: user.role,
     })

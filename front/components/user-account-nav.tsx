@@ -12,7 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { signOut } from "@/lib/utils/token"
-import { getUserInitials } from "@/lib/utils/user.utils"
+import { getProfilePicUrl, getUserInitials } from "@/lib/utils/user.utils"
 import { AvatarImage } from "@radix-ui/react-avatar"
 import { LogOut, User } from "lucide-react"
 import { useRouter } from "next/navigation"
@@ -44,7 +44,7 @@ export function UserAccountNav() {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-8 w-8 rounded-full">
           <Avatar className="h-8 w-8">
-            <AvatarImage src={session.picture || undefined} alt={session.name || "Avatar"} />
+            <AvatarImage src={getProfilePicUrl(session.picture) || ""} alt={session.name || "Avatar"} />
             <AvatarFallback>{initials}</AvatarFallback>
           </Avatar>
         </Button>
