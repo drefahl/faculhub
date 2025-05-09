@@ -1,5 +1,6 @@
 import Axios, { type AxiosRequestConfig, type AxiosError } from "axios"
-import { getTokenCookie } from "./token"
+import { redirect } from "next/navigation"
+import { getTokenCookie, signOut } from "./token"
 
 export const axiosInstance = Axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
@@ -12,6 +13,23 @@ axiosInstance.interceptors.request.use(async (config) => {
   }
   return config
 })
+
+axiosInstance.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    if (error.status === 401) {
+      await signOut()
+
+      if (typeof window !== "undefined") {
+        window.location.href = "/login"
+      } else {
+        redirect("/login")
+      }
+    }
+
+    return Promise.reject(error)
+  },
+)
 
 function mergeConfig(config: AxiosRequestConfig, options?: AxiosRequestConfig): AxiosRequestConfig {
   const merged = { ...config, ...options }
