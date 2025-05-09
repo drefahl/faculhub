@@ -12,7 +12,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Form } from "@/components/ui/form"
 import { refresh } from "@/lib/api/axios/auth"
 import { useUpdateUserProfile } from "@/lib/api/react-query/user"
-import { getUserInitials } from "@/lib/utils/user.utils"
+import { getProfilePicUrl, getUserInitials } from "@/lib/utils/user.utils"
 import type { Session } from "@/types"
 import { useRouter } from "next/navigation"
 import { ProfileImageUpload } from "./profile-image-upload"
@@ -73,7 +73,7 @@ export function ProfileForm({ session }: ProfileFormProps) {
       <CardContent className="space-y-6">
         <div className="flex flex-col items-center space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0">
           <Avatar className="h-24 w-24">
-            <AvatarImage src={session.picture || undefined} alt={session.name || "Avatar"} />
+            <AvatarImage src={getProfilePicUrl(session.picture) || ""} alt={session.name || "Avatar"} />
             <AvatarFallback className="text-2xl">{initials}</AvatarFallback>
           </Avatar>
 
