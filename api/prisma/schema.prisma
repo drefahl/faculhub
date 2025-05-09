@@ -25,6 +25,8 @@ model user {
   updatedAt    DateTime  @updatedAt
   thread       thread[]
   comment      comment[]
+  post         post[]
+  like         like[]
 }
 
 model file {
@@ -56,4 +58,49 @@ model comment {
   thread    thread   @relation(fields: [threadId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  posts     post[]
+}
+
+model like {
+  id     Int  @id @default(autoincrement())
+  userId Int
+  postId Int
+  post   post @relation(fields: [postId], references: [id])
+  user   user @relation(fields: [userId], references: [id])
+}
+
+enum postType {
+  NEWS
+  EVENT
+}
+
+model post {
+  id        Int       @id @default(autoincrement())
+  title     String
+  content   String    @db.Text
+  type      postType
+  isPinned  Boolean   @default(false)
+  eventDate DateTime?
+  location  String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  authorId  Int
+  views     Int       @default(0)
+  courses   course[]
+  author    user      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  comments  comment[]
+  likes     like[]
+
+  @@index([authorId])
+  @@index([type])
+  @@index([createdAt])
+}
+
+model course {
+  id        Int      @id @default(autoincrement())
+  name      String
+  code      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  posts     post[]
 }

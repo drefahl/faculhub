@@ -49,6 +49,9 @@
       },
       "complexity": {
         "noForEach": "off"
+      },
+      "security": {
+        "noDangerouslySetInnerHtml": "info"
       }
     }
   },

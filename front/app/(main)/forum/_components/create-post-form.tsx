@@ -10,7 +10,7 @@ import { Textarea } from "@/components/form/textarea"
 import { SubmitButton } from "@/components/submit-button"
 import { Button } from "@/components/ui/button"
 import { Form } from "@/components/ui/form"
-import { createThread } from "@/lib/api/thread/thread"
+import { createThread } from "@/lib/api/react-query/thread"
 import { toast } from "sonner"
 
 const createPostFormSchema = z.object({
@@ -37,7 +37,6 @@ export function CreatePostForm() {
 
       toast.success("Discussão criada com sucesso!", { description: "Sua discussão foi publicada no fórum." })
       router.push("/forum")
-      router.refresh()
     } catch (error) {
       toast.error("Erro ao criar discussão", {
         description: error instanceof Error ? error.message : "Ocorreu um erro inesperado",

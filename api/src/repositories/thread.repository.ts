@@ -19,17 +19,25 @@ export class ThreadRepository {
   }
 
   async listThreads({ take, skip, search }: { take: number; skip: number; search?: string }) {
-    return prisma.thread.findMany({
-      select,
-      take,
-      skip,
-      where: {
-        title: {
-          contains: search,
-          mode: "insensitive",
-        },
-      },
-    })
+    const where: Prisma.threadWhereInput = {
+      title: { contains: search, mode: "insensitive" },
+    }
+
+    const [total, threads] = await prisma.$transaction([
+      prisma.thread.count({ where }),
+      prisma.thread.findMany({ select, take, skip, where }),
+    ])
+
+    const page = Math.floor(skip / take) + 1
+    const totalPages = Math.ceil(total / take)
+
+    return {
+      data: threads,
+      total,
+      page,
+      perPage: take,
+      totalPages,
+    }
   }
 }
 

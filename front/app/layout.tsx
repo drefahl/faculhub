@@ -1,5 +1,9 @@
 import "./globals.css"
 
+import "reactjs-tiptap-editor/style.css"
+import "prism-code-editor-lightweight/layout.css"
+import "prism-code-editor-lightweight/themes/github-dark.css"
+
 import { Providers } from "@/components/providers"
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"

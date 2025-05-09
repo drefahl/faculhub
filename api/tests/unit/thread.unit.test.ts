@@ -78,12 +78,14 @@ describe("Thread Unit Tests", () => {
   })
 
   it("should list threads with pagination", async () => {
-    const threads = await threadService.list({ page: 1, take: 10 })
+    const response = await threadService.list({ page: 1, take: 10 })
+
+    const threads = response.data
 
     expect(threads).toBeDefined()
     expect(Array.isArray(threads)).toBe(true)
     expect(threads.length).toBeLessThanOrEqual(10)
-    expect(threadResponseArraySchema.safeParse(threads).success).toBe(true)
+    expect(threadResponseArraySchema.safeParse(response).success).toBe(true)
   })
 
   it("should return empty array for invalid pagination", async () => {
@@ -99,14 +101,14 @@ describe("Thread Unit Tests", () => {
       authorId,
     })
 
-    const threads = await threadService.list({ page: 1, take: 10, search: "Searchable" })
+    const { data: threads } = await threadService.list({ page: 1, take: 10, search: "Searchable" })
 
     expect(threads).toHaveLength(1)
     expect(threads[0].id).toBe(thread.id)
   })
 
   it("should return empty array for non-existent search term", async () => {
-    const threads = await threadService.list({ page: 1, take: 10, search: "NonExistent" })
+    const { data: threads } = await threadService.list({ page: 1, take: 10, search: "NonExistent" })
 
     expect(threads).toHaveLength(0)
   })

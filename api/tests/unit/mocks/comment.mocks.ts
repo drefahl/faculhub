@@ -12,6 +12,7 @@ export function createCommentRepositoryMock(): CommentRepository {
       mockConstants.comment.id,
       {
         id: mockConstants.comment.id,
+        postId: mockConstants.post.id,
         threadId: mockConstants.thread.id,
         authorId: mockConstants.user.id,
         content: mockConstants.comment.content,

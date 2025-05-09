@@ -2,24 +2,11 @@ import { NotFoundError } from "@/errors/NotFoundError"
 import { FileRepository } from "@/repositories/file.repository"
 import type { file } from "@prisma/client"
 import { vi } from "vitest"
-import { mockConstants } from "./constants"
 
 export function createFileRepositoryMock(): FileRepository {
   const repo = new FileRepository()
 
-  const files: Map<string, file> = new Map([
-    [
-      mockConstants.file.id,
-      {
-        id: mockConstants.file.id,
-        filename: mockConstants.file.filename,
-        mimeType: mockConstants.file.mimeType,
-        data: mockConstants.file.data,
-        createdAt: new Date(),
-        associatedUserIds: new Set([mockConstants.user.id]),
-      },
-    ],
-  ])
+  const files: Map<string, file> = new Map([])
 
   vi.spyOn(repo, "createFile").mockImplementation(async (data) => {
     const id = `file-${Date.now()}`

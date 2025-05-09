@@ -198,7 +198,7 @@ describe("Thread Integration Tests", () => {
       .set("Authorization", `Bearer ${authToken}`)
 
     expect(response.status).toBe(200)
-    expect(response.body.length).toBe(2)
+    expect(response.body.data.length).toBe(2)
     expect(threadResponseArraySchema.safeParse(response.body).success).toBe(true)
   })
 })

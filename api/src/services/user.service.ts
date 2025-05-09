@@ -76,7 +76,7 @@ export class UserService {
       }
     }
 
-    return this.userRepository.updateUser(userId, { ...updateData, role: "USER" })
+    return this.userRepository.updateUser(userId, updateData)
   }
 
   async updateUserProfileImage(userId: number, filename: string, mimeType: string, data: Buffer) {

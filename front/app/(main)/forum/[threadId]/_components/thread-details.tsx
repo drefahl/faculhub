@@ -1,6 +1,6 @@
 "use client"
 
-import { format, formatDistanceToNow } from "date-fns"
+import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import { Edit, MoreVertical, Trash2 } from "lucide-react"
 import { useEffect, useState } from "react"
@@ -13,7 +13,8 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Separator } from "@/components/ui/separator"
-import type { GetThreadById200, GetThreadById200CommentsItem } from "@/lib/api/generated.schemas"
+import type { GetThreadById200, GetThreadById200CommentsItem } from "@/lib/api/axios/generated.schemas"
+import { formatDistanceToNow } from "@/lib/utils/date.utils"
 import { getProfilePicUrl, getUserInitials } from "@/lib/utils/user.utils"
 import { CommentForm } from "./comment-form"
 import { CommentList } from "./comment-list"
@@ -129,18 +130,10 @@ export function ThreadDetail({ thread: initialThread }: ThreadDetailProps) {
             <div className="space-y-1">
               <CardTitle className="text-2xl">{thread.title}</CardTitle>
               <CardDescription>
-                Criado{" "}
-                {formatDistanceToNow(new Date(thread.createdAt), {
-                  addSuffix: true,
-                  locale: ptBR,
-                })}{" "}
+                Criado {formatDistanceToNow(thread.createdAt)}{" "}
                 {thread.createdAt !== thread.updatedAt && (
                   <Badge variant="outline" className="ml-2">
-                    Atualizado{" "}
-                    {formatDistanceToNow(new Date(thread.updatedAt), {
-                      addSuffix: true,
-                      locale: ptBR,
-                    })}
+                    Atualizado {formatDistanceToNow(thread.updatedAt)}
                   </Badge>
                 )}
               </CardDescription>

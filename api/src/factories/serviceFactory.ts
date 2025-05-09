@@ -1,10 +1,16 @@
 import { CommentRepository } from "@/repositories/comment.repository"
+import { CourseRepository } from "@/repositories/course.repository"
 import { FileRepository } from "@/repositories/file.repository"
+import { LikeRepository } from "@/repositories/like.repository"
+import { PostRepository } from "@/repositories/post.repository"
 import { ThreadRepository } from "@/repositories/thread.repository"
 import { UserRepository } from "@/repositories/user.repository"
 import { AuthService } from "@/services/auth.service"
 import { CommentService } from "@/services/comment.service"
+import { CourseService } from "@/services/course.service"
 import { FileService } from "@/services/file.service"
+import { LikeService } from "@/services/like.service"
+import { PostService } from "@/services/post.service"
 import { ThreadService } from "@/services/thread.service"
 import { UserService } from "@/services/user.service"
 
@@ -26,4 +32,15 @@ export function createThreadService() {
 
 export function createCommentService() {
   return new CommentService(new CommentRepository(), new ThreadRepository())
+}
+
+export function createPostService() {
+  return new PostService(new PostRepository())
+}
+
+export function createLikeService() {
+  return new LikeService(new LikeRepository())
+}
+export function createCourseService() {
+  return new CourseService(new CourseRepository())
 }

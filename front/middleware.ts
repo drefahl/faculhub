@@ -11,10 +11,13 @@ const REDIRECT_WHEN_NOT_AUTHENTICATED = "/login"
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
-  const publicRoute = PUBLIC_ROUTES.find((route) => route.pathname === pathname)
   const authToken = request.cookies.get("authToken")?.value
 
   if (pathname === "/login" || pathname === "/register") {
+    if (authToken) {
+      return NextResponse.redirect(new URL("/", request.url))
+    }
+
     const referer = request.headers.get("referer") ?? "/"
 
     const response = NextResponse.next()
@@ -29,6 +32,8 @@ export async function middleware(request: NextRequest) {
 
     return response
   }
+
+  const publicRoute = PUBLIC_ROUTES.find((route) => route.pathname === pathname)
 
   if (!authToken && publicRoute) {
     return NextResponse.next()
@@ -46,5 +51,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/login", "/register", "/admin/:path*", "/forum/new", "/perfil"],
+  matcher: ["/login", "/register", "/forum/new", "/perfil"],
 }

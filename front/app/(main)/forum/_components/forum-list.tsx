@@ -1,7 +1,4 @@
 "use client"
-
-import { formatDistanceToNow } from "date-fns"
-import { ptBR } from "date-fns/locale"
 import Link from "next/link"
 import { useEffect, useState } from "react"
 
@@ -11,18 +8,34 @@ import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 
 import { Pagination } from "@/components/pagination"
-import type { ListThreads200Item } from "@/lib/api/generated.schemas"
+import type { ListThreads200DataItem, ListThreadsParams } from "@/lib/api/axios/generated.schemas"
+import { useListThreads } from "@/lib/api/react-query/thread"
+import { formatDistanceToNow } from "@/lib/utils/date.utils"
 import { getProfilePicUrl, getUserInitials } from "@/lib/utils/user.utils"
 import { MessageSquare } from "lucide-react"
+import { useSearchParams } from "next/navigation"
 
-interface ForumListProps {
-  threads: ListThreads200Item[]
-  itemsPerPage?: number
-}
-
-export function ForumList({ threads: initialThreads, itemsPerPage = 5 }: ForumListProps) {
-  const [threads, setThreads] = useState<ListThreads200Item[]>(initialThreads)
+export function ForumList() {
+  const [threads, setThreads] = useState<ListThreads200DataItem[]>([])
   const [currentPage, setCurrentPage] = useState(1)
+
+  const searchParams = useSearchParams()
+
+  const filters: ListThreadsParams = {
+    page: currentPage,
+    take: 10,
+    search: searchParams.get("search") ?? "",
+  }
+
+  const { data } = useListThreads(filters, { query: { staleTime: 1 * 60 * 1000 } })
+
+  const { totalPages } = data || {}
+
+  useEffect(() => {
+    if (data) {
+      setThreads(data.data)
+    }
+  }, [data])
 
   const { socket, isConnected } = useSocketContext()
 
@@ -31,11 +44,11 @@ export function ForumList({ threads: initialThreads, itemsPerPage = 5 }: ForumLi
 
     socket.emit("join:thread", "all")
 
-    const handleCreate = (newThread: ListThreads200Item) => {
+    const handleCreate = (newThread: ListThreads200DataItem) => {
       setThreads((prev) => [...prev, newThread])
     }
 
-    const handleUpdate = (updatedThread: ListThreads200Item) => {
+    const handleUpdate = (updatedThread: ListThreads200DataItem) => {
       setThreads((prev) => prev.map((thread) => (thread.id === updatedThread.id ? updatedThread : thread)))
     }
 
@@ -54,11 +67,6 @@ export function ForumList({ threads: initialThreads, itemsPerPage = 5 }: ForumLi
       socket.off("thread:delete", handleDelete)
     }
   }, [socket, isConnected])
-
-  const totalPages = Math.ceil(threads.length / itemsPerPage)
-  const indexOfLastItem = currentPage * itemsPerPage
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage
-  const currentThreads = threads.slice(indexOfFirstItem, indexOfLastItem)
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page)
@@ -85,25 +93,17 @@ export function ForumList({ threads: initialThreads, itemsPerPage = 5 }: ForumLi
   return (
     <div className="space-y-6">
       <div className="grid gap-4">
-        {currentThreads.map((discussion) => (
+        {threads.map((discussion) => (
           <Link key={discussion.id} href={`/forum/${discussion.id}`}>
             <Card className="transition-all hover:bg-muted/50">
               <CardHeader className="pb-2">
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-muted-foreground">
-                    Criado{" "}
-                    {formatDistanceToNow(new Date(discussion.createdAt), {
-                      addSuffix: true,
-                      locale: ptBR,
-                    })}
+                    Criado {formatDistanceToNow(discussion.createdAt)}
                   </span>
                   {discussion.createdAt !== discussion.updatedAt && (
                     <Badge variant="outline" className="ml-2">
-                      Atualizado{" "}
-                      {formatDistanceToNow(new Date(discussion.updatedAt), {
-                        addSuffix: true,
-                        locale: ptBR,
-                      })}
+                      Atualizado {formatDistanceToNow(discussion.updatedAt)}
                     </Badge>
                   )}
                 </div>
@@ -145,10 +145,7 @@ export function ForumList({ threads: initialThreads, itemsPerPage = 5 }: ForumLi
                     </Avatar>
                     <span className="text-xs text-muted-foreground">
                       Último comentário{" "}
-                      {formatDistanceToNow(new Date(discussion.comments[discussion.comments.length - 1].createdAt), {
-                        addSuffix: true,
-                        locale: ptBR,
-                      })}
+                      {formatDistanceToNow(discussion.comments[discussion.comments.length - 1].createdAt)}
                     </span>
                   </div>
                 )}
@@ -158,7 +155,7 @@ export function ForumList({ threads: initialThreads, itemsPerPage = 5 }: ForumLi
         ))}
       </div>
 
-      {totalPages > 1 && (
+      {totalPages && totalPages > 1 && (
         <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
       )}
     </div>

@@ -1,7 +1,10 @@
-import { verifyJwt } from "@/middlewares/auth.middleware"
+import { adminCheck, attachUser, verifyJwt } from "@/middlewares/auth.middleware"
 import type { FastifyInstance } from "fastify"
 import { authRoutes } from "./auth.route"
 import { commentRoutes } from "./comment.route"
+import { courseRoutes } from "./course.route"
+import { likeRoutes } from "./like.route"
+import { postRoutes } from "./post.route"
 import { publicRoutes } from "./public.routes"
 import { threadRoutes } from "./thread.route"
 import { userRoutes } from "./user.route"
@@ -9,6 +12,8 @@ import { userRoutes } from "./user.route"
 export function registerRoutes(app: FastifyInstance) {
   app.register(
     async (fastifyInstance) => {
+      fastifyInstance.addHook("onRequest", attachUser)
+
       fastifyInstance.register(publicRoutes)
     },
     { prefix: "/api" },
@@ -19,9 +24,21 @@ export function registerRoutes(app: FastifyInstance) {
       fastifyInstance.addHook("onRequest", verifyJwt)
 
       fastifyInstance.register(authRoutes)
-      fastifyInstance.register(userRoutes, { prefix: "/users" })
       fastifyInstance.register(commentRoutes, { prefix: "/comments" })
+      fastifyInstance.register(likeRoutes, { prefix: "/likes" })
+      fastifyInstance.register(postRoutes, { prefix: "/posts" })
       fastifyInstance.register(threadRoutes, { prefix: "/threads" })
+      fastifyInstance.register(userRoutes, { prefix: "/users" })
+    },
+    { prefix: "/api" },
+  )
+
+  app.register(
+    async (fastifyInstance) => {
+      fastifyInstance.addHook("onRequest", verifyJwt)
+      fastifyInstance.addHook("onRequest", adminCheck)
+
+      fastifyInstance.register(courseRoutes, { prefix: "/courses" })
     },
     { prefix: "/api" },
   )

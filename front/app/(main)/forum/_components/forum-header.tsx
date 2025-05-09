@@ -14,7 +14,6 @@ interface ForumHeaderProps {
 export function ForumHeader({ initialQuery = "" }: ForumHeaderProps) {
   const router = useRouter()
 
-  //TODO: router.refresh() is not working as expected
   const onSearch = (query: string) => {
     const params = new URLSearchParams(window.location.search)
     if (query) {

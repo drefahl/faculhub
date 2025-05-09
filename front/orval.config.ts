@@ -1,29 +1,55 @@
 import { defineConfig } from "orval"
 
+const SWAGGER_PATH = "../api/swagger.json"
+
+const FORMAT_HOOK = {
+  afterAllFilesWrite: "pnpm run format",
+} as const
+
 export default defineConfig({
-  api: {
-    input: {
-      target: "../api/swagger.json",
-    },
+  reactQuery: {
+    input: { target: SWAGGER_PATH },
 
     output: {
-      target: "./lib/api/generated.ts",
-      client: "react-query",
-      mode: "tags-split",
+      target: "./lib/api/react-query/generated.ts",
+      mode: "tags",
 
-      clean: true,
-      biome: true,
+      client: "react-query",
 
       override: {
         mutator: {
           path: "./lib/utils/axios.ts",
-          name: "makeRequest",
+          name: "request",
         },
       },
+
+      clean: true,
+      biome: true,
     },
 
-    hooks: {
-      afterAllFilesWrite: "pnpm run format",
+    hooks: FORMAT_HOOK,
+  },
+
+  api: {
+    input: { target: SWAGGER_PATH },
+
+    output: {
+      target: "./lib/api/axios/generated.ts",
+      mode: "tags",
+
+      client: "axios-functions",
+
+      override: {
+        mutator: {
+          path: "./lib/utils/axios.ts",
+          name: "requestSafe",
+        },
+      },
+
+      clean: true,
+      biome: true,
     },
+
+    hooks: FORMAT_HOOK,
   },
 })

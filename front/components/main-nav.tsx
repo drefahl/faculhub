@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation"
 
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
-import { Calendar, Home, type LucideProps, MessageSquare } from "lucide-react"
+import { Calendar, CalendarDays, Home, type LucideProps, MessageSquare } from "lucide-react"
 
 type Route = {
   href: string
@@ -35,6 +35,12 @@ export function MainNav() {
       label: "Horário",
       icon: Calendar,
       active: pathname === "/cursos",
+    },
+    {
+      href: "/noticias",
+      label: "Notícias",
+      icon: CalendarDays,
+      active: pathname.startsWith("/noticias"),
     },
   ]
 

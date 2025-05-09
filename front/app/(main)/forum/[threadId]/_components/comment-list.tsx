@@ -4,11 +4,10 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { deleteComment } from "@/lib/api/comment/comment"
+import { deleteComment } from "@/lib/api/react-query/comment"
+import { formatDistanceToNow } from "@/lib/utils/date.utils"
 import { getProfilePicUrl, getUserInitials } from "@/lib/utils/user.utils"
 import type { Session } from "@/types"
-import { formatDistanceToNow } from "date-fns"
-import { ptBR } from "date-fns/locale"
 import { Edit, MoreVertical, Trash2 } from "lucide-react"
 import { useState } from "react"
 import { CommentEditForm } from "./comment-edit-form"
@@ -91,21 +90,9 @@ export function CommentList({ comments, threadId, session }: CommentListProps) {
                         <div>
                           <p className="text-sm font-medium">{comment.author.name}</p>
                           <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                            <span>
-                              {formatDistanceToNow(new Date(comment.createdAt), {
-                                addSuffix: true,
-                                locale: ptBR,
-                              })}
-                            </span>
-                            {isEdited && (
-                              <span className="italic">
-                                (editado{" "}
-                                {formatDistanceToNow(new Date(comment.updatedAt!), {
-                                  addSuffix: true,
-                                  locale: ptBR,
-                                })}
-                                )
-                              </span>
+                            <span>{formatDistanceToNow(comment.createdAt)}</span>
+                            {isEdited && comment.updatedAt && (
+                              <span className="italic">(editado {formatDistanceToNow(comment.updatedAt)} )</span>
                             )}
                           </div>
                         </div>

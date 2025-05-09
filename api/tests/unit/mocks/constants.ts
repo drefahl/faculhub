@@ -1,3 +1,15 @@
+import type { comment, course, file, like, post, thread, user } from "@prisma/client"
+
+type MockConstants = {
+  user: Partial<user> & { hashedPassword: string }
+  file: Partial<file>
+  thread: Partial<thread>
+  comment: Partial<comment>
+  post: Partial<post>
+  course: Partial<course>
+  like: Partial<like>
+}
+
 export const mockConstants = {
   user: {
     id: 1,
@@ -30,6 +42,33 @@ export const mockConstants = {
     threadId: 1,
     content: "This is a comment",
     authorId: 1,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  course: {
+    id: 1,
+    name: "Computer Science",
+    code: "CS101",
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  like: {
+    id: 1,
+    userId: 1,
+    postId: 1,
+  },
+  post: {
+    id: 1,
+    title: "Mocked Post",
+    content: "This is a mocked post content",
+    authorId: 1,
+    courseId: 1,
+    type: "NEWS",
+    isPinned: false,
+    eventDate: null,
+    location: null,
+    coverImage: null,
+    views: 0,
     createdAt: new Date(),
     updatedAt: new Date(),
   },

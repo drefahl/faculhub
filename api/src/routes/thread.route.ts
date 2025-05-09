@@ -123,4 +123,10 @@ export const threadSchema = z.object({
   ),
 })
 
-export const threadResponseArraySchema = z.array(threadSchema)
+export const threadResponseArraySchema = z.object({
+  data: z.array(threadSchema),
+  total: z.number(),
+  page: z.number(),
+  perPage: z.number(),
+  totalPages: z.number(),
+})

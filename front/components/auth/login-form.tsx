@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import { Form } from "@/components/ui/form"
-import { login } from "@/lib/api/auth/auth"
+import { login } from "@/lib/api/axios/auth"
 import { getCookie } from "@/lib/utils/cookie.utils"
 import { setTokenCookie } from "@/lib/utils/token"
 import { passwordSchema } from "@/lib/validations/password-schema"
@@ -36,17 +36,19 @@ export function LoginForm() {
   })
 
   async function onSubmit({ email, password }: LoginFormValues) {
-    try {
-      const { token } = await login({ email, password })
-      await setTokenCookie(token)
-      toast.success("Login realizado com sucesso!", { description: "Bem-vindo de volta!" })
-
-      const redirectTo = await getCookie("redirectTo")
-      router.push(redirectTo || "/")
-    } catch (error) {
+    const [error, response] = await login({ email, password })
+    if (error) {
       toast.error("Erro ao fazer login", { description: "Verifique suas credenciais e tente novamente." })
-      console.error("Error during login:", error)
+      return
     }
+
+    const { token } = response
+
+    await setTokenCookie(token)
+    toast.success("Login realizado com sucesso!", { description: "Bem-vindo de volta!" })
+
+    const redirectTo = await getCookie("redirectTo")
+    router.push(redirectTo || "/")
   }
 
   const handleGoogleSignIn = () => {

@@ -1,4 +1,5 @@
-import { getThreadById } from "@/lib/api/thread/thread"
+import { getThreadById } from "@/lib/api/react-query/thread"
+import { notFound } from "next/navigation"
 import { ThreadDetail } from "./_components/thread-details"
 
 interface ForumPageProps {
@@ -12,7 +13,8 @@ export default async function ForumPage({ params }: ForumPageProps) {
     throw new Error("Invalid thread ID")
   }
 
-  const data = await getThreadById(resolvedParams.threadId)
+  const thread = await getThreadById(resolvedParams.threadId)
+  if (!thread) return notFound()
 
-  return <ThreadDetail thread={data} />
+  return <ThreadDetail thread={thread} />
 }

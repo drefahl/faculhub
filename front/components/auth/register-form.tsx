@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form"
 import * as z from "zod"
 
 import { Button } from "@/components/ui/button"
-import { createUser } from "@/lib/api/user/user"
+import { createUser } from "@/lib/api/axios/user"
 import { passwordSchema } from "@/lib/validations/password-schema"
 import { toast } from "sonner"
 import { Input } from "../form/input"
@@ -41,14 +41,14 @@ export function RegisterForm() {
   })
 
   async function onSubmit({ name, email, password }: RegistrationFormData) {
-    try {
-      await createUser({ name, email, password })
-      toast.success("Conta criada com sucesso!", { description: "Você já pode fazer login." })
-      router.push("/login")
-    } catch (error) {
+    const [error] = await createUser({ name, email, password })
+    if (error) {
       toast.error("Erro ao criar conta", { description: "Verifique os dados e tente novamente." })
       return
     }
+
+    toast.success("Conta criada com sucesso!", { description: "Você já pode fazer login." })
+    router.push("/login")
   }
 
   const { isLoading } = form.formState

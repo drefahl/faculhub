@@ -19,10 +19,7 @@ export const tokenSchema = z
 export type TokenPayload = z.infer<typeof tokenSchema>
 
 export async function createToken(payload: TokenPayload) {
-  const jwt = await new SignJWT(payload)
-    .setProtectedHeader({ alg: "HS256" })
-    .setExpirationTime(env.NODE_ENV === "development" ? "1h" : "1d")
-    .sign(secret)
+  const jwt = await new SignJWT(payload).setProtectedHeader({ alg: "HS256" }).setExpirationTime("1d").sign(secret)
 
   return jwt
 }

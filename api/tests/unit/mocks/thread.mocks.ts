@@ -111,7 +111,7 @@ export function createThreadRepositoryMock(): ThreadRepository {
 
     const paginatedThreads = filteredThreads.slice(skip, skip + take)
 
-    return paginatedThreads.map((thread) => ({
+    const data = paginatedThreads.map((thread) => ({
       ...thread,
       author: {
         id: thread.authorId,
@@ -120,6 +120,19 @@ export function createThreadRepositoryMock(): ThreadRepository {
       },
       comments: [],
     }))
+
+    const total = filteredThreads.length
+
+    const page = Math.floor(skip / take) + 1
+    const totalPages = Math.ceil(total / take)
+
+    return {
+      data,
+      total,
+      page,
+      perPage: take,
+      totalPages,
+    } 
   })
 
   return repo

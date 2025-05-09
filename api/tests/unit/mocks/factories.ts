@@ -1,10 +1,16 @@
 import { AuthService } from "@/services/auth.service"
 import { CommentService } from "@/services/comment.service"
+import { CourseService } from "@/services/course.service"
 import { FileService } from "@/services/file.service"
+import { LikeService } from "@/services/like.service"
+import { PostService } from "@/services/post.service"
 import { ThreadService } from "@/services/thread.service"
 import { UserService } from "@/services/user.service"
 import { createCommentRepositoryMock } from "./comment.mocks"
+import { createCourseRepositoryMock } from "./course.mocls"
 import { createFileRepositoryMock } from "./file.mocks"
+import { createLikeRepositoryMock } from "./like.mocks"
+import { createPostRepositoryMock } from "./post.mocks"
 import { createThreadRepositoryMock } from "./thread.mocks"
 import { createUserRepositoryMock } from "./user.mocks"
 
@@ -18,6 +24,12 @@ export function createMockServices() {
   const threadService = new ThreadService(threadRepository, userRepository)
   const commentRepository = createCommentRepositoryMock()
   const commentService = new CommentService(commentRepository, threadRepository)
+  const likeRepository = createLikeRepositoryMock()
+  const likeService = new LikeService(likeRepository)
+  const postRepository = createPostRepositoryMock()
+  const postService = new PostService(postRepository)
+  const courseRepository = createCourseRepositoryMock()
+  const courseService = new CourseService(courseRepository)
 
   return {
     fileRepository,
@@ -29,5 +41,11 @@ export function createMockServices() {
     threadService,
     commentRepository,
     commentService,
+    likeRepository,
+    likeService,
+    postRepository,
+    postService,
+    courseRepository,
+    courseService,
   }
 }

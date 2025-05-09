@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
+    "lint": "pnpm lint:api && pnpm lint:front",
+    "lint:api": "cd api && pnpm lint && cd ..",
+    "lint:front": "cd front && pnpm lint && cd ..",
     "swagger:generate": "cd api && pnpm generate-swagger && cd ../front && pnpm orval && cd .."
   }
 }

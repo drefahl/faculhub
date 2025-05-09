@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button"
 import { getSession } from "@/lib/utils/token"
-import { Calendar, type LucideProps, MessageSquare } from "lucide-react"
+import { Calendar, CalendarDays, type LucideProps, MessageSquare } from "lucide-react"
 import Link from "next/link"
 
 type Feature = {
@@ -22,6 +22,12 @@ const features: Feature[] = [
     title: "Monte Seu Horário",
     description: "Crie e compartilhe seu horário de aulas com facilidade.",
     href: "/cursos",
+  },
+  {
+    icon: CalendarDays,
+    title: "Notícias",
+    description: "Fique por dentro das últimas notícias e eventos da faculdade.",
+    href: "/noticias",
   },
 ]
 

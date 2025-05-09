@@ -32,6 +32,7 @@ export const updateUserSchema = z
     currentPassword: passwordSchema.optional(),
     newPassword: passwordSchema.optional(),
     confirmPassword: passwordSchema.optional(),
+    role: z.enum(["USER"]).optional(),
   })
   .refine(
     (data) => {

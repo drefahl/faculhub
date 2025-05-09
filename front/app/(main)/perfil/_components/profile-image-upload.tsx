@@ -1,8 +1,8 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { refresh } from "@/lib/api/auth/auth"
-import { uploadProfileImage, useDeleteProfileImage } from "@/lib/api/user/user"
+import { refresh } from "@/lib/api/react-query/auth"
+import { uploadProfileImage, useDeleteProfileImage } from "@/lib/api/react-query/user"
 import { Trash2, Upload } from "lucide-react"
 import { useRouter } from "next/navigation"
 import type React from "react"
