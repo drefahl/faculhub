@@ -87,7 +87,7 @@ export default async function PostPage({ params }: { params: Promise<{ postId: s
             <div>
               <div className="text-sm text-muted-foreground">Data</div>
               <div className="font-medium">
-                {new Date(post.eventDate).toLocaleDateString(undefined, {
+                {new Date(post.eventDate).toLocaleDateString("pt-BR", {
                   weekday: "long",
                   year: "numeric",
                   month: "long",
