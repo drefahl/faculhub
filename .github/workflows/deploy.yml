@@ -63,6 +63,8 @@ jobs:
         run: pnpm test
 
   build_api:
+    name: 🐳 Build API
+    needs: test_api
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
@@ -91,6 +93,8 @@ jobs:
             ${{ env.DOCKER_REGISTRY }}/faculhub-api:latest
 
   build_front:
+    name: 🐳 Build Frontend
+    needs: build_api
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
