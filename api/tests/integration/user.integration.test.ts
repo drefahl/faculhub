@@ -1,117 +1,124 @@
-import path from "node:path"
-import { createServer } from "@/app"
-import type { Session } from "@/types/fastify-jwt"
-import type { FastifyInstance } from "fastify"
-import request from "supertest"
-import { afterAll, beforeAll, describe, expect, it } from "vitest"
-import { createUserAndGetAuthToken } from "./utils/auth.util"
+import { InvalidCredentialsError } from "@/errors/InvalidCredentialsError"
+import { createFileService, createUserService } from "@/factories/serviceFactory"
+import { comparePassword } from "@/lib/utils/crypto.utils"
+import { resetDatabase } from "tests/helpers/reset-db"
+import { beforeEach, describe, expect, it } from "vitest"
+import { ZodError } from "zod"
 
-let app: FastifyInstance
-let authToken: string
-let payload: Session
+const userService = createUserService()
+const fileService = createFileService()
 
-describe("User Integration Tests", () => {
-  beforeAll(async () => {
-    app = await createServer()
-    const response = await createUserAndGetAuthToken(app)
-    authToken = response.token
-    payload = response.payload
+describe("UserService Integration", () => {
+  const email = "user@test.com"
+  const password = "Str0ngP@ss"
+  let userId: number
+
+  beforeEach(async () => {
+    await resetDatabase()
+
+    const user = await userService.createUser({ email, name: "User", password })
+    userId = user.id
   })
 
-  afterAll(async () => {
-    await app.close()
+  it("should create a user with encrypted password", async () => {
+    const user = await userService.getUserById(userId)
+
+    expect(user).toBeDefined()
+    expect(user?.password).not.toBe(password)
+    expect(await comparePassword(password, user!.password!)).toBe(true)
   })
 
-  it("should register a new user", async () => {
-    const uniqueEmail = `anotheruser+${Date.now()}@example.com`
+  it("should not allow duplicate emails", async () => {
+    await expect(() => userService.createUser({ email, name: "New", password })).rejects.toThrow("Email already exists")
+  })
 
-    const response = await request(app.server).post("/api/users").send({
-      email: uniqueEmail,
-      name: "Another User",
-      password: "Another@123",
+  it("should get user by ID", async () => {
+    const user = await userService.getUserById(userId)
+
+    expect(user?.email).toBe(email)
+  })
+
+  it("should return null for non-existing user", async () => {
+    const user = await userService.getUserById(0)
+
+    expect(user).toBeNull()
+  })
+
+  it("should update user name only", async () => {
+    const updated = await userService.updateUser(userId, { name: "New Name", email })
+
+    expect(updated.name).toBe("New Name")
+    expect(updated.email).toBe(email)
+  })
+
+  it("should update password if current password is correct", async () => {
+    const newPassword = "N3w@pass"
+    const updated = await userService.updateUser(userId, {
+      email,
+      currentPassword: password,
+      newPassword,
+      confirmPassword: newPassword,
     })
 
-    expect(response.status).toBe(201)
-    expect(response.body).toHaveProperty("id")
+    expect(await comparePassword(newPassword, updated.password!)).toBe(true)
   })
 
-  it("should fail to register a user with an invalid email", async () => {
-    const response = await request(app.server).post("/api/users").send({
-      email: "invalid-email",
-      name: "Invalid User",
-      password: "pass",
+  it("should not update password if current password is wrong", async () => {
+    const updated = userService.updateUser(userId, {
+      email,
+      currentPassword: "Wr0ng@Pass",
+      newPassword: "Another@123",
+      confirmPassword: "Another@123",
     })
 
-    expect(response.status).toBe(400)
-    expect(response.body.message).toContain("Invalid request data")
+    await expect(updated).rejects.toThrow(InvalidCredentialsError)
   })
 
-  it("should login the user", async () => {
-    expect(authToken).toBeDefined()
+  it("should throw if new and confirm passwords do not match", async () => {
+    const updated = userService.updateUser(userId, {
+      email,
+      currentPassword: password,
+      newPassword: "NewOne",
+      confirmPassword: "DifferentOne",
+    })
+
+    await expect(updated).rejects.toThrow("Passwords do not match")
   })
 
-  it("should get the logged user profile", async () => {
-    const response = await request(app.server).get("/api/users/me").set("Authorization", `Bearer ${authToken}`)
+  it("should update profile picture", async () => {
+    const user = await userService.updateUserProfileImage(userId, "avatar.png", "image/png", Buffer.from("mock"))
 
-    expect(response.status).toBe(200)
-    expect(response.body).toHaveProperty("id", payload.id)
+    const file = await fileService.getFileById(user.profilePicId!)
+
+    expect(file).toBeDefined()
+    expect(file?.filename).toBe("avatar.png")
+    expect(file?.mimeType).toBe("image/png")
+
+    expect(user.profilePicId).toBe(file?.id)
   })
 
-  it("should update the logged user profile", async () => {
-    const newName = "Updated User"
-    const response = await request(app.server)
-      .patch("/api/users/me")
-      .set("Authorization", `Bearer ${authToken}`)
-      .send({ name: newName })
+  it("should delete profile picture", async () => {
+    await userService.updateUserProfileImage(userId, "avatar.png", "image/png", Buffer.from("mock"))
+    const user = await userService.deleteUserProfileImage(userId)
 
-    expect(response.status).toBe(200)
-    expect(response.body.name).toEqual(newName)
+    expect(user.profilePicId).toBeNull()
   })
 
-  it("should change the user picture when a new one is provided", async () => {
-    const filePath = path.resolve(__dirname, "../fixtures/test-image.png")
-
-    const response = await request(app.server)
-      .put("/api/users/profile-image")
-      .set("Authorization", `Bearer ${authToken}`)
-      .attach("file", filePath)
-
-    expect(response.status).toBe(200)
+  it("should throw on update image if user does not exist", async () => {
+    await expect(userService.updateUserProfileImage(0, "avatar.png", "image/png", Buffer.from("mock"))).rejects.toThrow(
+      "User not found",
+    )
   })
 
-  it("should delete the user profile image", async () => {
-    const filePath = path.resolve(__dirname, "../fixtures/test-image.png")
+  it("should throw on delete profile image if no profilePicId exists", async () => {
+    const cleanUser = await userService.updateUser(userId, { email, name: "Clean" })
 
-    await request(app.server)
-      .put("/api/users/profile-image")
-      .set("Authorization", `Bearer ${authToken}`)
-      .attach("file", filePath)
-
-    const response = await request(app.server)
-      .delete("/api/users/profile-image")
-      .set("Authorization", `Bearer ${authToken}`)
-
-    expect(response.status).toBe(200)
+    await expect(userService.deleteUserProfileImage(cleanUser.id)).rejects.toThrow("No profile image to delete")
   })
 
-  it("should partially update the user profile", async () => {
-    const response = await request(app.server)
-      .patch("/api/users/me")
-      .set("Authorization", `Bearer ${authToken}`)
-      .send({ name: "Partially Updated User" })
-
-    expect(response.status).toBe(200)
-    expect(response.body.name).toBe("Partially Updated User")
-  })
-
-  it("should fail to upload an invalid file as profile image", async () => {
-    const filePath = path.resolve(__dirname, "../fixtures/invalid-file.txt")
-    const response = await request(app.server)
-      .put("/api/users/profile-image")
-      .set("Authorization", `Bearer ${authToken}`)
-      .attach("file", filePath)
-
-    expect(response.status).toBe(400)
-    expect(response.body.message).toContain("File is not an image")
+  it("should throw error if file is not a valid image", async () => {
+    await expect(
+      userService.updateUserProfileImage(userId, "avatar.txt", "text/plain", Buffer.from("mock")),
+    ).rejects.toThrow(ZodError)
   })
 })

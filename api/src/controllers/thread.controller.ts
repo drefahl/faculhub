@@ -1,4 +1,4 @@
-import { isUserAdmin } from "@/lib/utils/user.utls"
+import { isUserAdmin } from "@/lib/utils/user.utils"
 import type { ThreadService } from "@/services/thread.service"
 import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify"
 import type { CreateThreadInput, UpdateThreadInput } from "../schemas/thread.schema"

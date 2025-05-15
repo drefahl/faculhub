@@ -1,4 +1,4 @@
-import { isUserAdmin } from "@/lib/utils/user.utls"
+import { isUserAdmin } from "@/lib/utils/user.utils"
 import type { CreateCommentInput, UpdateCommentInput } from "@/schemas/comment.schema"
 import type { CommentService } from "@/services/comment.service"
 import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify"

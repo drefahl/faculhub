@@ -9,13 +9,12 @@
     "build": "rimraf dist && tsc && tsc-alias",
     "lint": "tsc --noEmit",
     "format": "biome check --linter-enabled=false --write src",
-    "test:coverage": "vitest run --coverage",
     "test": "run-s test:unit test:integration",
     "test:unit": "vitest run ./tests/unit",
     "test:unit:watch": "vitest --watch ./tests/unit",
-    "test:integration:run": "vitest run --config vitest.integration.config.ts ./tests/integration",
+    "test:integration:run": "vitest run --config ./vitest.integration.config.ts ./tests/integration",
     "test:integration": "run-s docker:up test:integration:run docker:down",
-    "test:integration:watch": "vitest --watch --config vitest.integration.config.ts ./tests/integration",
+    "test:integration:watch": "vitest --watch --config ./vitest.integration.config.ts ./tests/integration",
     "docker:up": "docker compose up -d --remove-orphans --wait",
     "docker:down": "docker compose down",
     "generate-swagger": "ts-node -r tsconfig-paths/register --transpile-only scripts/generate-swagger.ts",
@@ -34,6 +33,7 @@
     "@fastify/oauth2": "^8.1.2",
     "@fastify/swagger": "^9.4.2",
     "@fastify/swagger-ui": "^5.2.2",
+    "@prisma/client": "6.6.0",
     "bcryptjs": "^3.0.2",
     "cross-env": "^7.0.3",
     "dotenv": "^16.4.7",
@@ -50,7 +50,6 @@
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
     "@paralleldrive/cuid2": "^2.2.2",
-    "@prisma/client": "6.6.0",
     "@types/bcrypt": "^5.0.2",
     "@types/node": "^22.13.17",
     "@types/supertest": "^6.0.3",
@@ -65,8 +64,5 @@
     "typescript": "^5.8.2",
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^3.1.1"
-  },
-  "prisma": {
-    "seed": "ts-node ./prisma/seed.ts"
   }
 }

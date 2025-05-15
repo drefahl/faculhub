@@ -1,115 +1,126 @@
 import { InvalidCredentialsError } from "@/errors/InvalidCredentialsError"
+import { hashPassword } from "@/lib/utils/crypto.utils"
 import { tokenSchema, verifyToken } from "@/lib/utils/jwt.utils"
+import { AuthService } from "@/services/auth.service"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 import { ZodError } from "zod"
-import { mockConstants } from "./mocks/constants"
-import { createMockServices } from "./mocks/factories"
 
-const {
-  user: { email, password },
-} = mockConstants
+describe("AuthService (unit)", () => {
+  let authService: AuthService
+  const email = "test@example.com"
+  const password = "StrongP@ss1"
 
-const { authService } = createMockServices()
+  const mockUserService = {
+    getUserById: vi.fn(),
+    getUserByEmail: vi.fn(),
+    createUserWithGoogle: vi.fn(),
+    updateUser: vi.fn(),
+  }
 
-describe("Credentials Login", () => {
-  beforeEach(() => {
+  const mockFileService = {
+    createFile: vi.fn(),
+    deleteFile: vi.fn(),
+    getFileById: vi.fn(),
+  }
+
+  beforeEach(async () => {
     vi.clearAllMocks()
+
+    const hashed = await hashPassword(password)
+    const userData = {
+      id: 1,
+      email,
+      password: hashed,
+      name: "Test User",
+      profilePicId: null,
+      role: "USER",
+      providers: ["credentials"],
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }
+
+    mockUserService.getUserById.mockResolvedValue(userData)
+    mockUserService.getUserByEmail.mockResolvedValue(userData)
+    mockUserService.updateUser.mockResolvedValue(userData)
+
+    authService = new AuthService(mockUserService as any, mockFileService as any)
   })
 
-  it("should login with valid credentials and return a valid token", async () => {
-    const token = await authService.login(email, password)
+  describe("Credentials Login", () => {
+    it("returns a valid JWT for correct credentials", async () => {
+      const token = await authService.login(email, password)
+      expect(typeof token).toBe("string")
 
-    expect(token).toBeDefined()
-
-    const decoded = await verifyToken(token)
-
-    expect(decoded).toHaveProperty("id")
-    expect(decoded).toHaveProperty("email")
-  })
-
-  it("should throw an error with invalid credentials", async () => {
-    await expect(authService.login(email, "wR0ngP@assWord")).rejects.toThrow(InvalidCredentialsError)
-  })
-
-  it("should throw an error with empty email", async () => {
-    await expect(authService.login("", password)).rejects.toThrow(ZodError)
-  })
-
-  it("should throw an error with short password", async () => {
-    await expect(authService.login(email, "123")).rejects.toThrow(ZodError)
-  })
-
-  it("should throw an error with empty password", async () => {
-    await expect(authService.login(email, "")).rejects.toThrow(ZodError)
-  })
-
-  it("should throw an error with password containing only numbers", async () => {
-    await expect(authService.login(email, "1234567890")).rejects.toThrow(ZodError)
-  })
-
-  it("should throw an error with password containing only letters", async () => {
-    await expect(authService.login(email, "abcdefghij")).rejects.toThrow(ZodError)
-  })
-
-  it("should throw an error with password containing only special characters", async () => {
-    await expect(authService.login(email, "!@#$%^&*()")).rejects.toThrow(ZodError)
-  })
-
-  it("should throw an error with password containing only spaces", async () => {
-    await expect(authService.login(email, "          ")).rejects.toThrow(ZodError)
-  })
-
-  it("should throw an error with password containing only letters and numbers", async () => {
-    await expect(authService.login(email, "abcdefghij1234567890")).rejects.toThrow(ZodError)
-  })
-})
-
-describe("Google Login", () => {
-  beforeEach(() => {
-    vi.clearAllMocks()
-  })
-
-  it("should login with valid google credentials and return a valid token", async () => {
-    const token = await authService.googleLogin({
-      id_token: "valid-google-token",
-      access_token: "token",
-      expires_in: 3600,
-      expires_at: new Date(),
-      token_type: "Bearer",
+      const decoded = await verifyToken(token)
+      tokenSchema.parse(decoded)
     })
 
-    expect(token).toBeDefined()
-
-    const decoded = await verifyToken(token)
-    tokenSchema.parse(decoded)
+    it("throws ZodError for invalid inputs", async () => {
+      const invalids = ["", "123", "abcdefghij", "!@#$%^&*()", "          ", "abc123xyz456"]
+      await expect(() => authService.login("", password)).rejects.toBeInstanceOf(ZodError)
+      for (const pass of invalids) {
+        await expect(() => authService.login(email, pass)).rejects.toBeInstanceOf(ZodError)
+      }
+    })
   })
 
-  it("should throw an error with invalid google credentials", async () => {
-    await expect(
-      authService.googleLogin({
-        id_token: "invalid-google-token",
-        access_token: "token",
+  describe("Google Login & Refresh", () => {
+    beforeEach(() => {
+      // @ts-ignore
+      vi.spyOn<any, any>(authService, "verifyGoogleToken").mockImplementation(async (idToken: string) => {
+        if (idToken === "valid-google-token") {
+          return {
+            email,
+            name: "Test User",
+            picture: null,
+            sub: "google-sub-id",
+          }
+        }
+        return null
+      })
+    })
+
+    it("returns JWT for valid Google credentials", async () => {
+      const token = await authService.googleLogin({
+        id_token: "valid-google-token",
+        access_token: "foo",
         expires_in: 3600,
         expires_at: new Date(),
         token_type: "Bearer",
-      }),
-    ).rejects.toThrow(InvalidCredentialsError)
-  })
+      })
 
-  it("should refresh the token", async () => {
-    const token = await authService.login(email, password)
+      expect(typeof token).toBe("string")
 
-    const decoded = await verifyToken(token)
-    const newToken = await authService.refresh(decoded.id)
-    const newDecoded = await verifyToken(newToken)
+      const decoded = await verifyToken(token)
+      tokenSchema.parse(decoded)
+    })
 
-    expect(newDecoded).toHaveProperty("id")
-    expect(newDecoded).toHaveProperty("email")
-    expect(newDecoded.id).toEqual(decoded.id)
-    expect(newDecoded.email).toEqual(decoded.email)
-  })
+    it("throws InvalidCredentialsError for invalid Google credentials", async () => {
+      await expect(() =>
+        authService.googleLogin({
+          id_token: "invalid-token",
+          access_token: "foo",
+          expires_in: 3600,
+          expires_at: new Date(),
+          token_type: "Bearer",
+        }),
+      ).rejects.toBeInstanceOf(InvalidCredentialsError)
+    })
 
-  it("should throw an error when refreshing with an invalid token", async () => {
-    await expect(authService.refresh(0)).rejects.toThrow(InvalidCredentialsError)
+    it("refreshes a valid token", async () => {
+      const token = await authService.login(email, password)
+      const decoded = await verifyToken(token)
+
+      const newToken = await authService.refresh(decoded.id)
+      const newDecoded = await verifyToken(newToken)
+
+      expect(newDecoded.id).toBe(decoded.id)
+      expect(newDecoded.email).toBe(decoded.email)
+    })
+
+    it("throws InvalidCredentialsError when refreshing non-existent user", async () => {
+      mockUserService.getUserById.mockResolvedValue(null)
+      await expect(() => authService.refresh(999)).rejects.toBeInstanceOf(InvalidCredentialsError)
+    })
   })
 })

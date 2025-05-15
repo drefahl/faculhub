@@ -2,6 +2,7 @@ import { InvalidCredentialsError } from "@/errors/InvalidCredentialsError"
 import { NotFoundError } from "@/errors/NotFoundError"
 import { comparePassword, hashPassword } from "@/lib/utils/crypto.utils"
 import type { UserRepository } from "@/repositories/user.repository"
+import { imageFileSchema } from "@/schemas/file.schema"
 import {
   type CreateUserInput,
   type CreateUserWithGoogleInput,
@@ -80,6 +81,8 @@ export class UserService {
   }
 
   async updateUserProfileImage(userId: number, filename: string, mimeType: string, data: Buffer) {
+    imageFileSchema.parse({ filename, mimeType, data })
+
     const user = await this.userRepository.getUserById(userId)
     if (!user) throw new NotFoundError("User not found")
 

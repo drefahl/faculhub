@@ -14,7 +14,7 @@ export async function postRoutes(app: FastifyInstance) {
       schema: {
         tags: ["Post"],
         operationId: "createPost",
-        body: createPostSchema.omit({ authorId: true }),
+        body: createPostSchema.innerType().omit({ authorId: true }),
         response: {
           201: postSchema,
         },

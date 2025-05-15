@@ -25,7 +25,7 @@ interface PostFormProps {
   courses?: ListCourses200Item[]
 }
 
-const schema = createPostSchema.omit({ authorId: true })
+const schema = createPostSchema.innerType().omit({ authorId: true })
 
 type FormValues = z.infer<typeof schema>
 
@@ -46,8 +46,6 @@ export function PostForm({ post, courses = [] }: PostFormProps) {
     resolver: zodResolver(schema as any),
     defaultValues,
   })
-
-  console.log(form.watch(), form.formState.errors)
 
   async function onSubmit(values: FormValues) {
     try {
