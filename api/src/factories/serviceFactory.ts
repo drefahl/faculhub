@@ -1,15 +1,20 @@
+import { env } from "@/config/env.config"
+import { ResendEmailClient } from "@/email/src/resend-email-client"
 import { CommentRepository } from "@/repositories/comment.repository"
 import { CourseRepository } from "@/repositories/course.repository"
 import { FileRepository } from "@/repositories/file.repository"
 import { LikeRepository } from "@/repositories/like.repository"
+import { PasswordResetRepository } from "@/repositories/password-reset.repository"
 import { PostRepository } from "@/repositories/post.repository"
 import { ThreadRepository } from "@/repositories/thread.repository"
 import { UserRepository } from "@/repositories/user.repository"
 import { AuthService } from "@/services/auth.service"
 import { CommentService } from "@/services/comment.service"
 import { CourseService } from "@/services/course.service"
+import { EmailService } from "@/services/email.service"
 import { FileService } from "@/services/file.service"
 import { LikeService } from "@/services/like.service"
+import { PasswordResetService } from "@/services/password-reset.service"
 import { PostService } from "@/services/post.service"
 import { ThreadService } from "@/services/thread.service"
 import { UserService } from "@/services/user.service"
@@ -41,6 +46,15 @@ export function createPostService() {
 export function createLikeService() {
   return new LikeService(new LikeRepository())
 }
+
 export function createCourseService() {
   return new CourseService(new CourseRepository())
+}
+
+export function createEmailService() {
+  return new EmailService(new ResendEmailClient(env.RESEND_API_KEY))
+}
+
+export function createPasswordResetService() {
+  return new PasswordResetService(new PasswordResetRepository(), createUserService(), createEmailService())
 }

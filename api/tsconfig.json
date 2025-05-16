@@ -5,18 +5,23 @@
     "lib": [
       "es2023"
     ],
-    "module": "node16",
     "target": "es2022",
+    "module": "node16",
+    "moduleResolution": "node16",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "moduleResolution": "node16",
+    "jsx": "preserve",
+    "jsxImportSource": "@react-email/render",
     "baseUrl": ".",
     "outDir": "./dist",
     "paths": {
       "@/*": [
         "./src/*"
-      ]
+      ],
+      "@/email/*": [
+        "../email/*"
+      ],
     }
   },
   "include": [
@@ -24,9 +29,10 @@
     "tests/**/*.ts",
     "prisma/**/*.ts",
     "vitest.setup.ts",
+    "../email/**/*.{ts,tsx}",
   ],
   "exclude": [
-    "node_modules",
-    "dist"
+    "**/node_modules",
+    "dist",
   ]
 }

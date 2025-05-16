@@ -2,6 +2,7 @@ import { InvalidCredentialsError } from "@/errors/InvalidCredentialsError"
 import { NotFoundError } from "@/errors/NotFoundError"
 import { comparePassword, hashPassword } from "@/lib/utils/crypto.utils"
 import type { UserRepository } from "@/repositories/user.repository"
+import { passwordSchema } from "@/schemas/common.schema"
 import { imageFileSchema } from "@/schemas/file.schema"
 import {
   type CreateUserInput,
@@ -107,5 +108,18 @@ export class UserService {
     await this.fileService.deleteFile(file.id)
 
     return this.userRepository.updateUser(userId, { profilePic: { disconnect: true } })
+  }
+
+  async updatePassword(userId: number, newPassword: string): Promise<user> {
+    passwordSchema.parse(newPassword)
+
+    const user = await this.userRepository.getUserById(userId)
+    if (!user) {
+      throw new NotFoundError("User not found")
+    }
+
+    const hashedPassword = await hashPassword(newPassword)
+
+    return this.userRepository.updateUser(userId, { password: hashedPassword })
   }
 }

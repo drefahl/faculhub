@@ -7,5 +7,10 @@
     "lint:api": "cd api && pnpm lint && cd ..",
     "lint:front": "cd front && pnpm lint && cd ..",
     "swagger:generate": "cd api && pnpm generate-swagger && cd ../front && pnpm orval && cd .."
+  },
+  "dependencies": {
+    "@react-email/components": "^0.0.41",
+    "react-email": "^4.0.13",
+    "resend": "^4.5.1"
   }
 }

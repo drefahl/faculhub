@@ -4,6 +4,7 @@ import { authPublicRoutes } from "./auth.route"
 import { commentPublicRoutes } from "./comment.route"
 import { filePublicRoutes } from "./file.route"
 import { likePublicRoutes } from "./like.route"
+import { passwordResetRoutes } from "./password-reset.route"
 import { postPublicRoutes } from "./post.route"
 import { threadPublicRoutes } from "./thread.route"
 import { userPublicRoutes } from "./user.route"
@@ -16,6 +17,8 @@ export async function publicRoutes(app: FastifyInstance) {
   app.register(filePublicRoutes, { prefix: "/files" })
 
   app.register(likePublicRoutes, { prefix: "/likes" })
+
+  app.register(passwordResetRoutes, { prefix: "/password-reset" })
 
   app.register(postPublicRoutes, { prefix: "/posts" })
 

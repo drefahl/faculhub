@@ -13,20 +13,21 @@ enum Role {
 }
 
 model user {
-  id           Int       @id(map: "user_pk") @default(autoincrement())
-  googleId     String?   @unique
-  email        String    @unique(map: "user_unique") @db.VarChar
-  name         String?   @db.VarChar
-  password     String?   @db.VarChar
-  role         Role      @default(USER)
-  profilePic   file?     @relation(fields: [profilePicId], references: [id])
-  profilePicId String?
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-  thread       thread[]
-  comment      comment[]
-  post         post[]
-  like         like[]
+  id            Int             @id(map: "user_pk") @default(autoincrement())
+  googleId      String?         @unique
+  email         String          @unique(map: "user_unique") @db.VarChar
+  name          String?         @db.VarChar
+  password      String?         @db.VarChar
+  role          Role            @default(USER)
+  profilePic    file?           @relation(fields: [profilePicId], references: [id])
+  profilePicId  String?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  thread        thread[]
+  comment       comment[]
+  post          post[]
+  like          like[]
+  passwordReset passwordReset[]
 }
 
 model file {
@@ -103,4 +104,15 @@ model course {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   posts     post[]
+}
+
+model passwordReset {
+  id        String   @id @default(cuid())
+  userId    Int
+  token     String   @unique
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      user     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
