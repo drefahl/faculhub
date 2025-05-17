@@ -5,7 +5,7 @@ env:
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "development" ]
 
 jobs:
   build_api:
@@ -32,6 +32,8 @@ jobs:
           GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}
           GOOGLE_CALLBACK_URI=${{ secrets.GOOGLE_CALLBACK_URI }}
           FRONTEND_URL=${{ secrets.FRONTEND_URL }}
+          RESEND_API_KEY=${{ secrets.RESEND_API_KEY }}
+          HASH_SECRET=${{ secrets.HASH_SECRET }}
         tags: |
             ${{ env.DOCKER_REGISTRY }}/faculhub-api:${{ github.sha }}
             ${{ env.DOCKER_REGISTRY }}/faculhub-api:latest
