@@ -50,7 +50,7 @@ jobs:
 
       - name: Install dependencies (API)
         working-directory: api
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --recursive --frozen-lockfile
 
       - name: Generate Prisma Client
         working-directory: api
