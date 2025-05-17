@@ -10,8 +10,8 @@ import { SubmitButton } from "@/components/submit-button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Form } from "@/components/ui/form"
-import { refresh } from "@/lib/api/axios/auth"
 import { useUpdateUserProfile } from "@/lib/api/react-query/user"
+import { refreshToken } from "@/lib/utils/token"
 import { getProfilePicUrl, getUserInitials } from "@/lib/utils/user.utils"
 import type { Session } from "@/types"
 import { useRouter } from "next/navigation"
@@ -46,7 +46,7 @@ export function ProfileForm({ session }: ProfileFormProps) {
       { data },
       {
         onSuccess: async () => {
-          await refresh({ withCredentials: true })
+          await refreshToken()
           toast.success("Perfil atualizado", {
             description: "Suas informações pessoais foram atualizadas com sucesso.",
           })

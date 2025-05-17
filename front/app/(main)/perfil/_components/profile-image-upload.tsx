@@ -1,8 +1,8 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { refresh } from "@/lib/api/react-query/auth"
 import { uploadProfileImage, useDeleteProfileImage } from "@/lib/api/react-query/user"
+import { refreshToken } from "@/lib/utils/token"
 import { Trash2, Upload } from "lucide-react"
 import { useRouter } from "next/navigation"
 import type React from "react"
@@ -41,7 +41,7 @@ export function ProfileImageUpload() {
       setIsUploading(true)
 
       await uploadProfileImage({ data: formData })
-      await refresh({ withCredentials: true })
+      await refreshToken()
       toast.success("Imagem atualizada", { description: "Sua foto de perfil foi atualizada com sucesso." })
 
       if (fileInputRef.current) {
@@ -59,7 +59,7 @@ export function ProfileImageUpload() {
   const handleRemoveImage = () => {
     removeImage(undefined, {
       onSuccess: async () => {
-        await refresh({ withCredentials: true })
+        await refreshToken()
         toast.success("Imagem removida", { description: "Sua foto de perfil foi removida com sucesso." })
         router.refresh()
       },

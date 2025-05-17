@@ -12,8 +12,8 @@ import { SubmitButton } from "@/components/submit-button"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Form } from "@/components/ui/form"
-import { refresh } from "@/lib/api/axios/auth"
 import { useUpdateUserProfile } from "@/lib/api/react-query/user"
+import { refreshToken } from "@/lib/utils/token"
 import { isGoogleAccount, isUsingCredentials } from "@/lib/utils/user.utils"
 import { passwordSchema } from "@/lib/validations/password-schema"
 import type { Session } from "@/types"
@@ -73,7 +73,7 @@ export function PasswordForm({ session }: PasswordFormProps) {
       },
       {
         onSuccess: async () => {
-          await refresh({ withCredentials: true })
+          await refreshToken()
           toast.success(isUsingAuthCredentials ? "Senha atualizada" : "Senha definida", {
             description: isUsingAuthCredentials
               ? "Sua senha foi atualizada com sucesso."

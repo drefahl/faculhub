@@ -1,3 +1,4 @@
+import { refresh } from "@/lib/api/axios/auth"
 import type { Session } from "@/types"
 import { decodeJwt } from "jose"
 
@@ -32,4 +33,14 @@ export async function decodeToken(token: string | undefined) {
 export async function signOut() {
   const { _deleteTokenCookie } = await _dynamicImport()
   await _deleteTokenCookie()
+}
+
+export async function refreshToken() {
+  const [err, response] = await refresh()
+  if (err) return null
+
+  const { token } = response
+  await setTokenCookie(token)
+
+  return token
 }
