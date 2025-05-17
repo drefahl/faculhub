@@ -4,6 +4,7 @@ RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
 COPY package.json pnpm-lock.yaml* ./
+COPY email/package.json email/pnpm-lock.yaml* ./email/
 RUN corepack enable pnpm && pnpm install --recursive --frozen-lockfile
 
 COPY . .
