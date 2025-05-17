@@ -13,6 +13,7 @@ const envSchema = z.object({
   GOOGLE_CALLBACK_URI: z.string().default("http://localhost:3333/api/login/google/callback"),
   FRONTEND_URL: z.string().default("http://localhost:3000"),
   RESEND_API_KEY: z.string().trim(),
+  HASH_SECRET: z.string().trim(),
 })
 
 const _env = envSchema.safeParse(process.env)

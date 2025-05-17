@@ -4,9 +4,11 @@
     "jsx": "react-jsx",
     "skipLibCheck": true,
     "strict": true,
-    "noEmit": true,
     "strictNullChecks": true,
     "esModuleInterop": true,
+    "baseUrl": ".",
+    "outDir": "./dist",
+    "declaration": true,
   },
   "include": [
     "**/*.ts",
@@ -14,6 +16,12 @@
   ],
   "exclude": [
     "node_modules",
-    ".react-email"
-  ]
+    ".react-email",
+  ],
+  "ts-node": {
+    "include": [
+      "**/*.ts",
+      "**/*.tsx"
+    ]
+  }
 }

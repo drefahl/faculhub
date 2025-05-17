@@ -3,13 +3,13 @@ import type React from "react"
 import { BaseEmail } from "./base-email"
 
 interface PasswordResetEmailProps {
-  username: string
+  username?: string
   resetUrl: string
   expiresAt: Date
 }
 
 export function PasswordResetEmail({ username, resetUrl, expiresAt }: PasswordResetEmailProps): React.ReactElement {
-  if (!username || !resetUrl || !expiresAt) {
+  if (!resetUrl || !expiresAt) {
     throw new Error("Missing required props: username, resetUrl, or expiresAt")
   }
 
@@ -24,9 +24,9 @@ export function PasswordResetEmail({ username, resetUrl, expiresAt }: PasswordRe
         Pedido de Redefinição de Palavra-Passe
       </Heading>
 
-      <Text className="text-[#1e293b] text-[16px] leading-[24px]">Olá {username},</Text>
+      {username && <Text className="text-[#1e293b] text-[16px] leading-[24px]">Olá {username},</Text>}
 
-      <Text className="text-[#1e293b] text-[16px] leading-[24px]">
+      <Text className="text-[#1e293b] text-[16px] leading-[24px] text-justify">
         Recebemos um pedido para redefinir a sua palavra-passe da sua conta Faculhub. Para proceder com a redefinição da
         sua palavra-passe, por favor clique no botão abaixo:
       </Text>
@@ -40,16 +40,16 @@ export function PasswordResetEmail({ username, resetUrl, expiresAt }: PasswordRe
         </Button>
       </Section>
 
-      <Text className="text-[#1e293b] text-[16px] leading-[24px]">
+      <Text className="text-[#1e293b] text-[16px] leading-[24px] text-justify">
         Se não solicitou a redefinição da palavra-passe, pode ignorar este email. A sua palavra-passe permanecerá
         inalterada.
       </Text>
 
-      <Text className="text-[#1e293b] text-[16px] leading-[24px]">
-        Este link para redefinir a palavra-passe irá expirar em {expiryHours} horas.
+      <Text className="text-[#1e293b] text-[16px] leading-[24px] text-justify">
+        Este link para redefinir a palavra-passe irá expirar em {expiryHours} {expiryHours > 1 ? "horas" : "hora"}.
       </Text>
 
-      <Text className="text-[#64748b] text-[14px] italic mt-[32px] p-[16px] bg-[#f1f5f9] rounded-lg">
+      <Text className="text-[#64748b] text-[14px] italic mt-[32px] p-[16px] bg-[#f1f5f9] rounded-lg text-justify">
         Por razões de segurança, este link só pode ser utilizado uma vez. Se precisar de redefinir a sua palavra-passe
         novamente, por favor solicite um novo link.
       </Text>

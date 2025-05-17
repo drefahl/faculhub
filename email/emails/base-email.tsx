@@ -1,4 +1,4 @@
-import { Body, Container, Head, Hr, Html, Img, Link, Preview, Section, Text } from "@react-email/components"
+import { Body, Container, Head, Hr, Html, Img, Preview, Section, Text } from "@react-email/components"
 import { Tailwind } from "@react-email/tailwind"
 import type React from "react"
 
@@ -34,24 +34,6 @@ export const BaseEmail: React.FC<BaseEmailProps> = ({ previewText, children }) =
             <Section>
               <Text className="text-[#64748b] text-[12px] text-center mt-[16px]">
                 © {currentYear} Faculhub. Todos os direitos reservados.
-              </Text>
-
-              <Text className="text-[#64748b] text-[12px] text-center">
-                123 Avenida da Universidade, Distrito do Campus, Cidade da Educação
-              </Text>
-
-              <Text className="text-[#64748b] text-[12px] text-center">
-                <Link href="https://faculhub.com/privacy" className="text-[#8b5cf6] underline">
-                  Política de Privacidade
-                </Link>{" "}
-                •{" "}
-                <Link href="https://faculhub.com/terms" className="text-[#8b5cf6] underline">
-                  Termos de Serviço
-                </Link>{" "}
-                •{" "}
-                <Link href="https://faculhub.com/unsubscribe" className="text-[#8b5cf6] underline">
-                  Cancelar Subscrição
-                </Link>
               </Text>
             </Section>
           </Container>

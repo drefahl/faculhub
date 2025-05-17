@@ -1,5 +1,4 @@
-import { env } from "@/config/env.config"
-import { ResendEmailClient } from "@/email/src/resend-email-client"
+import { ResendClient } from "@/clients/resend.client"
 import { CommentRepository } from "@/repositories/comment.repository"
 import { CourseRepository } from "@/repositories/course.repository"
 import { FileRepository } from "@/repositories/file.repository"
@@ -52,7 +51,7 @@ export function createCourseService() {
 }
 
 export function createEmailService() {
-  return new EmailService(new ResendEmailClient(env.RESEND_API_KEY))
+  return new EmailService(new ResendClient())
 }
 
 export function createPasswordResetService() {

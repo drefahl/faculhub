@@ -24,4 +24,14 @@ export class PasswordResetRepository {
       data: { used: true },
     })
   }
+
+  async findActiveByUserId(userId: number) {
+    return prisma.passwordReset.findFirst({
+      where: {
+        userId,
+        used: false,
+        expiresAt: { gt: new Date() },
+      },
+    })
+  }
 }

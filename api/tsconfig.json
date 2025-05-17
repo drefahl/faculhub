@@ -11,8 +11,6 @@
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "jsx": "preserve",
-    "jsxImportSource": "@react-email/render",
     "baseUrl": ".",
     "outDir": "./dist",
     "paths": {
@@ -20,7 +18,7 @@
         "./src/*"
       ],
       "@/email/*": [
-        "../email/*"
+        "../email/dist/*"
       ],
     }
   },
@@ -29,7 +27,7 @@
     "tests/**/*.ts",
     "prisma/**/*.ts",
     "vitest.setup.ts",
-    "../email/**/*.{ts,tsx}",
+    "../email/dist/**/*.{js,ts}",
   ],
   "exclude": [
     "**/node_modules",

@@ -58,7 +58,7 @@ export function RegisterForm() {
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <Input name="name" label="Nome" placeholder="Seu nome completo" />
 
-        <Input name="email" label="Email" placeholder="seu.email@exemplo.com" />
+        <Input name="email" label="Email" placeholder="seu@email.com" />
 
         <PasswordInput name="password" label="Senha" placeholder="******" />
 

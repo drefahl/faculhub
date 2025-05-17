@@ -69,7 +69,7 @@ describe("PasswordResetEmail", () => {
   })
 
   it("throws an error if required props are missing", () => {
-    expect(() => render(<PasswordResetEmail username="" resetUrl="" expiresAt={new Date()} />)).toThrow(
+    expect(() => render(<PasswordResetEmail resetUrl="" expiresAt={new Date()} />)).toThrow(
       "Missing required props: username, resetUrl, or expiresAt",
     )
   })

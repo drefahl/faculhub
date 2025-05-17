@@ -43,6 +43,16 @@ export type CountLikes200 = {
   count: number
 }
 
+export type RequestPasswordResetBody = {
+  email: string
+}
+
+export type ResetPasswordBody = {
+  token: string
+  /** @minLength 8 */
+  password: string
+}
+
 export type RecordPostView200Type = (typeof RecordPostView200Type)[keyof typeof RecordPostView200Type]
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare

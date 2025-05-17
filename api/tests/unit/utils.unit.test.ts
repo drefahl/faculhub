@@ -1,6 +1,6 @@
 import { Readable } from "node:stream"
 import { createCookieOptions } from "@/lib/utils/cookie.utils"
-import { comparePassword, hashPassword } from "@/lib/utils/crypto.utils"
+import { comparePassword, createHash, hashPassword, verifyHash } from "@/lib/utils/crypto.utils"
 import { fileStreamToBuffer, getFileBytesFromUrl } from "@/lib/utils/file.utils"
 import { createToken, decodeToken, tokenSchema, verifyToken } from "@/lib/utils/jwt.utils"
 import { getUserProviders, isUserAdmin } from "@/lib/utils/user.utils"
@@ -48,6 +48,50 @@ describe("Password utils", () => {
     expect(typeof hashed).toBe("string")
     expect(await comparePassword(raw, hashed)).toBe(true)
     expect(await comparePassword("wrong", hashed)).toBe(false)
+  })
+})
+
+describe("Hash Utils", () => {
+  const SECRET = "my-test-secret"
+
+  beforeAll(() => {
+    process.env.HASH_SECRET = SECRET
+  })
+
+  it("createHash returns a 64-character hex string", () => {
+    const h = createHash("foo")
+    expect(typeof h).toBe("string")
+    expect(h).toMatch(/^[a-f0-9]{64}$/)
+  })
+
+  it("same input always generates the same hash", () => {
+    const a = createHash("bar")
+    const b = createHash("bar")
+    expect(a).toBe(b)
+  })
+
+  it("different inputs generate different hashes", () => {
+    const a = createHash("baz")
+    const b = createHash("qux")
+    expect(a).not.toBe(b)
+  })
+
+  it("verifyHash returns true when the input matches the hash", () => {
+    const input = "secret-password"
+    const h = createHash(input)
+    expect(verifyHash(input, h)).toBe(true)
+  })
+
+  it("verifyHash returns false for incorrect input", () => {
+    const h = createHash("original")
+    expect(verifyHash("something-else", h)).toBe(false)
+  })
+
+  it("handles empty input correctly", () => {
+    const h = createHash("")
+    expect(h).toHaveLength(64)
+    expect(verifyHash("", h)).toBe(true)
+    expect(verifyHash(" ", h)).toBe(false)
   })
 })
 

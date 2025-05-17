@@ -9,7 +9,9 @@ import { Button } from "../ui/button"
 import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "../ui/form"
 import { Input as UiInput } from "../ui/input"
 
-interface InputProps<T extends FieldValues> extends UiInputProps<T> {
+interface InputProps<T extends FieldValues>
+  extends UiInputProps<T>,
+    Omit<React.InputHTMLAttributes<HTMLInputElement>, "name"> {
   type?: "text" | "email" | "password" | "number" | "tel" | "url"
 }
 

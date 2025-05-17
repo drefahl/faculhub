@@ -75,7 +75,7 @@ export function LoginForm() {
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-          <Input name="email" type="email" label="Email" placeholder="seu.email@exemplo.com" />
+          <Input name="email" type="email" label="Email" placeholder="seu@email.com" />
 
           <PasswordInput name="password" label="Nova Senha" placeholder="••••••••" />
 
