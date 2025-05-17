@@ -24,7 +24,7 @@ export async function createServer() {
   registerGoogleOAuth(app)
   app.register(fastifyJwt, { secret: env.JWT_SECRET, sign: { algorithm: "HS256" } })
   app.register(fastifyMultipart, { limits: { fileSize: 5 * 1024 * 1024 } })
-  app.register(fastifyIo, { cors: { origin: env.FRONTEND_URL } })
+  app.register(fastifyIo, { cors: { origin: true } })
 
   // Error Handling
   app.setErrorHandler(errorHandler)
