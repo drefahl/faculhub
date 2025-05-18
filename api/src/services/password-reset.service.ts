@@ -1,6 +1,6 @@
 import crypto from "node:crypto"
 import { env } from "@/config/env.config"
-import { PasswordResetEmail } from "@/email/password-reset-email"
+import { PasswordResetEmail } from "email/password-reset-email"
 import { createHash, verifyHash } from "@/lib/utils/crypto.utils"
 import type { PasswordResetRepository } from "@/repositories/password-reset.repository"
 import type { EmailService } from "./email.service"
