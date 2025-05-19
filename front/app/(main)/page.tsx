@@ -61,6 +61,15 @@ export default async function HomePage() {
         </div>
       </section>
 
+      <section className="w-full border-b border-border/40">
+        <div className="container py-2">
+          <p className="text-center text-xs sm:text-sm text-muted-foreground">
+            Atualmente disponível para o <span className="font-medium">IFC - Campus São Bento do Sul</span> • Em breve
+            em mais universidades
+          </p>
+        </div>
+      </section>
+
       <section className="w-full py-6 sm:py-10 md:py-16">
         <div className="container">
           <div className="flex flex-col items-center justify-center text-center mb-6 sm:mb-8 md:mb-10">
