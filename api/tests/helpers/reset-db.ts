@@ -6,6 +6,7 @@ export async function resetDatabase() {
     prisma.like.deleteMany(),
     prisma.comment.deleteMany(),
     prisma.thread.deleteMany(),
+    prisma.category.deleteMany(),
     prisma.post.deleteMany(),
     prisma.user.deleteMany(),
     prisma.course.deleteMany(),

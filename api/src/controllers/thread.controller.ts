@@ -31,7 +31,9 @@ export class ThreadController {
     const threadId = +request.params.id
 
     const thread = await this.threadService.getById(threadId)
-    if ((!thread || thread.author.id !== request.user.id) && !isUserAdmin(request.user)) {
+    if (!thread) return reply.code(404).send({ message: "Not found" })
+
+    if (thread.author.id !== request.user.id && !isUserAdmin(request.user)) {
       return reply.code(403).send({ message: "Unauthorized" })
     }
 
@@ -46,7 +48,9 @@ export class ThreadController {
     const threadId = +request.params.id
 
     const thread = await this.threadService.getById(threadId)
-    if ((!thread || thread.author.id !== request.user.id) && !isUserAdmin(request.user)) {
+    if (!thread) return reply.code(404).send({ message: "Not found" })
+
+    if (thread.author.id !== request.user.id && !isUserAdmin(request.user)) {
       return reply.code(403).send({ message: "Unauthorized" })
     }
 
@@ -59,7 +63,7 @@ export class ThreadController {
   }
 
   async list(
-    request: FastifyRequest<{ Querystring: { page: number; take: number; search?: string } }>,
+    request: FastifyRequest<{ Querystring: { page: number; take: number; search?: string; categoryId?: number } }>,
     reply: FastifyReply,
   ) {
     const threads = await this.threadService.list(request.query)

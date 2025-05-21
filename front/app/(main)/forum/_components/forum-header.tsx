@@ -1,10 +1,13 @@
 "use client"
-
 import { Button } from "@/components/ui/button"
+import {} from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
+import { SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { useListCategories } from "@/lib/api/react-query/category"
+import { Select } from "@radix-ui/react-select"
 import { Plus, Search } from "lucide-react"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
 
 interface ForumHeaderProps {
@@ -42,6 +45,7 @@ export function ForumHeader({ initialQuery = "" }: ForumHeaderProps) {
       </div>
       <div className="flex flex-col gap-4 md:flex-row">
         <ForumSearch onSearch={onSearch} initialQuery={initialQuery} />
+        <CategoryFilter />
       </div>
     </div>
   )
@@ -83,5 +87,60 @@ export function ForumSearch({ onSearch, initialQuery = "", placeholder = "Buscar
         aria-label="Buscar discussões"
       />
     </div>
+  )
+}
+
+export function CategoryFilter() {
+  const [selectedCategory, setSelectedCategory] = useState<number | null>(null)
+
+  const router = useRouter()
+  const searchParams = useSearchParams()
+
+  const { data: categories, isLoading } = useListCategories()
+
+  useEffect(() => {
+    const categoryParam = searchParams.get("categoryId")
+    if (categoryParam) {
+      setSelectedCategory(Number(categoryParam))
+    }
+  }, [searchParams])
+
+  const handleCategoryChange = (categoryId: string) => {
+    setSelectedCategory((prev) => (prev === Number(categoryId) ? null : Number(categoryId)))
+
+    const params = new URLSearchParams(window.location.search)
+    if (categoryId) {
+      params.set("categoryId", categoryId)
+    } else {
+      params.delete("categoryId")
+    }
+    window.history.replaceState({}, "", `${window.location.pathname}?${params.toString()}`)
+    router.refresh()
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex-shrink-0 w-full md:w-64">
+        <div className="h-10 bg-muted animate-pulse rounded-md" />
+      </div>
+    )
+  }
+
+  if (!categories || categories.length === 0) return null
+
+  return (
+    <Select value={selectedCategory?.toString()} onValueChange={handleCategoryChange}>
+      <SelectTrigger className="w-full md:w-64">
+        <SelectValue placeholder="Selecione uma categoria" />
+      </SelectTrigger>
+
+      <SelectContent>
+        {categories.map((category) => (
+          <SelectItem key={category.id} value={category.id.toString()}>
+            {category.name}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
   )
 }

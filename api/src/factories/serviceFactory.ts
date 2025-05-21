@@ -1,4 +1,5 @@
 import { ResendClient } from "@/clients/resend.client"
+import { CategoryRepository } from "@/repositories/category.repository"
 import { CommentRepository } from "@/repositories/comment.repository"
 import { CourseRepository } from "@/repositories/course.repository"
 import { FileRepository } from "@/repositories/file.repository"
@@ -8,6 +9,7 @@ import { PostRepository } from "@/repositories/post.repository"
 import { ThreadRepository } from "@/repositories/thread.repository"
 import { UserRepository } from "@/repositories/user.repository"
 import { AuthService } from "@/services/auth.service"
+import { CategoryService } from "@/services/category.service"
 import { CommentService } from "@/services/comment.service"
 import { CourseService } from "@/services/course.service"
 import { EmailService } from "@/services/email.service"
@@ -31,7 +33,7 @@ export function createAuthService() {
 }
 
 export function createThreadService() {
-  return new ThreadService(new ThreadRepository(), new UserRepository())
+  return new ThreadService(new ThreadRepository(), new UserRepository(), createCategoryService())
 }
 
 export function createCommentService() {
@@ -56,4 +58,8 @@ export function createEmailService() {
 
 export function createPasswordResetService() {
   return new PasswordResetService(new PasswordResetRepository(), createUserService(), createEmailService())
+}
+
+export function createCategoryService() {
+  return new CategoryService(new CategoryRepository())
 }

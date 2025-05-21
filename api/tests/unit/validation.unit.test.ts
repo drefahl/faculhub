@@ -1,3 +1,4 @@
+import { createCategorySchema, updateCategorySchema } from "@/schemas/category.schema"
 import { createCommentSchema, updateCommentSchema } from "@/schemas/comment.schema"
 import { createCourseSchema, updateCourseSchema } from "@/schemas/course.schema"
 import { imageFileSchema } from "@/schemas/file.schema"
@@ -318,6 +319,28 @@ describe("updatePostSchema (unit)", () => {
       courses: [0, "a" as any],
     })
 
+    expect(result.success).toBe(false)
+  })
+})
+
+describe("Category Schemas (unit)", () => {
+  it("should validate a valid create payload", () => {
+    const result = createCategorySchema.safeParse({ name: "Category Name" })
+    expect(result.success).toBe(true)
+  })
+
+  it("should fail for empty name", () => {
+    const result = createCategorySchema.safeParse({ name: "" })
+    expect(result.success).toBe(false)
+  })
+
+  it("should validate a valid update payload", () => {
+    const result = updateCategorySchema.safeParse({ name: "Updated Category" })
+    expect(result.success).toBe(true)
+  })
+
+  it("should fail for empty name on update", () => {
+    const result = updateCategorySchema.safeParse({ name: "" })
     expect(result.success).toBe(false)
   })
 })

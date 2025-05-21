@@ -18,9 +18,15 @@ export class ThreadRepository {
     return prisma.thread.delete({ select, where: { id } })
   }
 
-  async listThreads({ take, skip, search }: { take: number; skip: number; search?: string }) {
+  async listThreads({
+    take,
+    skip,
+    search,
+    categoryId,
+  }: { take: number; skip: number; search?: string; categoryId?: number }) {
     const where: Prisma.threadWhereInput = {
       title: { contains: search, mode: "insensitive" },
+      categories: categoryId ? { some: { id: categoryId } } : undefined,
     }
 
     const [total, threads] = await prisma.$transaction([
@@ -41,7 +47,7 @@ export class ThreadRepository {
   }
 }
 
-const select = {
+const select: Prisma.threadSelect = {
   id: true,
   title: true,
   content: true,
@@ -68,6 +74,14 @@ const select = {
           profilePicId: true,
         },
       },
+    },
+  },
+  categories: {
+    select: {
+      id: true,
+      name: true,
+      createdAt: true,
+      updatedAt: true,
     },
   },
 } as const

@@ -8,15 +8,24 @@ const threadService = createThreadService()
 
 describe("ThreadService Integration", () => {
   let authorId: number
+  let categoryId: number
   const contentMock = "Lorem ipsum dolor sit amet"
 
   beforeEach(async () => {
     await resetDatabase()
 
-    const author = await prisma.user.create({
+    const createAuthor = prisma.user.create({
       data: { name: "Author", email: "a@a.com", password: "123456" },
     })
+
+    const createCategory = prisma.category.create({
+      data: { name: "Category" },
+    })
+
+    const [author, category] = await Promise.all([createAuthor, createCategory])
+
     authorId = author.id
+    categoryId = category.id
   })
 
   it("creates a thread successfully", async () => {
@@ -24,6 +33,7 @@ describe("ThreadService Integration", () => {
       title: "Hello World",
       content: "This is a thread",
       authorId,
+      categories: [categoryId],
     })
 
     expect(thread.id).toBeDefined()
@@ -48,12 +58,75 @@ describe("ThreadService Integration", () => {
   })
 
   it("updates a thread and throws if not found", async () => {
-    const t = await threadService.create({ title: "New Title", content: "Old Content", authorId })
+    const t = await threadService.create({
+      title: "New Title",
+      content: "Old Content",
+      authorId,
+      categories: [categoryId],
+    })
 
     const updated = await threadService.update(t.id, { title: "Updated Title", content: "New Content" })
     expect(updated.title).toBe("Updated Title")
 
     await expect(threadService.update(0, { title: "X", content: "Y" })).rejects.toThrow(NotFoundError)
+  })
+
+  it("throws if categories do not exist", async () => {
+    await expect(
+      threadService.create({ title: "title", content: contentMock, authorId, categories: [999] }),
+    ).rejects.toThrow(NotFoundError)
+  })
+
+  it("throws if categories do not exist on update", async () => {
+    const t = await threadService.create({ title: "title", content: contentMock, authorId })
+    await expect(
+      threadService.update(t.id, { title: "title", content: contentMock, categories: [999] }),
+    ).rejects.toThrow(NotFoundError)
+  })
+
+  it("removes a category from a thread", async () => {
+    const t = await threadService.create({
+      title: "title",
+      content: contentMock,
+      authorId,
+      categories: [categoryId],
+    })
+
+    const updated = await threadService.update(t.id, { categories: [] })
+    expect(updated.categories.length).toBe(0)
+  })
+
+  it("updates a thread's categories", async () => {
+    const c = await prisma.category.create({ data: { name: "Category 2" } })
+
+    const t = await threadService.create({
+      title: "title",
+      content: contentMock,
+      authorId,
+      categories: [categoryId, c.id],
+    })
+
+    const updated = await threadService.update(t.id, { categories: [categoryId] })
+    expect(updated.categories.length).toBe(1)
+    expect(updated.categories[0].id).toBe(categoryId)
+  })
+
+  it("adds a category to a thread", async () => {
+    const t = await threadService.create({ title: "title", content: contentMock, authorId })
+
+    const updated = await threadService.update(t.id, { categories: [categoryId] })
+    expect(updated.categories.length).toBe(1)
+    expect(updated.categories[0].id).toBe(categoryId)
+  })
+
+  it("adds multiple categories to a thread", async () => {
+    const t = await threadService.create({ title: "title", content: contentMock, authorId })
+    const c = await prisma.category.create({ data: { name: "Category 2" } })
+
+    const updated = await threadService.update(t.id, { categories: [categoryId, c.id] })
+    expect(updated.categories.length).toBe(2)
+    expect(updated.categories[0].id).toBe(categoryId)
+    expect(updated.categories[1].id).toBe(c.id)
   })
 
   it("deletes a thread and throws if not found", async () => {

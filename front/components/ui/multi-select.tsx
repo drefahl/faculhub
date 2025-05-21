@@ -52,7 +52,7 @@ export interface MultiSelectProps
     /** The text to display for the option. */
     label: string
     /** The unique value associated with the option. */
-    value: string
+    value: string | number
     /** Optional icon component to display alongside the option. */
     icon?: React.ComponentType<{ className?: string }>
   }[]
@@ -61,7 +61,7 @@ export interface MultiSelectProps
    * Callback function triggered when the selected values change.
    * Receives an array of the new selected values.
    */
-  onValueChange: (value: string[]) => void
+  onValueChange: (value: (string | number)[]) => void
 
   /** The default selected values when the component mounts. */
   defaultValue?: string[]
@@ -121,7 +121,7 @@ export const MultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps>
     },
     ref,
   ) => {
-    const [selectedValues, setSelectedValues] = React.useState<string[]>(defaultValue)
+    const [selectedValues, setSelectedValues] = React.useState<(string | number)[]>(defaultValue)
     const [isPopoverOpen, setIsPopoverOpen] = React.useState(false)
     const [isAnimating, setIsAnimating] = React.useState(false)
 
@@ -136,7 +136,7 @@ export const MultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps>
       }
     }
 
-    const toggleOption = (option: string) => {
+    const toggleOption = (option: string | number) => {
       const newSelectedValues = selectedValues.includes(option)
         ? selectedValues.filter((value) => value !== option)
         : [...selectedValues, option]

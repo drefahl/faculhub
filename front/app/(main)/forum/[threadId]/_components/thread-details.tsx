@@ -14,8 +14,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Separator } from "@/components/ui/separator"
 import type { GetThreadById200, GetThreadById200CommentsItem } from "@/lib/api/axios/generated.schemas"
+import { deleteThread } from "@/lib/api/axios/thread"
+import { getListThreadsQueryKey } from "@/lib/api/react-query/thread"
 import { formatDistanceToNow } from "@/lib/utils/date.utils"
 import { getProfilePicUrl, getUserInitials } from "@/lib/utils/user.utils"
+import { useQueryClient } from "@tanstack/react-query"
+import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { toast } from "sonner"
 import { CommentForm } from "./comment-form"
 import { CommentList } from "./comment-list"
 
@@ -25,9 +31,10 @@ interface ThreadDetailProps {
 
 export function ThreadDetail({ thread: initialThread }: ThreadDetailProps) {
   const [thread, setThread] = useState<GetThreadById200 | null>(initialThread)
-  const [isDeleting, setIsDeleting] = useState(false)
 
+  const router = useRouter()
   const { session } = useSession()
+  const queryClient = useQueryClient()
   const { socket, isConnected } = useSocketContext()
 
   const isAdmin = session?.role === "ADMIN" || false
@@ -113,13 +120,17 @@ export function ThreadDetail({ thread: initialThread }: ThreadDetailProps) {
   const handleDeleteThread = async () => {
     if (!socket || !isConnected) return
 
-    try {
-      setIsDeleting(true)
-    } catch (error) {
+    const [error] = await deleteThread(thread.id)
+
+    if (error) {
+      toast.error("Erro ao excluir discussão")
       console.error("Failed to delete thread:", error)
-    } finally {
-      setIsDeleting(false)
+      return
     }
+
+    queryClient.invalidateQueries({ queryKey: getListThreadsQueryKey({} as any) })
+    toast.success("Discussão excluída com sucesso")
+    router.push("/forum")
   }
 
   return (
@@ -129,6 +140,17 @@ export function ThreadDetail({ thread: initialThread }: ThreadDetailProps) {
           <div className="flex items-center justify-between">
             <div className="space-y-1">
               <CardTitle className="text-2xl">{thread.title}</CardTitle>
+
+              {thread.categories && thread.categories.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {thread.categories.map((category) => (
+                    <Badge key={category.id} variant="secondary">
+                      {category.name}
+                    </Badge>
+                  ))}
+                </div>
+              )}
+
               <CardDescription>
                 Criado {formatDistanceToNow(thread.createdAt)}{" "}
                 {thread.createdAt !== thread.updatedAt && (
@@ -149,16 +171,15 @@ export function ThreadDetail({ thread: initialThread }: ThreadDetailProps) {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   {isAuthor && (
-                    <DropdownMenuItem>
-                      <Edit className="mr-2 h-4 w-4" />
-                      Editar discussão
-                    </DropdownMenuItem>
+                    <Link href={`/forum/edit/${thread.id}`} passHref>
+                      <DropdownMenuItem>
+                        <Edit className="mr-2 h-4 w-4" />
+                        Editar discussão
+                      </DropdownMenuItem>
+                    </Link>
                   )}
-                  <DropdownMenuItem
-                    className="text-destructive focus:text-destructive"
-                    disabled={isDeleting}
-                    onClick={handleDeleteThread}
-                  >
+
+                  <DropdownMenuItem className="text-destructive focus:text-destructive" onClick={handleDeleteThread}>
                     <Trash2 className="mr-2 h-4 w-4" />
                     Excluir discussão
                   </DropdownMenuItem>

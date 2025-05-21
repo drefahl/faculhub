@@ -34,6 +34,45 @@ export type GetApiLoginGoogleCallback401 = {
   message: string
 }
 
+export type ListCategories200Item = {
+  id: number
+  name: string
+}
+
+export type CreateCategoryBody = {
+  name: string
+}
+
+export type GetCategoryById200 = {
+  id: number
+  name: string
+}
+
+export type GetCategoryById404 = {
+  message: string
+}
+
+export type UpdateCategoryBody = {
+  name: string
+}
+
+export type UpdateCategory200 = {
+  id: number
+  name: string
+}
+
+export type UpdateCategory404 = {
+  message: string
+}
+
+export type DeleteCategory200 = {
+  success: boolean
+}
+
+export type DeleteCategory404 = {
+  message: string
+}
+
 export type UpdateCommentBody = {
   /** @minLength 1 */
   content: string
@@ -445,6 +484,7 @@ export type ListThreadsParams = {
   page: number
   take: number
   search?: string
+  categoryId?: number
 }
 
 export type ListThreads200DataItemCreatedAt = string | string
@@ -474,6 +514,11 @@ export type ListThreads200DataItemCommentsItem = {
   author: ListThreads200DataItemCommentsItemAuthor
 }
 
+export type ListThreads200DataItemCategoriesItem = {
+  id: number
+  name: string
+}
+
 export type ListThreads200DataItem = {
   id: number
   title: string
@@ -482,6 +527,7 @@ export type ListThreads200DataItem = {
   updatedAt: ListThreads200DataItemUpdatedAt
   author: ListThreads200DataItemAuthor
   comments: ListThreads200DataItemCommentsItem[]
+  categories: ListThreads200DataItemCategoriesItem[]
 }
 
 export type ListThreads200 = {
@@ -497,6 +543,7 @@ export type CreateThreadBody = {
   title: string
   /** @minLength 2 */
   content: string
+  categories?: number[]
 }
 
 export type CreateThread200CreatedAt = string | string
@@ -526,6 +573,11 @@ export type CreateThread200CommentsItem = {
   author: CreateThread200CommentsItemAuthor
 }
 
+export type CreateThread200CategoriesItem = {
+  id: number
+  name: string
+}
+
 export type CreateThread200 = {
   id: number
   title: string
@@ -534,6 +586,7 @@ export type CreateThread200 = {
   updatedAt: CreateThread200UpdatedAt
   author: CreateThread200Author
   comments: CreateThread200CommentsItem[]
+  categories: CreateThread200CategoriesItem[]
 }
 
 export type GetThreadById200CreatedAt = string | string
@@ -563,6 +616,11 @@ export type GetThreadById200CommentsItem = {
   author: GetThreadById200CommentsItemAuthor
 }
 
+export type GetThreadById200CategoriesItem = {
+  id: number
+  name: string
+}
+
 export type GetThreadById200 = {
   id: number
   title: string
@@ -571,11 +629,13 @@ export type GetThreadById200 = {
   updatedAt: GetThreadById200UpdatedAt
   author: GetThreadById200Author
   comments: GetThreadById200CommentsItem[]
+  categories: GetThreadById200CategoriesItem[]
 }
 
 export type UpdateThreadBody = {
   title?: string
   content?: string
+  categories?: number[]
 }
 
 export type UpdateThread200CreatedAt = string | string
@@ -605,6 +665,11 @@ export type UpdateThread200CommentsItem = {
   author: UpdateThread200CommentsItemAuthor
 }
 
+export type UpdateThread200CategoriesItem = {
+  id: number
+  name: string
+}
+
 export type UpdateThread200 = {
   id: number
   title: string
@@ -613,6 +678,7 @@ export type UpdateThread200 = {
   updatedAt: UpdateThread200UpdatedAt
   author: UpdateThread200Author
   comments: UpdateThread200CommentsItem[]
+  categories: UpdateThread200CategoriesItem[]
 }
 
 export type DeleteThread200CreatedAt = string | string
@@ -642,6 +708,11 @@ export type DeleteThread200CommentsItem = {
   author: DeleteThread200CommentsItemAuthor
 }
 
+export type DeleteThread200CategoriesItem = {
+  id: number
+  name: string
+}
+
 export type DeleteThread200 = {
   id: number
   title: string
@@ -650,6 +721,7 @@ export type DeleteThread200 = {
   updatedAt: DeleteThread200UpdatedAt
   author: DeleteThread200Author
   comments: DeleteThread200CommentsItem[]
+  categories: DeleteThread200CategoriesItem[]
 }
 
 export type CreateUserBody = {

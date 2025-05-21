@@ -25,6 +25,7 @@ export function ForumList() {
     page: currentPage,
     take: 10,
     search: searchParams.get("search") ?? "",
+    categoryId: searchParams.get("categoryId") ? Number(searchParams.get("categoryId")) : undefined,
   }
 
   const { data } = useListThreads(filters, { query: { staleTime: 1 * 60 * 1000 } })
@@ -112,7 +113,18 @@ export function ForumList() {
 
               <CardContent>
                 <div className="mb-3 line-clamp-2 text-sm text-muted-foreground">{discussion.content}</div>
-                <div className="flex items-center gap-2">
+
+                {discussion.categories && discussion.categories.length > 0 && (
+                  <div className="flex flex-wrap gap-2">
+                    {discussion.categories.map((category) => (
+                      <Badge key={category.id} variant="secondary">
+                        {category.name}
+                      </Badge>
+                    ))}
+                  </div>
+                )}
+
+                <div className="flex items-center gap-2 mt-3">
                   <Avatar className="h-6 w-6">
                     <AvatarImage
                       src={getProfilePicUrl(discussion.author.profilePicId) || ""}

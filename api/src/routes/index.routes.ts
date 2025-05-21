@@ -1,6 +1,7 @@
 import { adminCheck, attachUser, verifyJwt } from "@/middlewares/auth.middleware"
 import type { FastifyInstance } from "fastify"
 import { authRoutes } from "./auth.route"
+import { categoryRoutes } from "./category.routes"
 import { commentRoutes } from "./comment.route"
 import { courseRoutes } from "./course.route"
 import { likeRoutes } from "./like.route"
@@ -38,6 +39,7 @@ export function registerRoutes(app: FastifyInstance) {
       fastifyInstance.addHook("onRequest", verifyJwt)
       fastifyInstance.addHook("onRequest", adminCheck)
 
+      fastifyInstance.register(categoryRoutes, { prefix: "/categories" })
       fastifyInstance.register(courseRoutes, { prefix: "/courses" })
     },
     { prefix: "/api" },

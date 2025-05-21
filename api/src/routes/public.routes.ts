@@ -1,6 +1,7 @@
 import type { FastifyInstance } from "fastify"
 import z from "zod"
 import { authPublicRoutes } from "./auth.route"
+import { categoryPublicRoutes } from "./category.routes"
 import { commentPublicRoutes } from "./comment.route"
 import { filePublicRoutes } from "./file.route"
 import { likePublicRoutes } from "./like.route"
@@ -11,6 +12,8 @@ import { userPublicRoutes } from "./user.route"
 
 export async function publicRoutes(app: FastifyInstance) {
   app.register(authPublicRoutes)
+
+  app.register(categoryPublicRoutes, { prefix: "/categories" })
 
   app.register(commentPublicRoutes, { prefix: "/comments" })
 

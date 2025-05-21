@@ -16,6 +16,7 @@ export async function threadRoutes(app: FastifyInstance) {
         body: z.object({
           title: z.string().nonempty().min(2, { message: "Title is required" }),
           content: z.string().nonempty().min(2, { message: "Content is required" }),
+          categories: z.array(z.number().int().positive()).optional(),
         }),
         response: {
           200: threadSchema,
@@ -35,6 +36,7 @@ export async function threadRoutes(app: FastifyInstance) {
         body: z.object({
           title: z.string().optional(),
           content: z.string().optional(),
+          categories: z.array(z.number().int().positive()).optional(),
         }),
         response: {
           200: threadSchema,
@@ -73,6 +75,7 @@ export async function threadPublicRoutes(app: FastifyInstance) {
           page: z.coerce.number(),
           take: z.coerce.number(),
           search: z.string().optional(),
+          categoryId: z.coerce.number().optional(),
         }),
         response: {
           200: threadResponseArraySchema,
@@ -119,6 +122,12 @@ export const threadSchema = z.object({
         name: z.string(),
         profilePicId: z.string().nullable(),
       }),
+    }),
+  ),
+  categories: z.array(
+    z.object({
+      id: z.number(),
+      name: z.string(),
     }),
   ),
 })
