@@ -15,6 +15,7 @@ export class ThreadRepository {
   }
 
   async deleteThread(id: number) {
+    await prisma.comment.deleteMany({ where: { threadId: id } })
     return prisma.thread.delete({ select, where: { id } })
   }
 
