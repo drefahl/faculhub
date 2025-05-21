@@ -61,8 +61,10 @@ export class AuthService {
       throw new InvalidCredentialsError("Invalid credentials")
     }
 
+    let user = await this.userService.getUserByEmail(email)
+
     let fileCreationResult = null
-    if (picture) {
+    if (!user?.createdAt && picture) {
       try {
         const imageData = await getFileBytesFromUrl(picture)
         if (imageData?.data && imageData.data.length > 0) {
@@ -76,8 +78,6 @@ export class AuthService {
         console.error("Error fetching image from URL:", error)
       }
     }
-
-    let user = await this.userService.getUserByEmail(email)
 
     if (!user) {
       user = await this.userService.createUserWithGoogle({
