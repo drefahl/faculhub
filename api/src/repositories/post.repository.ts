@@ -26,6 +26,7 @@ export class PostRepository {
   }
 
   async deletePost(id: number) {
+    await prisma.like.deleteMany({ where: { postId: id } })
     return prisma.post.delete({ where: { id }, select })
   }
 
