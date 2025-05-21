@@ -1,9 +1,5 @@
 "use client"
 
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useRouter } from "next/navigation"
-import { useForm } from "react-hook-form"
-
 import { DatePicker } from "@/components/form/date-picker"
 import { Editor } from "@/components/form/editor"
 import { Input } from "@/components/form/input"
@@ -16,7 +12,11 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel } from "@/components/ui/form"
 import type { GetPostById200, ListCourses200Item } from "@/lib/api/axios/generated.schemas"
 import { createPost, updatePost } from "@/lib/api/react-query/post"
+import { revalidatePath } from "@/lib/utils/next.utils"
 import { createPostSchema } from "@/shared/schemas/post.schema"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useRouter } from "next/navigation"
+import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 import type { z } from "zod"
 
@@ -57,6 +57,7 @@ export function PostForm({ post, courses = [] }: PostFormProps) {
         toast.success("Sucesso", { description: "Publicação criada com sucesso" })
       }
 
+      await revalidatePath("/noticias")
       router.back()
     } catch (error) {
       toast.error("Algo deu errado. Por favor, tente novamente.")
@@ -76,6 +77,23 @@ export function PostForm({ post, courses = [] }: PostFormProps) {
       <CardContent className="pt-6">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <FormField
+              control={form.control}
+              name="isPinned"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                  <FormControl>
+                    <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                  </FormControl>
+
+                  <div className="space-y-1 leading-none">
+                    <FormLabel>Fixar esta publicação</FormLabel>
+                    <FormDescription>Publicações fixadas aparecerão no topo do quadro</FormDescription>
+                  </div>
+                </FormItem>
+              )}
+            />
+
             <Input name="title" label="Título" placeholder="Digite o título da publicação" />
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -101,23 +119,6 @@ export function PostForm({ post, courses = [] }: PostFormProps) {
                 <Input name="location" label="Local" placeholder="Digite o local do evento" />
               </div>
             )}
-
-            <FormField
-              control={form.control}
-              name="isPinned"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
-                  <FormControl>
-                    <Checkbox checked={field.value} onCheckedChange={field.onChange} />
-                  </FormControl>
-
-                  <div className="space-y-1 leading-none">
-                    <FormLabel>Fixar esta publicação</FormLabel>
-                    <FormDescription>Publicações fixadas aparecerão no topo do quadro</FormDescription>
-                  </div>
-                </FormItem>
-              )}
-            />
 
             <div className="flex justify-end space-x-4">
               <Button type="button" variant="outline" onClick={() => router.back()}>
