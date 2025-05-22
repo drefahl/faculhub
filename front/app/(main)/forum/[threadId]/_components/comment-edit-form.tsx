@@ -1,6 +1,6 @@
 "use client"
 
-import { Textarea } from "@/components/form/textarea"
+import { MarkdownEditor } from "@/components/form/markdown-editor"
 import { SubmitButton } from "@/components/submit-button"
 import { Button } from "@/components/ui/button"
 import { CardContent, CardFooter } from "@/components/ui/card"
@@ -57,7 +57,12 @@ export function CommentEditForm({ comment, onCancel }: CommentEditFormProps) {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <CardContent className="p-4 pt-4">
-          <Textarea name="content" className="min-h-[100px] resize-y" autoFocus />
+          <MarkdownEditor
+            name="content"
+            placeholder="Escreva um comentário..."
+            defaultLayout="split-horizontal"
+            className="w-full"
+          />
         </CardContent>
 
         <CardFooter className="flex justify-end gap-2 p-4 pt-0">

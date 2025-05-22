@@ -1,6 +1,6 @@
 "use client"
 
-import { Textarea } from "@/components/form/textarea"
+import { MarkdownEditor } from "@/components/form/markdown-editor"
 import { SubmitButton } from "@/components/submit-button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Form } from "@/components/ui/form"
@@ -47,19 +47,29 @@ export function CommentForm({ threadId, session }: CommentFormProps) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <div className="flex gap-3">
+        <div className="flex flex-col lg:flex-row gap-3">
           <Avatar className="h-8 w-8">
             <AvatarImage src={getProfilePicUrl(currentUserProfilePic) || ""} alt={currentUserName} />
             <AvatarFallback>{getUserInitials(currentUserName)}</AvatarFallback>
           </Avatar>
 
           <div className="flex-1">
-            <Textarea name="content" placeholder="Escreva um comentário..." className="min-h-[100px] resize-y" />
+            <MarkdownEditor
+              name="content"
+              placeholder="Escreva um comentário..."
+              defaultLayout="split-horizontal"
+              className="w-full"
+              minHeight={150}
+            />
           </div>
         </div>
 
-        <div className="flex justify-end">
-          <SubmitButton disabled={!form.watch("content")} pendingCallback={() => "Enviando..."}>
+        <div className="flex justify-end w-full">
+          <SubmitButton
+            className="w-full lg:w-auto"
+            disabled={!form.watch("content")}
+            pendingCallback={() => "Enviando..."}
+          >
             Comentar
           </SubmitButton>
         </div>

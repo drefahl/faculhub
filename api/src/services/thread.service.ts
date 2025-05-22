@@ -58,8 +58,6 @@ export class ThreadService {
       categories: { connect: data.categories?.map((id) => ({ id })) },
     }
 
-    console.log("updateData", data)
-
     if (data.categories !== undefined) {
       if (Array.isArray(data.categories) && data.categories.length === 0) {
         updateData.categories = { set: [] }

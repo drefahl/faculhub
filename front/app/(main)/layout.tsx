@@ -18,7 +18,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
         </div>
       </header>
 
-      <main className="flex-1 w-full container">{children}</main>
+      <main className="flex-1 w-full container flex flex-col">{children}</main>
 
       <SiteFooter />
     </div>

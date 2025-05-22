@@ -112,8 +112,6 @@ export function ForumList() {
               </CardHeader>
 
               <CardContent>
-                <div className="mb-3 line-clamp-2 text-sm text-muted-foreground">{discussion.content}</div>
-
                 {discussion.categories && discussion.categories.length > 0 && (
                   <div className="flex flex-wrap gap-2">
                     {discussion.categories.map((category) => (

@@ -4,6 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { MarkdownViewer } from "@/components/ui/markdown-viewer"
 import { deleteComment } from "@/lib/api/react-query/comment"
 import { formatDistanceToNow } from "@/lib/utils/date.utils"
 import { getProfilePicUrl, getUserInitials } from "@/lib/utils/user.utils"
@@ -36,7 +37,6 @@ export function CommentList({ comments, threadId, session }: CommentListProps) {
 
   const currentUserId = session?.id || 0
   const isAdmin = session?.role === "ADMIN" || false
-  const isAuthenticated = !!session
 
   const handleEditComment = (commentId: number) => {
     setEditingCommentId(commentId)
@@ -126,7 +126,7 @@ export function CommentList({ comments, threadId, session }: CommentListProps) {
                       )}
                     </div>
 
-                    <div className="whitespace-pre-wrap pl-10 text-sm">{comment.content}</div>
+                    <MarkdownViewer markdown={comment.content} />
                   </CardContent>
                 </>
               )}

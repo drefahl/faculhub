@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { MarkdownViewer } from "@/components/ui/markdown-viewer"
 import { Separator } from "@/components/ui/separator"
 import type { GetThreadById200, GetThreadById200CommentsItem } from "@/lib/api/axios/generated.schemas"
 import { deleteThread } from "@/lib/api/axios/thread"
@@ -189,10 +190,14 @@ export function ThreadDetail({ thread: initialThread }: ThreadDetailProps) {
           </div>
         </CardHeader>
 
-        <CardContent>
-          <div className="mb-6 whitespace-pre-wrap text-base">{thread.content}</div>
+        <CardContent className="p-2 pt-0">
+          <div className="mb-6">
+            <MarkdownViewer className="border-none shadow-none" markdown={thread.content} />
+          </div>
 
-          <div className="flex items-center gap-3">
+          <Separator className="mb-4 mx-4" />
+
+          <div className="flex items-center gap-3 p-4">
             <Avatar>
               <AvatarImage src={getProfilePicUrl(thread.author.profilePicId) || ""} alt={thread.author.name} />
               <AvatarFallback>{getUserInitials(thread.author.name)}</AvatarFallback>

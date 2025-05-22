@@ -1,21 +1,20 @@
 "use client"
 
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useRouter } from "next/navigation"
-import { useForm } from "react-hook-form"
-import * as z from "zod"
-
 import { Input } from "@/components/form/input"
+import { MarkdownEditor } from "@/components/form/markdown-editor"
 import { MultiSelect } from "@/components/form/multi-select"
-import { Textarea } from "@/components/form/textarea"
 import { SubmitButton } from "@/components/submit-button"
 import { Button } from "@/components/ui/button"
 import { Form } from "@/components/ui/form"
 import type { GetThreadById200 } from "@/lib/api/axios/generated.schemas"
 import { useListCategories } from "@/lib/api/react-query/category"
 import { createThread, getListThreadsQueryKey, updateThread } from "@/lib/api/react-query/thread"
+import { zodResolver } from "@hookform/resolvers/zod"
 import { useQueryClient } from "@tanstack/react-query"
+import { useRouter } from "next/navigation"
+import { useForm } from "react-hook-form"
 import { toast } from "sonner"
+import * as z from "zod"
 
 const createThreadFormSchema = z.object({
   title: z.string().min(5, { message: "Título deve ter pelo menos 5 caracteres." }),
@@ -52,8 +51,6 @@ export function ThreadForm({ thread }: ThreadFormProps) {
         const threadId = thread?.id
         if (!threadId) throw new Error("ID da discussão não encontrado")
 
-        console.log({ data: { content, title, categories } })
-
         await updateThread(threadId, { content, title, categories })
         toast.success("Discussão editada com sucesso!", { description: "Sua discussão foi editada no fórum." })
         router.push(`/forum/${threadId}`)
@@ -89,12 +86,7 @@ export function ThreadForm({ thread }: ThreadFormProps) {
 
         <Input name="title" label="Título" placeholder="Título da sua discussão" />
 
-        <Textarea
-          name="content"
-          label="Conteúdo"
-          placeholder="Escreva o conteúdo da sua discussão aqui..."
-          className="min-h-[200px]"
-        />
+        <MarkdownEditor name="content" label="Conteúdo" placeholder="Escreva o conteúdo da sua discussão aqui..." />
 
         <div className="flex justify-end gap-4">
           <Button type="button" variant="outline" onClick={() => router.back()}>
