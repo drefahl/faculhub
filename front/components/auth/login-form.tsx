@@ -77,7 +77,7 @@ export function LoginForm() {
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <Input name="email" type="email" label="Email" placeholder="seu@email.com" />
 
-          <PasswordInput name="password" label="Nova Senha" placeholder="••••••••" />
+          <PasswordInput name="password" label="Senha" placeholder="••••••••" />
 
           <SubmitButton className="w-full" pendingCallback={() => "Entrando"}>
             Entrar
