@@ -7,7 +7,7 @@ import * as z from "zod"
 
 import { Button } from "@/components/ui/button"
 import { createUser } from "@/lib/api/axios/user"
-import { passwordSchema } from "@/lib/validations/password-schema"
+import { passwordSchemaRegistration } from "@/lib/validations/password-schema"
 import { toast } from "sonner"
 import { Input } from "../form/input"
 import { PasswordInput } from "../form/password"
@@ -17,7 +17,7 @@ const registrationFormSchema = z
   .object({
     name: z.string().min(2, { message: "Nome deve ter pelo menos 2 caracteres." }),
     email: z.string().email({ message: "Email inválido." }),
-    password: passwordSchema,
+    password: passwordSchemaRegistration,
     confirmPassword: z.string().min(1, { message: "Confirme sua senha." }),
   })
   .refine((data) => data.password === data.confirmPassword, {

@@ -1,6 +1,8 @@
 import { z } from "zod"
 
-export const passwordSchema = z
+export const passwordSchemaLogin = z.string().min(1, { message: "Digite a senha" })
+
+export const passwordSchemaRegistration = z
   .string()
   .min(1, { message: "Senha é obrigatória" })
   .min(8, { message: "Senha deve ter pelo menos 8 caracteres" })

@@ -15,7 +15,7 @@ import { Form } from "@/components/ui/form"
 import { useUpdateUserProfile } from "@/lib/api/react-query/user"
 import { refreshToken } from "@/lib/utils/token"
 import { isGoogleAccount, isUsingCredentials } from "@/lib/utils/user.utils"
-import { passwordSchema } from "@/lib/validations/password-schema"
+import { passwordSchemaRegistration } from "@/lib/validations/password-schema"
 import type { Session } from "@/types"
 import { useRouter } from "next/navigation"
 
@@ -34,7 +34,7 @@ export function PasswordForm({ session }: PasswordFormProps) {
   const passwordFormSchema = z
     .object({
       currentPassword: z.string().min(1, { message: "Senha atual deve ter pelo menos 6 caracteres" }).optional(),
-      newPassword: passwordSchema,
+      newPassword: passwordSchemaRegistration,
       confirmPassword: z.string().min(1, { message: "Confirme sua nova senha" }),
     })
     .refine(

@@ -5,7 +5,7 @@ import { Form } from "@/components/ui/form"
 import { login } from "@/lib/api/axios/auth"
 import { getCookie } from "@/lib/utils/cookie.utils"
 import { setTokenCookie } from "@/lib/utils/token"
-import { passwordSchema } from "@/lib/validations/password-schema"
+import { passwordSchemaLogin } from "@/lib/validations/password-schema"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useRouter } from "next/navigation"
 import { useForm } from "react-hook-form"
@@ -19,7 +19,7 @@ import { Separator } from "../ui/separator"
 
 const loginFormValidationSchema = z.object({
   email: z.string().email({ message: "Email inválido." }),
-  password: passwordSchema,
+  password: passwordSchemaLogin,
 })
 
 type LoginFormValues = z.infer<typeof loginFormValidationSchema>
@@ -77,7 +77,13 @@ export function LoginForm() {
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <Input name="email" type="email" label="Email" placeholder="seu@email.com" />
 
-          <PasswordInput name="password" label="Senha" placeholder="••••••••" />
+          <PasswordInput
+            name="password"
+            label="Senha"
+            placeholder="••••••••"
+            showRequirements={false}
+            showStrength={false}
+          />
 
           <SubmitButton className="w-full" pendingCallback={() => "Entrando"}>
             Entrar
