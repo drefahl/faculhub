@@ -24,7 +24,8 @@ export class ThreadRepository {
     skip,
     search,
     categoryId,
-  }: { take: number; skip: number; search?: string; categoryId?: number }) {
+    orderBy = {},
+  }: { take: number; skip: number; search?: string; categoryId?: number; orderBy?: object }) {
     const where: Prisma.threadWhereInput = {
       title: { contains: search, mode: "insensitive" },
       categories: categoryId ? { some: { id: categoryId } } : undefined,
@@ -32,7 +33,7 @@ export class ThreadRepository {
 
     const [total, threads] = await prisma.$transaction([
       prisma.thread.count({ where }),
-      prisma.thread.findMany({ select, take, skip, where }),
+      prisma.thread.findMany({ select, take, skip, where, orderBy }),
     ])
 
     const page = Math.floor(skip / take) + 1

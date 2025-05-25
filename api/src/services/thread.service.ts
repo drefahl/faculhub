@@ -90,6 +90,10 @@ export class ThreadService {
 
     const skip = (page - 1) * take
 
-    return this.threadRepository.listThreads({ take, skip, search, categoryId })
+    const orderBy = {
+      lastInteraction: "desc",
+    }
+
+    return this.threadRepository.listThreads({ take, skip, search, categoryId, orderBy })
   }
 }
