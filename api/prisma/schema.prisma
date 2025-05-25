@@ -40,15 +40,16 @@ model file {
 }
 
 model thread {
-  id         Int        @id @default(autoincrement())
-  title      String
-  content    String
-  authorId   Int
-  author     user       @relation(fields: [authorId], references: [id])
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
-  comments   comment[]
-  categories category[]
+  id              Int        @id @default(autoincrement())
+  title           String
+  content         String
+  authorId        Int
+  author          user       @relation(fields: [authorId], references: [id])
+  lastInteraction DateTime   @default(now())
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  comments        comment[]
+  categories      category[]
 }
 
 model comment {

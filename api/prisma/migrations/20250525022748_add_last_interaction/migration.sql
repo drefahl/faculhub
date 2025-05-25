@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "thread" ADD COLUMN     "lastInteraction" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP;
