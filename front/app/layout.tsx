@@ -5,6 +5,7 @@ import "prism-code-editor-lightweight/layout.css"
 import "prism-code-editor-lightweight/themes/github-dark.css"
 
 import { Providers } from "@/components/providers"
+import { GoogleAnalytics } from "@next/third-parties/google"
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import type React from "react"
@@ -31,6 +32,8 @@ export default async function RootLayout({
           <div className="flex flex-col flex-1">{children}</div>
         </Providers>
       </body>
+
+      <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
     </html>
   )
 }
