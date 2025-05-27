@@ -123,6 +123,7 @@ jobs:
         push: true
         build-args: |
           NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}
+          NEXT_PUBLIC_SITE_URL=${{ secrets.NEXT_PUBLIC_SITE_URL }}
           NEXT_PUBLIC_GA_ID=${{ secrets.NEXT_PUBLIC_GA_ID }}
         tags: |
             ${{ env.DOCKER_REGISTRY }}/faculhub-front:${{ github.sha }}

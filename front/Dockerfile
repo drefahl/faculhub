@@ -15,6 +15,7 @@ RUN rm -r shared
 COPY front/shared/schemas ./shared/schemas/
 
 ARG NEXT_PUBLIC_API_URL
+ARG NEXT_PUBLIC_SITE_URL
 ARG NEXT_PUBLIC_GA_ID
 
 RUN corepack enable pnpm && pnpm run build
