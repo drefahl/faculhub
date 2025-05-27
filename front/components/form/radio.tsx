@@ -47,7 +47,7 @@ export function Radio<T extends FieldValues>({ name, variant, ...rest }: RadioPr
               {rest?.options.map((option) => (
                 <FormItem key={option.value} className="flex items-center space-x-3 space-y-0">
                   <FormControl>
-                    <RadioGroupItem value={option.value} />
+                    <RadioGroupItem value={option.value.toString()} />
                   </FormControl>
 
                   <FormLabel>{option.label}</FormLabel>

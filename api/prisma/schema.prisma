@@ -13,21 +13,24 @@ enum Role {
 }
 
 model user {
-  id            Int             @id(map: "user_pk") @default(autoincrement())
-  googleId      String?         @unique
-  email         String          @unique(map: "user_unique") @db.VarChar
-  name          String?         @db.VarChar
-  password      String?         @db.VarChar
-  role          Role            @default(USER)
-  profilePic    file?           @relation(fields: [profilePicId], references: [id])
-  profilePicId  String?
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
-  thread        thread[]
-  comment       comment[]
-  post          post[]
-  like          like[]
-  passwordReset passwordReset[]
+  id               Int             @id(map: "user_pk") @default(autoincrement())
+  googleId         String?         @unique
+  email            String          @unique(map: "user_unique") @db.VarChar
+  name             String?         @db.VarChar
+  password         String?         @db.VarChar
+  enrollmentNumber String?         @unique(map: "user_enrollment_unique") @db.VarChar
+  role             Role            @default(USER)
+  profilePic       file?           @relation(fields: [profilePicId], references: [id])
+  profilePicId     String?
+  courseId         Int?
+  course           course?         @relation(fields: [courseId], references: [id])
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+  thread           thread[]
+  comment          comment[]
+  post             post[]
+  like             like[]
+  passwordReset    passwordReset[]
 }
 
 model file {
@@ -106,6 +109,7 @@ model course {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   posts     post[]
+  user      user[]
 }
 
 model passwordReset {

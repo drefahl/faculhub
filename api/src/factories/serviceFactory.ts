@@ -25,7 +25,7 @@ export function createFileService() {
 }
 
 export function createUserService() {
-  return new UserService(new UserRepository(), createFileService())
+  return new UserService(new UserRepository(), createFileService(), createCourseService())
 }
 
 export function createAuthService() {

@@ -3,9 +3,9 @@ import type { FastifyInstance } from "fastify"
 import z from "zod"
 import { CourseController } from "../controllers/course.controller"
 
-export async function courseRoutes(app: FastifyInstance) {
-  const controller = new CourseController(createCourseService())
+const controller = new CourseController(createCourseService())
 
+export async function courseRoutes(app: FastifyInstance) {
   app.post(
     "/",
     {
@@ -21,30 +21,6 @@ export async function courseRoutes(app: FastifyInstance) {
       },
     },
     controller.create.bind(controller),
-  )
-
-  app.get(
-    "/",
-    {
-      schema: {
-        tags: ["Course"],
-        operationId: "listCourses",
-        response: { 200: z.array(z.object({ id: z.number(), code: z.string() })) },
-      },
-    },
-    controller.list.bind(controller),
-  )
-
-  app.get(
-    "/:id",
-    {
-      schema: {
-        tags: ["Course"],
-        operationId: "getCourseById",
-        params: z.object({ id: z.coerce.number() }),
-      },
-    },
-    controller.getById.bind(controller),
   )
 
   app.patch(
@@ -69,5 +45,31 @@ export async function courseRoutes(app: FastifyInstance) {
       },
     },
     controller.delete.bind(controller),
+  )
+}
+
+export async function coursePublicRoutes(app: FastifyInstance) {
+  app.get(
+    "/",
+    {
+      schema: {
+        tags: ["Course"],
+        operationId: "listCourses",
+        response: { 200: z.array(z.object({ id: z.number(), code: z.string() })) },
+      },
+    },
+    controller.list.bind(controller),
+  )
+
+  app.get(
+    "/:id",
+    {
+      schema: {
+        tags: ["Course"],
+        operationId: "getCourseById",
+        params: z.object({ id: z.coerce.number() }),
+      },
+    },
+    controller.getById.bind(controller),
   )
 }

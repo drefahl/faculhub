@@ -7,4 +7,4 @@ export type Session = {
   providers: ["google"] | ["credentials"] | ["google", "credentials"]
 }
 
-export type Option<T = string> = { value: T; label: T }
+export type Option<T = string | number> = { value: T; label: T }

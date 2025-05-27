@@ -3,13 +3,21 @@ import { passwordSchema } from "./common.schema"
 
 const pictureSchema = z.string().nullable().optional()
 const emailSchema = z.string().email({ message: "Invalid email" })
+const courseIdSchema = z.number().int().positive().nullable().optional()
+export const enrollmentNumberSchema = z
+  .string()
+  .regex(/^20(?:1[7-9]|[2-9]\d)\d{6}$/, { message: "Invalid enrollment number" })
+  .nullable()
+  .optional()
 
 export const createUserSchema = z
   .object({
     email: emailSchema,
     name: z.string().trim(),
     profilePicId: pictureSchema,
+    courseId: courseIdSchema,
     password: passwordSchema,
+    enrollmentNumber: enrollmentNumberSchema,
   })
   .strict()
 
@@ -29,6 +37,8 @@ export const updateUserSchema = z
     name: z.string().max(255, { message: "Name must be at most 255 characters" }).optional(),
     email: z.string().email().optional(),
     profilePicId: pictureSchema,
+    courseId: courseIdSchema,
+    enrollmentNumber: enrollmentNumberSchema,
     currentPassword: passwordSchema.optional(),
     newPassword: passwordSchema.optional(),
     confirmPassword: passwordSchema.optional(),
@@ -54,6 +64,8 @@ export const ResponseGetUserSchema = z
     email: z.string(),
     name: z.string().nullable(),
     profilePicId: pictureSchema,
+    courseId: courseIdSchema,
+    enrollmentNumber: enrollmentNumberSchema,
   })
   .nullable()
 

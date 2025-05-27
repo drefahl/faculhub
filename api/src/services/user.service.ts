@@ -13,12 +13,14 @@ import {
   updateUserSchema,
 } from "@/schemas/user.schema"
 import type { Prisma, user } from "@prisma/client"
+import type { CourseService } from "./course.service"
 import type { FileService } from "./file.service"
 
 export class UserService {
   constructor(
     private readonly userRepository: UserRepository,
     private readonly fileService: FileService,
+    private readonly courseService: CourseService,
   ) {}
 
   async createUser(data: CreateUserInput): Promise<user> {
@@ -27,6 +29,18 @@ export class UserService {
     const emailExists = await this.userRepository.getUserByEmail(userData.email)
     if (emailExists) {
       throw new Error("Email already exists")
+    }
+
+    if (userData.enrollmentNumber) {
+      const enrollmentNumberExists = await this.userRepository.getUserByEnrollmentNumber(userData.enrollmentNumber)
+      if (enrollmentNumberExists) {
+        throw new Error("Enrollment number already exists")
+      }
+    }
+
+    if (userData.courseId) {
+      const course = await this.courseService.getCourseById(userData.courseId)
+      if (!course) throw new NotFoundError("Course not found")
     }
 
     const hashedPassword = await hashPassword(userData.password)
@@ -62,7 +76,7 @@ export class UserService {
       throw new NotFoundError("User not found")
     }
 
-    const { currentPassword, newPassword, confirmPassword, ...baseUserData } = validatedData
+    const { currentPassword, newPassword, confirmPassword, courseId, enrollmentNumber, ...baseUserData } = validatedData
 
     const updateData: Prisma.userUpdateInput = { ...baseUserData }
 
@@ -76,6 +90,20 @@ export class UserService {
         }
         updateData.password = await hashPassword(newPassword)
       }
+    }
+
+    if (enrollmentNumber) {
+      const existingUser = await this.userRepository.getUserByEnrollmentNumber(enrollmentNumber)
+      if (existingUser && existingUser.id !== userId) {
+        throw new Error("Enrollment number already exists")
+      }
+      updateData.enrollmentNumber = enrollmentNumber.trim()
+    }
+
+    if (courseId) {
+      const course = await this.courseService.getCourseById(courseId)
+      if (!course) throw new NotFoundError("Course not found")
+      updateData.course = { connect: { id: courseId } }
     }
 
     return this.userRepository.updateUser(userId, updateData)

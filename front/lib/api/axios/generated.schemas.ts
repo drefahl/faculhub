@@ -729,8 +729,15 @@ export type CreateUserBody = {
   name: string
   /** @nullable */
   profilePicId?: string | null
+  /**
+   * @minimum 0
+   * @exclusiveMinimum
+   */
+  courseId?: number
   /** @minLength 8 */
   password: string
+  /** @pattern ^20(?:1[7-9]|[2-9]\d)\d{6}$ */
+  enrollmentNumber?: string
 }
 
 /**
@@ -743,6 +750,13 @@ export type CreateUser201 = {
   name: string | null
   /** @nullable */
   profilePicId?: string | null
+  /**
+   * @minimum 0
+   * @exclusiveMinimum
+   */
+  courseId?: number
+  /** @pattern ^20(?:1[7-9]|[2-9]\d)\d{6}$ */
+  enrollmentNumber?: string
 } | null
 
 export type Refresh200 = {
@@ -788,6 +802,13 @@ export type GetUserProfile200 = {
   name: string | null
   /** @nullable */
   profilePicId?: string | null
+  /**
+   * @minimum 0
+   * @exclusiveMinimum
+   */
+  courseId?: number
+  /** @pattern ^20(?:1[7-9]|[2-9]\d)\d{6}$ */
+  enrollmentNumber?: string
 } | null
 
 export type UpdateUserProfileBodyRole = (typeof UpdateUserProfileBodyRole)[keyof typeof UpdateUserProfileBodyRole]
@@ -803,6 +824,11 @@ export type UpdateUserProfileBody = {
   email?: string
   /** @nullable */
   profilePicId?: string | null
+  /**
+   * @minimum 0
+   * @exclusiveMinimum
+   */
+  courseId?: number
   /** @minLength 8 */
   currentPassword?: string
   /** @minLength 8 */
@@ -822,6 +848,13 @@ export type UpdateUserProfile200 = {
   name: string | null
   /** @nullable */
   profilePicId?: string | null
+  /**
+   * @minimum 0
+   * @exclusiveMinimum
+   */
+  courseId?: number
+  /** @pattern ^20(?:1[7-9]|[2-9]\d)\d{6}$ */
+  enrollmentNumber?: string
 } | null
 
 /**
@@ -834,6 +867,13 @@ export type UploadProfileImage200 = {
   name: string | null
   /** @nullable */
   profilePicId?: string | null
+  /**
+   * @minimum 0
+   * @exclusiveMinimum
+   */
+  courseId?: number
+  /** @pattern ^20(?:1[7-9]|[2-9]\d)\d{6}$ */
+  enrollmentNumber?: string
 } | null
 
 export type UploadProfileImage400 = {
@@ -854,6 +894,13 @@ export type DeleteProfileImage200 = {
   name: string | null
   /** @nullable */
   profilePicId?: string | null
+  /**
+   * @minimum 0
+   * @exclusiveMinimum
+   */
+  courseId?: number
+  /** @pattern ^20(?:1[7-9]|[2-9]\d)\d{6}$ */
+  enrollmentNumber?: string
 } | null
 
 export type DeleteProfileImage404 = {

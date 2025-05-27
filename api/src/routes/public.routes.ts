@@ -3,6 +3,7 @@ import z from "zod"
 import { authPublicRoutes } from "./auth.route"
 import { categoryPublicRoutes } from "./category.routes"
 import { commentPublicRoutes } from "./comment.route"
+import { coursePublicRoutes } from "./course.route"
 import { filePublicRoutes } from "./file.route"
 import { likePublicRoutes } from "./like.route"
 import { passwordResetRoutes } from "./password-reset.route"
@@ -16,6 +17,8 @@ export async function publicRoutes(app: FastifyInstance) {
   app.register(categoryPublicRoutes, { prefix: "/categories" })
 
   app.register(commentPublicRoutes, { prefix: "/comments" })
+
+  app.register(coursePublicRoutes, { prefix: "/courses" })
 
   app.register(filePublicRoutes, { prefix: "/files" })
 

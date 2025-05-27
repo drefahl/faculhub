@@ -10,9 +10,10 @@ import { describe, expect, it } from "vitest"
 describe("User Validation", () => {
   it("should validate a valid user", () => {
     const result = createUserSchema.safeParse({
-      name: "Cauã",
-      email: "caua@teste.com",
+      name: "Name",
+      email: "user@example.com",
       password: "Str0ngPassword123!",
+      courseId: 1,
     })
 
     expect(result.success).toBe(true)
@@ -20,7 +21,7 @@ describe("User Validation", () => {
 
   it("should fail for invalid email", () => {
     const result = createUserSchema.safeParse({
-      name: "Cauã",
+      name: "Name",
       email: "invalid-email",
       password: "Str0ngPassword123!",
     })
@@ -30,8 +31,8 @@ describe("User Validation", () => {
 
   it("should fail for short password", () => {
     const result = createUserSchema.safeParse({
-      name: "Cauã",
-      email: "caua@teste.com",
+      name: "Name",
+      email: "user@example.com",
       password: "short",
     })
 
@@ -40,8 +41,8 @@ describe("User Validation", () => {
 
   it("should fail for password without number", () => {
     const result = createUserSchema.safeParse({
-      name: "Cauã",
-      email: "caua@teste.com",
+      name: "Name",
+      email: "user@example.com",
       password: "NoNumberPassword!",
     })
 
@@ -50,8 +51,8 @@ describe("User Validation", () => {
 
   it("should fail for password without special character", () => {
     const result = createUserSchema.safeParse({
-      name: "Cauã",
-      email: "caua@teste.com",
+      name: "Name",
+      email: "user@example.com",
       password: "NoSpecialCharacter123",
     })
     expect(result.success).toBe(false)
@@ -59,8 +60,8 @@ describe("User Validation", () => {
 
   it("should fail for password without uppercase letter", () => {
     const result = createUserSchema.safeParse({
-      name: "Cauã",
-      email: "caua@teste.com",
+      name: "Name",
+      email: "user@example.com",
       password: "nouppercase123!",
     })
     expect(result.success).toBe(false)
@@ -68,11 +69,81 @@ describe("User Validation", () => {
 
   it("should fail for password without lowercase letter", () => {
     const result = createUserSchema.safeParse({
-      name: "Cauã",
-      email: "caua@teste.com",
+      name: "Name",
+      email: "user@example.com",
       password: "NOLOWERCASE123!",
     })
     expect(result.success).toBe(false)
+  })
+
+  it("should fail for invalid courseId", () => {
+    const result = createUserSchema.safeParse({
+      name: "Name",
+      email: "user@example.com",
+      password: "Str0ngPassword123!",
+      courseId: -1,
+    })
+
+    expect(result.success).toBe(false)
+  })
+
+  it("should allow optional courseId to be undefined", () => {
+    const result = createUserSchema.safeParse({
+      name: "Name",
+      email: "user@example.com",
+      password: "Str0ngPassword123!",
+      courseId: undefined,
+    })
+
+    expect(result.success).toBe(true)
+  })
+
+  it("should fail for invalid courseId", () => {
+    const result = createUserSchema.safeParse({
+      name: "Name",
+      email: "user@example.com",
+      password: "Str0ngPassword123!",
+      courseId: -1,
+    })
+
+    expect(result.success).toBe(false)
+  })
+
+  describe("enrollmentNumber validation", () => {
+    const base = {
+      name: "Name",
+      email: "user@example.com",
+      password: "Str0ngPassword123!",
+    }
+
+    const validNumbers = ["2017000000", "2017999999", "2023002313", "2099123456"]
+    for (const num of validNumbers) {
+      it(`should accept valid enrollment number ${num}`, () => {
+        const result = createUserSchema.safeParse({ ...base, enrollmentNumber: num })
+        expect(result.success).toBe(true)
+      })
+    }
+
+    const invalidNumbers = [
+      "1917000000",
+      "2107000000",
+      "2016000000",
+      "2015000000",
+      "20A7000000",
+      "201700000",
+      "20170000000",
+      "2017-002313",
+    ]
+
+    for (const num of invalidNumbers) {
+      it(`should reject invalid enrollment number ${num}`, () => {
+        const result = createUserSchema.safeParse({ ...base, enrollmentNumber: num })
+        expect(result.success).toBe(false)
+        if (!result.success) {
+          expect(result.error.errors[0].message).toBe("Invalid enrollment number")
+        }
+      })
+    }
   })
 })
 

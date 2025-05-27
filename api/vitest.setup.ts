@@ -3,4 +3,4 @@ import { config } from "dotenv"
 
 config({ path: ".env.test", override: true })
 
-execSync("npx prisma db push")
+execSync("npx prisma db push --accept-data-loss")

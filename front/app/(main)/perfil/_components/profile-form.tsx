@@ -6,38 +6,46 @@ import { toast } from "sonner"
 import * as z from "zod"
 
 import { Input } from "@/components/form/input"
+import { Select } from "@/components/form/select"
 import { SubmitButton } from "@/components/submit-button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Form } from "@/components/ui/form"
+import type { GetUserProfile200 } from "@/lib/api/axios/generated.schemas"
+import { useListCourses } from "@/lib/api/react-query/course"
 import { useUpdateUserProfile } from "@/lib/api/react-query/user"
 import { refreshToken } from "@/lib/utils/token"
 import { getProfilePicUrl, getUserInitials } from "@/lib/utils/user.utils"
-import type { Session } from "@/types"
+import { enrollmentNumberSchema } from "@/lib/validations/enrollment-number"
 import { useRouter } from "next/navigation"
 import { ProfileImageUpload } from "./profile-image-upload"
 
 interface ProfileFormProps {
-  session: Session
+  profile: NonNullable<GetUserProfile200>
 }
 
 const profileFormSchema = z.object({
   name: z.string().trim().min(2, { message: "Nome deve ter pelo menos 2 caracteres." }).max(50, {
     message: "Nome não pode ter mais de 50 caracteres.",
   }),
+  courseId: z.coerce.number().int().positive().optional(),
+  enrollmentNumber: enrollmentNumberSchema,
 })
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>
 
-export function ProfileForm({ session }: ProfileFormProps) {
+export function ProfileForm({ profile }: ProfileFormProps) {
   const router = useRouter()
 
   const { mutate: updateProfile, isPending } = useUpdateUserProfile()
+  const { data: courses } = useListCourses()
 
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
     defaultValues: {
-      name: session.name || "",
+      name: profile?.name || "",
+      courseId: profile?.courseId || undefined,
+      enrollmentNumber: profile?.enrollmentNumber || "",
     },
   })
 
@@ -61,7 +69,7 @@ export function ProfileForm({ session }: ProfileFormProps) {
     )
   }
 
-  const initials = getUserInitials(session.name)
+  const initials = getUserInitials(profile.name)
 
   return (
     <Card>
@@ -73,7 +81,7 @@ export function ProfileForm({ session }: ProfileFormProps) {
       <CardContent className="space-y-6">
         <div className="flex flex-col items-center space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0">
           <Avatar className="h-24 w-24">
-            <AvatarImage src={getProfilePicUrl(session.picture) || ""} alt={session.name || "Avatar"} />
+            <AvatarImage src={getProfilePicUrl(profile.profilePicId) || ""} alt={profile.name || "Avatar"} />
             <AvatarFallback className="text-2xl">{initials}</AvatarFallback>
           </Avatar>
 
@@ -85,6 +93,33 @@ export function ProfileForm({ session }: ProfileFormProps) {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <Input name="name" label="Nome" placeholder="Seu nome" />
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              <Input
+                type="text"
+                name="enrollmentNumber"
+                label="Matrícula"
+                placeholder="Número de matrícula"
+                maxLength={10}
+                description="Número de matrícula fornecido pela instituição"
+                autoComplete="off"
+                autoCapitalize="off"
+                autoCorrect="off"
+                spellCheck="false"
+              />
+
+              {courses && courses.length > 0 && (
+                <Select
+                  name="courseId"
+                  label="Curso"
+                  placeholder="Selecione seu curso"
+                  options={courses.map((course) => ({
+                    value: course.id,
+                    label: course.code,
+                  }))}
+                />
+              )}
+            </div>
 
             <div className="flex justify-end">
               <SubmitButton>{isPending ? "Salvando..." : "Salvar alterações"}</SubmitButton>

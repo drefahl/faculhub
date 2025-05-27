@@ -17,4 +17,10 @@ export class UserRepository {
   async updateUser(userId: number, data: Prisma.userUpdateInput): Promise<user> {
     return prisma.user.update({ where: { id: userId }, data })
   }
+
+  async getUserByEnrollmentNumber(enrollmentNumber: string): Promise<user | null> {
+    return prisma.user.findUnique({
+      where: { enrollmentNumber: enrollmentNumber.trim() },
+    })
+  }
 }

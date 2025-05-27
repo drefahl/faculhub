@@ -1,5 +1,6 @@
 import { InvalidCredentialsError } from "@/errors/InvalidCredentialsError"
-import { createFileService, createUserService } from "@/factories/serviceFactory"
+import { NotFoundError } from "@/errors/NotFoundError"
+import { createCourseService, createFileService, createUserService } from "@/factories/serviceFactory"
 import { comparePassword } from "@/lib/utils/crypto.utils"
 import { resetDatabase } from "tests/helpers/reset-db"
 import { beforeEach, describe, expect, it } from "vitest"
@@ -7,16 +8,28 @@ import { ZodError } from "zod"
 
 const userService = createUserService()
 const fileService = createFileService()
+const courseService = createCourseService()
 
 describe("UserService Integration", () => {
   const email = "user@test.com"
   const password = "Str0ngP@ss"
+  const enrollment = "2023012345"
+
   let userId: number
+  let courseId: number
 
   beforeEach(async () => {
     await resetDatabase()
 
-    const user = await userService.createUser({ email, name: "User", password })
+    const course = await courseService.createCourse({ name: "Test Course", code: "TEST123" })
+    courseId = course.id
+
+    const user = await userService.createUser({
+      email,
+      name: "User",
+      password,
+      enrollmentNumber: enrollment,
+    })
     userId = user.id
   })
 
@@ -29,7 +42,14 @@ describe("UserService Integration", () => {
   })
 
   it("should not allow duplicate emails", async () => {
-    await expect(() => userService.createUser({ email, name: "New", password })).rejects.toThrow("Email already exists")
+    await expect(() =>
+      userService.createUser({
+        email,
+        name: "New",
+        password,
+        enrollmentNumber: enrollment,
+      }),
+    ).rejects.toThrow("Email already exists")
   })
 
   it("should get user by ID", async () => {
@@ -120,5 +140,94 @@ describe("UserService Integration", () => {
     await expect(
       userService.updateUserProfileImage(userId, "avatar.txt", "text/plain", Buffer.from("mock")),
     ).rejects.toThrow(ZodError)
+  })
+
+  it("should create a user with a valid courseId", async () => {
+    const newEmail = "withcourse@test.com"
+    const newUser = await userService.createUser({
+      email: newEmail,
+      name: "ComCurso",
+      password,
+      enrollmentNumber: "2023002314",
+      courseId,
+    })
+
+    expect(newUser.courseId).toBe(courseId)
+    expect(await comparePassword(password, newUser.password!)).toBe(true)
+  })
+
+  it("should throw NotFoundError when creating user with non-existing courseId", async () => {
+    await expect(() =>
+      userService.createUser({
+        email: "nocourse@test.com",
+        name: "SemCurso",
+        password,
+        enrollmentNumber: "2023002315",
+        courseId: 9999,
+      }),
+    ).rejects.toThrow(NotFoundError)
+  })
+
+  it("should update user by connecting to a new valid courseId", async () => {
+    const otherCourse = await courseService.createCourse({ name: "Other Course", code: "OTHER123" })
+
+    const updated = await userService.updateUser(userId, {
+      email,
+      name: "User",
+      courseId: otherCourse.id,
+    })
+
+    expect(updated.courseId).toBe(otherCourse.id)
+  })
+
+  it("should throw NotFoundError when updating user with non-existing courseId", async () => {
+    await expect(() =>
+      userService.updateUser(userId, {
+        email,
+        name: "User",
+        courseId: 8888,
+      }),
+    ).rejects.toThrow(NotFoundError)
+  })
+
+  it("should throw error if enrollment number already exists", async () => {
+    await expect(() =>
+      userService.createUser({
+        email: "test@test.com",
+        name: "Test User",
+        password,
+        enrollmentNumber: enrollment,
+        courseId,
+      }),
+    ).rejects.toThrow(Error)
+  })
+
+  it("should throw error if updating user with existing enrollment number", async () => {
+    const existingUser = await userService.createUser({
+      email: "existing@test.com",
+      name: "Existing User",
+      password,
+      enrollmentNumber: "2023002314",
+      courseId,
+    })
+
+    await expect(() =>
+      userService.updateUser(userId, {
+        email,
+        name: "User",
+        enrollmentNumber: existingUser.enrollmentNumber,
+      }),
+    ).rejects.toThrow(Error)
+  })
+
+  it("should allow updating user with a different enrollment number", async () => {
+    const newEnrollment = "2023012346"
+    const updated = await userService.updateUser(userId, {
+      email,
+      name: "User",
+      enrollmentNumber: newEnrollment,
+    })
+
+    expect(updated.enrollmentNumber).toBe(newEnrollment)
   })
 })

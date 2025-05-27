@@ -2738,9 +2738,18 @@
                     "type": "string",
                     "nullable": true
                   },
+                  "courseId": {
+                    "type": "integer",
+                    "exclusiveMinimum": true,
+                    "minimum": 0
+                  },
                   "password": {
                     "type": "string",
                     "minLength": 8
+                  },
+                  "enrollmentNumber": {
+                    "type": "string",
+                    "pattern": "^20(?:1[7-9]|[2-9]\\d)\\d{6}$"
                   }
                 },
                 "required": [
@@ -2775,6 +2784,15 @@
                     "profilePicId": {
                       "type": "string",
                       "nullable": true
+                    },
+                    "courseId": {
+                      "type": "integer",
+                      "exclusiveMinimum": true,
+                      "minimum": 0
+                    },
+                    "enrollmentNumber": {
+                      "type": "string",
+                      "pattern": "^20(?:1[7-9]|[2-9]\\d)\\d{6}$"
                     }
                   },
                   "required": [
@@ -3000,6 +3018,15 @@
                     "profilePicId": {
                       "type": "string",
                       "nullable": true
+                    },
+                    "courseId": {
+                      "type": "integer",
+                      "exclusiveMinimum": true,
+                      "minimum": 0
+                    },
+                    "enrollmentNumber": {
+                      "type": "string",
+                      "pattern": "^20(?:1[7-9]|[2-9]\\d)\\d{6}$"
                     }
                   },
                   "required": [
@@ -3038,6 +3065,11 @@
                   "profilePicId": {
                     "type": "string",
                     "nullable": true
+                  },
+                  "courseId": {
+                    "type": "integer",
+                    "exclusiveMinimum": true,
+                    "minimum": 0
                   },
                   "currentPassword": {
                     "type": "string",
@@ -3084,6 +3116,15 @@
                     "profilePicId": {
                       "type": "string",
                       "nullable": true
+                    },
+                    "courseId": {
+                      "type": "integer",
+                      "exclusiveMinimum": true,
+                      "minimum": 0
+                    },
+                    "enrollmentNumber": {
+                      "type": "string",
+                      "pattern": "^20(?:1[7-9]|[2-9]\\d)\\d{6}$"
                     }
                   },
                   "required": [
@@ -3128,6 +3169,15 @@
                     "profilePicId": {
                       "type": "string",
                       "nullable": true
+                    },
+                    "courseId": {
+                      "type": "integer",
+                      "exclusiveMinimum": true,
+                      "minimum": 0
+                    },
+                    "enrollmentNumber": {
+                      "type": "string",
+                      "pattern": "^20(?:1[7-9]|[2-9]\\d)\\d{6}$"
                     }
                   },
                   "required": [
@@ -3208,6 +3258,15 @@
                     "profilePicId": {
                       "type": "string",
                       "nullable": true
+                    },
+                    "courseId": {
+                      "type": "integer",
+                      "exclusiveMinimum": true,
+                      "minimum": 0
+                    },
+                    "enrollmentNumber": {
+                      "type": "string",
+                      "pattern": "^20(?:1[7-9]|[2-9]\\d)\\d{6}$"
                     }
                   },
                   "required": [
