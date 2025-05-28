@@ -23,7 +23,7 @@ type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1]
  */
 export const createUser = (createUserBody: CreateUserBody, options?: SecondParameter<typeof requestSafe>) => {
   return requestSafe<CreateUser201>(
-    { url: `/api/users/`, method: "POST", headers: { "Content-Type": "application/json" }, data: createUserBody },
+    { url: `/users/`, method: "POST", headers: { "Content-Type": "application/json" }, data: createUserBody },
     options,
   )
 }
@@ -31,7 +31,7 @@ export const createUser = (createUserBody: CreateUserBody, options?: SecondParam
  * Get user profile
  */
 export const getUserProfile = (options?: SecondParameter<typeof requestSafe>) => {
-  return requestSafe<GetUserProfile200>({ url: `/api/users/me`, method: "GET" }, options)
+  return requestSafe<GetUserProfile200>({ url: `/users/me`, method: "GET" }, options)
 }
 /**
  * Update user profile
@@ -41,12 +41,7 @@ export const updateUserProfile = (
   options?: SecondParameter<typeof requestSafe>,
 ) => {
   return requestSafe<UpdateUserProfile200>(
-    {
-      url: `/api/users/me`,
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      data: updateUserProfileBody,
-    },
+    { url: `/users/me`, method: "PATCH", headers: { "Content-Type": "application/json" }, data: updateUserProfileBody },
     options,
   )
 }
@@ -54,13 +49,13 @@ export const updateUserProfile = (
  * Upload a profile image
  */
 export const uploadProfileImage = (options?: SecondParameter<typeof requestSafe>) => {
-  return requestSafe<UploadProfileImage200>({ url: `/api/users/profile-image`, method: "PUT" }, options)
+  return requestSafe<UploadProfileImage200>({ url: `/users/profile-image`, method: "PUT" }, options)
 }
 /**
  * Delete a profile image
  */
 export const deleteProfileImage = (options?: SecondParameter<typeof requestSafe>) => {
-  return requestSafe<DeleteProfileImage200>({ url: `/api/users/profile-image`, method: "DELETE" }, options)
+  return requestSafe<DeleteProfileImage200>({ url: `/users/profile-image`, method: "DELETE" }, options)
 }
 export type CreateUserResult = NonNullable<Awaited<ReturnType<typeof createUser>>>
 export type GetUserProfileResult = NonNullable<Awaited<ReturnType<typeof getUserProfile>>>

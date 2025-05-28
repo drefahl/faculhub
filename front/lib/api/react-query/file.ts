@@ -23,11 +23,11 @@ import type { ErrorType } from "../../utils/axios"
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1]
 
 export const getFileById = (id: string, options?: SecondParameter<typeof request>, signal?: AbortSignal) => {
-  return request<void>({ url: `/api/files/${id}`, method: "GET", signal }, options)
+  return request<void>({ url: `/files/${id}`, method: "GET", signal }, options)
 }
 
 export const getGetFileByIdQueryKey = (id: string) => {
-  return [`/api/files/${id}`] as const
+  return [`/files/${id}`] as const
 }
 
 export const getGetFileByIdQueryOptions = <

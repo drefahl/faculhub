@@ -28,11 +28,11 @@ import type { ErrorType } from "../../utils/axios"
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1]
 
 export const getCommentById = (id: number, options?: SecondParameter<typeof request>, signal?: AbortSignal) => {
-  return request<void>({ url: `/api/comments/${id}`, method: "GET", signal }, options)
+  return request<void>({ url: `/comments/${id}`, method: "GET", signal }, options)
 }
 
 export const getGetCommentByIdQueryKey = (id: number) => {
-  return [`/api/comments/${id}`] as const
+  return [`/comments/${id}`] as const
 }
 
 export const getGetCommentByIdQueryOptions = <
@@ -129,7 +129,7 @@ export const updateComment = (
 ) => {
   return request<void>(
     {
-      url: `/api/comments/${id}`,
+      url: `/comments/${id}`,
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       data: updateCommentBody,
@@ -197,7 +197,7 @@ export const useUpdateComment = <TError = ErrorType<unknown>, TContext = unknown
   return useMutation(mutationOptions, queryClient)
 }
 export const deleteComment = (id: number, options?: SecondParameter<typeof request>) => {
-  return request<void>({ url: `/api/comments/${id}`, method: "DELETE" }, options)
+  return request<void>({ url: `/comments/${id}`, method: "DELETE" }, options)
 }
 
 export const getDeleteCommentMutationOptions = <TError = ErrorType<unknown>, TContext = unknown>(options?: {
@@ -242,7 +242,7 @@ export const createComment = (
 ) => {
   return request<void>(
     {
-      url: `/api/comments/`,
+      url: `/comments/`,
       method: "POST",
       headers: { "Content-Type": "application/json" },
       data: createCommentBody,

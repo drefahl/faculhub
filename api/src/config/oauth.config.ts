@@ -13,7 +13,7 @@ export function registerGoogleOAuth(app: FastifyInstance) {
       },
       auth: fastifyOauth2.GOOGLE_CONFIGURATION,
     },
-    startRedirectPath: "/api/login/google",
+    startRedirectPath: "/login/google",
     callbackUri: env.GOOGLE_CALLBACK_URI,
     callbackUriParams: {
       access_type: "offline",

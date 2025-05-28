@@ -47,13 +47,7 @@ export const createUser = (
   signal?: AbortSignal,
 ) => {
   return request<CreateUser201>(
-    {
-      url: `/api/users/`,
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      data: createUserBody,
-      signal,
-    },
+    { url: `/users/`, method: "POST", headers: { "Content-Type": "application/json" }, data: createUserBody, signal },
     options,
   )
 }
@@ -97,11 +91,11 @@ export const useCreateUser = <TError = ErrorType<unknown>, TContext = unknown>(
  * Get user profile
  */
 export const getUserProfile = (options?: SecondParameter<typeof request>, signal?: AbortSignal) => {
-  return request<GetUserProfile200>({ url: `/api/users/me`, method: "GET", signal }, options)
+  return request<GetUserProfile200>({ url: `/users/me`, method: "GET", signal }, options)
 }
 
 export const getGetUserProfileQueryKey = () => {
-  return [`/api/users/me`] as const
+  return [`/users/me`] as const
 }
 
 export const getGetUserProfileQueryOptions = <
@@ -192,12 +186,7 @@ export const updateUserProfile = (
   options?: SecondParameter<typeof request>,
 ) => {
   return request<UpdateUserProfile200>(
-    {
-      url: `/api/users/me`,
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      data: updateUserProfileBody,
-    },
+    { url: `/users/me`, method: "PATCH", headers: { "Content-Type": "application/json" }, data: updateUserProfileBody },
     options,
   )
 }
@@ -263,7 +252,7 @@ export const useUpdateUserProfile = <TError = ErrorType<unknown>, TContext = unk
  * Upload a profile image
  */
 export const uploadProfileImage = (options?: SecondParameter<typeof request>) => {
-  return request<UploadProfileImage200>({ url: `/api/users/profile-image`, method: "PUT" }, options)
+  return request<UploadProfileImage200>({ url: `/users/profile-image`, method: "PUT" }, options)
 }
 
 export const getUploadProfileImageMutationOptions = <
@@ -309,7 +298,7 @@ export const useUploadProfileImage = <
  * Delete a profile image
  */
 export const deleteProfileImage = (options?: SecondParameter<typeof request>) => {
-  return request<DeleteProfileImage200>({ url: `/api/users/profile-image`, method: "DELETE" }, options)
+  return request<DeleteProfileImage200>({ url: `/users/profile-image`, method: "DELETE" }, options)
 }
 
 export const getDeleteProfileImageMutationOptions = <

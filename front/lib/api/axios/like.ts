@@ -11,13 +11,13 @@ import { requestSafe } from "../../utils/axios"
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1]
 
 export const countLikes = (postId: number, options?: SecondParameter<typeof requestSafe>) => {
-  return requestSafe<CountLikes200>({ url: `/api/likes/${postId}/count`, method: "GET" }, options)
+  return requestSafe<CountLikes200>({ url: `/likes/${postId}/count`, method: "GET" }, options)
 }
 export const likePost = (postId: number, options?: SecondParameter<typeof requestSafe>) => {
-  return requestSafe<LikePost201>({ url: `/api/likes/${postId}`, method: "POST" }, options)
+  return requestSafe<LikePost201>({ url: `/likes/${postId}`, method: "POST" }, options)
 }
 export const unlikePost = (postId: number, options?: SecondParameter<typeof requestSafe>) => {
-  return requestSafe<UnlikePost200>({ url: `/api/likes/${postId}`, method: "DELETE" }, options)
+  return requestSafe<UnlikePost200>({ url: `/likes/${postId}`, method: "DELETE" }, options)
 }
 export type CountLikesResult = NonNullable<Awaited<ReturnType<typeof countLikes>>>
 export type LikePostResult = NonNullable<Awaited<ReturnType<typeof likePost>>>

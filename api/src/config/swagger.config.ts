@@ -20,5 +20,5 @@ export function swaggerConfig(app: FastifyInstance) {
     transform: jsonSchemaTransform,
   })
 
-  app.register(fastifySwaggerUi, { routePrefix: "/api/docs" })
+  app.register(fastifySwaggerUi, { routePrefix: "/docs" })
 }

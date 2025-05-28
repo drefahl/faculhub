@@ -30,7 +30,7 @@ export type Login401 = {
   message: string
 }
 
-export type GetApiLoginGoogleCallback401 = {
+export type GetLoginGoogleCallback401 = {
   message: string
 }
 
@@ -76,6 +76,22 @@ export type DeleteCategory404 = {
 export type UpdateCommentBody = {
   /** @minLength 1 */
   content: string
+}
+
+export type ListCourses200Item = {
+  id: number
+  code: string
+}
+
+export type CreateCourseBody = {
+  name: string
+  code: string
+  description: string
+}
+
+export type CreateCourse201 = {
+  id: number
+  code: string
 }
 
 export type CountLikes200 = {
@@ -732,12 +748,16 @@ export type CreateUserBody = {
   /**
    * @minimum 0
    * @exclusiveMinimum
+   * @nullable
    */
-  courseId?: number
+  courseId?: number | null
   /** @minLength 8 */
   password: string
-  /** @pattern ^20(?:1[7-9]|[2-9]\d)\d{6}$ */
-  enrollmentNumber?: string
+  /**
+   * @nullable
+   * @pattern ^20(?:1[7-9]|[2-9]\d)\d{6}$
+   */
+  enrollmentNumber?: string | null
 }
 
 /**
@@ -753,10 +773,14 @@ export type CreateUser201 = {
   /**
    * @minimum 0
    * @exclusiveMinimum
+   * @nullable
    */
-  courseId?: number
-  /** @pattern ^20(?:1[7-9]|[2-9]\d)\d{6}$ */
-  enrollmentNumber?: string
+  courseId?: number | null
+  /**
+   * @nullable
+   * @pattern ^20(?:1[7-9]|[2-9]\d)\d{6}$
+   */
+  enrollmentNumber?: string | null
 } | null
 
 export type Refresh200 = {
@@ -805,10 +829,14 @@ export type GetUserProfile200 = {
   /**
    * @minimum 0
    * @exclusiveMinimum
+   * @nullable
    */
-  courseId?: number
-  /** @pattern ^20(?:1[7-9]|[2-9]\d)\d{6}$ */
-  enrollmentNumber?: string
+  courseId?: number | null
+  /**
+   * @nullable
+   * @pattern ^20(?:1[7-9]|[2-9]\d)\d{6}$
+   */
+  enrollmentNumber?: string | null
 } | null
 
 export type UpdateUserProfileBodyRole = (typeof UpdateUserProfileBodyRole)[keyof typeof UpdateUserProfileBodyRole]
@@ -827,8 +855,14 @@ export type UpdateUserProfileBody = {
   /**
    * @minimum 0
    * @exclusiveMinimum
+   * @nullable
    */
-  courseId?: number
+  courseId?: number | null
+  /**
+   * @nullable
+   * @pattern ^20(?:1[7-9]|[2-9]\d)\d{6}$
+   */
+  enrollmentNumber?: string | null
   /** @minLength 8 */
   currentPassword?: string
   /** @minLength 8 */
@@ -851,10 +885,14 @@ export type UpdateUserProfile200 = {
   /**
    * @minimum 0
    * @exclusiveMinimum
+   * @nullable
    */
-  courseId?: number
-  /** @pattern ^20(?:1[7-9]|[2-9]\d)\d{6}$ */
-  enrollmentNumber?: string
+  courseId?: number | null
+  /**
+   * @nullable
+   * @pattern ^20(?:1[7-9]|[2-9]\d)\d{6}$
+   */
+  enrollmentNumber?: string | null
 } | null
 
 /**
@@ -870,10 +908,14 @@ export type UploadProfileImage200 = {
   /**
    * @minimum 0
    * @exclusiveMinimum
+   * @nullable
    */
-  courseId?: number
-  /** @pattern ^20(?:1[7-9]|[2-9]\d)\d{6}$ */
-  enrollmentNumber?: string
+  courseId?: number | null
+  /**
+   * @nullable
+   * @pattern ^20(?:1[7-9]|[2-9]\d)\d{6}$
+   */
+  enrollmentNumber?: string | null
 } | null
 
 export type UploadProfileImage400 = {
@@ -897,28 +939,16 @@ export type DeleteProfileImage200 = {
   /**
    * @minimum 0
    * @exclusiveMinimum
+   * @nullable
    */
-  courseId?: number
-  /** @pattern ^20(?:1[7-9]|[2-9]\d)\d{6}$ */
-  enrollmentNumber?: string
+  courseId?: number | null
+  /**
+   * @nullable
+   * @pattern ^20(?:1[7-9]|[2-9]\d)\d{6}$
+   */
+  enrollmentNumber?: string | null
 } | null
 
 export type DeleteProfileImage404 = {
   message: string
-}
-
-export type CreateCourseBody = {
-  name: string
-  code: string
-  description: string
-}
-
-export type CreateCourse201 = {
-  id: number
-  code: string
-}
-
-export type ListCourses200Item = {
-  id: number
-  code: string
 }

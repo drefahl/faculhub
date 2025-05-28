@@ -21,19 +21,19 @@ import { requestSafe } from "../../utils/axios"
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1]
 
 export const recordPostView = (id: number, options?: SecondParameter<typeof requestSafe>) => {
-  return requestSafe<RecordPostView200>({ url: `/api/posts/${id}/view`, method: "PATCH" }, options)
+  return requestSafe<RecordPostView200>({ url: `/posts/${id}/view`, method: "PATCH" }, options)
 }
 export const listPosts = (params: ListPostsParams, options?: SecondParameter<typeof requestSafe>) => {
-  return requestSafe<ListPosts200>({ url: `/api/posts/`, method: "GET", params }, options)
+  return requestSafe<ListPosts200>({ url: `/posts/`, method: "GET", params }, options)
 }
 export const createPost = (createPostBody: CreatePostBody, options?: SecondParameter<typeof requestSafe>) => {
   return requestSafe<CreatePost201>(
-    { url: `/api/posts/`, method: "POST", headers: { "Content-Type": "application/json" }, data: createPostBody },
+    { url: `/posts/`, method: "POST", headers: { "Content-Type": "application/json" }, data: createPostBody },
     options,
   )
 }
 export const getPostById = (id: number, options?: SecondParameter<typeof requestSafe>) => {
-  return requestSafe<GetPostById200>({ url: `/api/posts/${id}`, method: "GET" }, options)
+  return requestSafe<GetPostById200>({ url: `/posts/${id}`, method: "GET" }, options)
 }
 export const updatePost = (
   id: number,
@@ -41,12 +41,12 @@ export const updatePost = (
   options?: SecondParameter<typeof requestSafe>,
 ) => {
   return requestSafe<UpdatePost200>(
-    { url: `/api/posts/${id}`, method: "PATCH", headers: { "Content-Type": "application/json" }, data: updatePostBody },
+    { url: `/posts/${id}`, method: "PATCH", headers: { "Content-Type": "application/json" }, data: updatePostBody },
     options,
   )
 }
 export const deletePost = (id: number, options?: SecondParameter<typeof requestSafe>) => {
-  return requestSafe<DeletePost200>({ url: `/api/posts/${id}`, method: "DELETE" }, options)
+  return requestSafe<DeletePost200>({ url: `/posts/${id}`, method: "DELETE" }, options)
 }
 export type RecordPostViewResult = NonNullable<Awaited<ReturnType<typeof recordPostView>>>
 export type ListPostsResult = NonNullable<Awaited<ReturnType<typeof listPosts>>>

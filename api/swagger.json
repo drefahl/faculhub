@@ -8,7 +8,7 @@
     "schemas": {}
   },
   "paths": {
-    "/api/login/google": {
+    "/login/google": {
       "get": {
         "operationId": "googleLogin",
         "tags": [
@@ -21,7 +21,7 @@
         }
       }
     },
-    "/api/health": {
+    "/health": {
       "get": {
         "operationId": "health",
         "tags": [
@@ -61,7 +61,7 @@
         }
       }
     },
-    "/api/login": {
+    "/login": {
       "post": {
         "operationId": "login",
         "tags": [
@@ -132,7 +132,7 @@
         }
       }
     },
-    "/api/login/google/callback": {
+    "/login/google/callback": {
       "get": {
         "tags": [
           "Auth"
@@ -160,7 +160,7 @@
         }
       }
     },
-    "/api/categories/": {
+    "/categories/": {
       "get": {
         "operationId": "listCategories",
         "tags": [
@@ -226,7 +226,7 @@
         }
       }
     },
-    "/api/categories/{id}": {
+    "/categories/{id}": {
       "get": {
         "operationId": "getCategoryById",
         "tags": [
@@ -423,7 +423,7 @@
         }
       }
     },
-    "/api/comments/{id}": {
+    "/comments/{id}": {
       "get": {
         "operationId": "getCommentById",
         "tags": [
@@ -508,7 +508,166 @@
         }
       }
     },
-    "/api/files/{id}": {
+    "/courses/": {
+      "get": {
+        "operationId": "listCourses",
+        "tags": [
+          "Course"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "number"
+                      },
+                      "code": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "code"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createCourse",
+        "tags": [
+          "Course"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "code": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name",
+                  "code",
+                  "description"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "number"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "code"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/courses/{id}": {
+      "get": {
+        "operationId": "getCourseById",
+        "tags": [
+          "Course"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "number"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response"
+          }
+        }
+      },
+      "patch": {
+        "operationId": "updateCourse",
+        "tags": [
+          "Course"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "number"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response"
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteCourse",
+        "tags": [
+          "Course"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "number"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response"
+          }
+        }
+      }
+    },
+    "/files/{id}": {
       "get": {
         "operationId": "getFileById",
         "tags": [
@@ -531,7 +690,7 @@
         }
       }
     },
-    "/api/likes/{postId}/count": {
+    "/likes/{postId}/count": {
       "get": {
         "operationId": "countLikes",
         "tags": [
@@ -572,7 +731,7 @@
         }
       }
     },
-    "/api/password-reset/request": {
+    "/password-reset/request": {
       "post": {
         "operationId": "requestPasswordReset",
         "tags": [
@@ -605,7 +764,7 @@
         }
       }
     },
-    "/api/password-reset/reset": {
+    "/password-reset/reset": {
       "post": {
         "operationId": "resetPassword",
         "tags": [
@@ -642,7 +801,7 @@
         }
       }
     },
-    "/api/posts/{id}/view": {
+    "/posts/{id}/view": {
       "patch": {
         "operationId": "recordPostView",
         "tags": [
@@ -808,7 +967,7 @@
         }
       }
     },
-    "/api/posts/": {
+    "/posts/": {
       "get": {
         "operationId": "listPosts",
         "tags": [
@@ -1244,7 +1403,7 @@
         }
       }
     },
-    "/api/posts/{id}": {
+    "/posts/{id}": {
       "get": {
         "operationId": "getPostById",
         "tags": [
@@ -1784,7 +1943,7 @@
         }
       }
     },
-    "/api/threads/": {
+    "/threads/": {
       "get": {
         "operationId": "listThreads",
         "tags": [
@@ -2191,7 +2350,7 @@
         }
       }
     },
-    "/api/threads/{id}": {
+    "/threads/{id}": {
       "get": {
         "operationId": "getThreadById",
         "tags": [
@@ -2714,7 +2873,7 @@
         }
       }
     },
-    "/api/users/": {
+    "/users/": {
       "post": {
         "operationId": "createUser",
         "tags": [
@@ -2741,7 +2900,8 @@
                   "courseId": {
                     "type": "integer",
                     "exclusiveMinimum": true,
-                    "minimum": 0
+                    "minimum": 0,
+                    "nullable": true
                   },
                   "password": {
                     "type": "string",
@@ -2749,7 +2909,8 @@
                   },
                   "enrollmentNumber": {
                     "type": "string",
-                    "pattern": "^20(?:1[7-9]|[2-9]\\d)\\d{6}$"
+                    "pattern": "^20(?:1[7-9]|[2-9]\\d)\\d{6}$",
+                    "nullable": true
                   }
                 },
                 "required": [
@@ -2788,11 +2949,13 @@
                     "courseId": {
                       "type": "integer",
                       "exclusiveMinimum": true,
-                      "minimum": 0
+                      "minimum": 0,
+                      "nullable": true
                     },
                     "enrollmentNumber": {
                       "type": "string",
-                      "pattern": "^20(?:1[7-9]|[2-9]\\d)\\d{6}$"
+                      "pattern": "^20(?:1[7-9]|[2-9]\\d)\\d{6}$",
+                      "nullable": true
                     }
                   },
                   "required": [
@@ -2809,7 +2972,7 @@
         }
       }
     },
-    "/api/refresh": {
+    "/refresh": {
       "get": {
         "operationId": "refresh",
         "tags": [
@@ -2857,7 +3020,7 @@
         }
       }
     },
-    "/api/comments/": {
+    "/comments/": {
       "post": {
         "operationId": "createComment",
         "tags": [
@@ -2902,7 +3065,7 @@
         }
       }
     },
-    "/api/likes/{postId}": {
+    "/likes/{postId}": {
       "post": {
         "operationId": "likePost",
         "tags": [
@@ -2990,7 +3153,7 @@
         }
       }
     },
-    "/api/users/me": {
+    "/users/me": {
       "get": {
         "operationId": "getUserProfile",
         "tags": [
@@ -3022,11 +3185,13 @@
                     "courseId": {
                       "type": "integer",
                       "exclusiveMinimum": true,
-                      "minimum": 0
+                      "minimum": 0,
+                      "nullable": true
                     },
                     "enrollmentNumber": {
                       "type": "string",
-                      "pattern": "^20(?:1[7-9]|[2-9]\\d)\\d{6}$"
+                      "pattern": "^20(?:1[7-9]|[2-9]\\d)\\d{6}$",
+                      "nullable": true
                     }
                   },
                   "required": [
@@ -3069,7 +3234,13 @@
                   "courseId": {
                     "type": "integer",
                     "exclusiveMinimum": true,
-                    "minimum": 0
+                    "minimum": 0,
+                    "nullable": true
+                  },
+                  "enrollmentNumber": {
+                    "type": "string",
+                    "pattern": "^20(?:1[7-9]|[2-9]\\d)\\d{6}$",
+                    "nullable": true
                   },
                   "currentPassword": {
                     "type": "string",
@@ -3120,11 +3291,13 @@
                     "courseId": {
                       "type": "integer",
                       "exclusiveMinimum": true,
-                      "minimum": 0
+                      "minimum": 0,
+                      "nullable": true
                     },
                     "enrollmentNumber": {
                       "type": "string",
-                      "pattern": "^20(?:1[7-9]|[2-9]\\d)\\d{6}$"
+                      "pattern": "^20(?:1[7-9]|[2-9]\\d)\\d{6}$",
+                      "nullable": true
                     }
                   },
                   "required": [
@@ -3141,7 +3314,7 @@
         }
       }
     },
-    "/api/users/profile-image": {
+    "/users/profile-image": {
       "put": {
         "operationId": "uploadProfileImage",
         "tags": [
@@ -3173,11 +3346,13 @@
                     "courseId": {
                       "type": "integer",
                       "exclusiveMinimum": true,
-                      "minimum": 0
+                      "minimum": 0,
+                      "nullable": true
                     },
                     "enrollmentNumber": {
                       "type": "string",
-                      "pattern": "^20(?:1[7-9]|[2-9]\\d)\\d{6}$"
+                      "pattern": "^20(?:1[7-9]|[2-9]\\d)\\d{6}$",
+                      "nullable": true
                     }
                   },
                   "required": [
@@ -3262,11 +3437,13 @@
                     "courseId": {
                       "type": "integer",
                       "exclusiveMinimum": true,
-                      "minimum": 0
+                      "minimum": 0,
+                      "nullable": true
                     },
                     "enrollmentNumber": {
                       "type": "string",
-                      "pattern": "^20(?:1[7-9]|[2-9]\\d)\\d{6}$"
+                      "pattern": "^20(?:1[7-9]|[2-9]\\d)\\d{6}$",
+                      "nullable": true
                     }
                   },
                   "required": [
@@ -3298,165 +3475,6 @@
                 }
               }
             }
-          }
-        }
-      }
-    },
-    "/api/courses/": {
-      "post": {
-        "operationId": "createCourse",
-        "tags": [
-          "Course"
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "type": "string"
-                  },
-                  "code": {
-                    "type": "string"
-                  },
-                  "description": {
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "name",
-                  "code",
-                  "description"
-                ],
-                "additionalProperties": false
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "201": {
-            "description": "Default Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "id": {
-                      "type": "number"
-                    },
-                    "code": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "id",
-                    "code"
-                  ],
-                  "additionalProperties": false
-                }
-              }
-            }
-          }
-        }
-      },
-      "get": {
-        "operationId": "listCourses",
-        "tags": [
-          "Course"
-        ],
-        "responses": {
-          "200": {
-            "description": "Default Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "id": {
-                        "type": "number"
-                      },
-                      "code": {
-                        "type": "string"
-                      }
-                    },
-                    "required": [
-                      "id",
-                      "code"
-                    ],
-                    "additionalProperties": false
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/courses/{id}": {
-      "get": {
-        "operationId": "getCourseById",
-        "tags": [
-          "Course"
-        ],
-        "parameters": [
-          {
-            "schema": {
-              "type": "number"
-            },
-            "in": "path",
-            "name": "id",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Default Response"
-          }
-        }
-      },
-      "patch": {
-        "operationId": "updateCourse",
-        "tags": [
-          "Course"
-        ],
-        "parameters": [
-          {
-            "schema": {
-              "type": "number"
-            },
-            "in": "path",
-            "name": "id",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Default Response"
-          }
-        }
-      },
-      "delete": {
-        "operationId": "deleteCourse",
-        "tags": [
-          "Course"
-        ],
-        "parameters": [
-          {
-            "schema": {
-              "type": "number"
-            },
-            "in": "path",
-            "name": "id",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Default Response"
           }
         }
       }

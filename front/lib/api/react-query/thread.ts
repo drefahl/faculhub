@@ -41,11 +41,11 @@ export const listThreads = (
   options?: SecondParameter<typeof request>,
   signal?: AbortSignal,
 ) => {
-  return request<ListThreads200>({ url: `/api/threads/`, method: "GET", params, signal }, options)
+  return request<ListThreads200>({ url: `/threads/`, method: "GET", params, signal }, options)
 }
 
 export const getListThreadsQueryKey = (params: ListThreadsParams) => {
-  return [`/api/threads/`, ...(params ? [params] : [])] as const
+  return [`/threads/`, ...(params ? [params] : [])] as const
 }
 
 export const getListThreadsQueryOptions = <
@@ -142,7 +142,7 @@ export const createThread = (
 ) => {
   return request<CreateThread200>(
     {
-      url: `/api/threads/`,
+      url: `/threads/`,
       method: "POST",
       headers: { "Content-Type": "application/json" },
       data: createThreadBody,
@@ -195,11 +195,11 @@ export const useCreateThread = <TError = ErrorType<unknown>, TContext = unknown>
   return useMutation(mutationOptions, queryClient)
 }
 export const getThreadById = (id: number, options?: SecondParameter<typeof request>, signal?: AbortSignal) => {
-  return request<GetThreadById200>({ url: `/api/threads/${id}`, method: "GET", signal }, options)
+  return request<GetThreadById200>({ url: `/threads/${id}`, method: "GET", signal }, options)
 }
 
 export const getGetThreadByIdQueryKey = (id: number) => {
-  return [`/api/threads/${id}`] as const
+  return [`/threads/${id}`] as const
 }
 
 export const getGetThreadByIdQueryOptions = <
@@ -295,12 +295,7 @@ export const updateThread = (
   options?: SecondParameter<typeof request>,
 ) => {
   return request<UpdateThread200>(
-    {
-      url: `/api/threads/${id}`,
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      data: updateThreadBody,
-    },
+    { url: `/threads/${id}`, method: "PATCH", headers: { "Content-Type": "application/json" }, data: updateThreadBody },
     options,
   )
 }
@@ -364,7 +359,7 @@ export const useUpdateThread = <TError = ErrorType<unknown>, TContext = unknown>
   return useMutation(mutationOptions, queryClient)
 }
 export const deleteThread = (id: number, options?: SecondParameter<typeof request>) => {
-  return request<DeleteThread200>({ url: `/api/threads/${id}`, method: "DELETE" }, options)
+  return request<DeleteThread200>({ url: `/threads/${id}`, method: "DELETE" }, options)
 }
 
 export const getDeleteThreadMutationOptions = <TError = ErrorType<unknown>, TContext = unknown>(options?: {

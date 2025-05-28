@@ -28,11 +28,11 @@ import type { ErrorType } from "../../utils/axios"
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1]
 
 export const countLikes = (postId: number, options?: SecondParameter<typeof request>, signal?: AbortSignal) => {
-  return request<CountLikes200>({ url: `/api/likes/${postId}/count`, method: "GET", signal }, options)
+  return request<CountLikes200>({ url: `/likes/${postId}/count`, method: "GET", signal }, options)
 }
 
 export const getCountLikesQueryKey = (postId: number) => {
-  return [`/api/likes/${postId}/count`] as const
+  return [`/likes/${postId}/count`] as const
 }
 
 export const getCountLikesQueryOptions = <TData = Awaited<ReturnType<typeof countLikes>>, TError = ErrorType<unknown>>(
@@ -120,7 +120,7 @@ export function useCountLikes<TData = Awaited<ReturnType<typeof countLikes>>, TE
 }
 
 export const likePost = (postId: number, options?: SecondParameter<typeof request>, signal?: AbortSignal) => {
-  return request<LikePost201>({ url: `/api/likes/${postId}`, method: "POST", signal }, options)
+  return request<LikePost201>({ url: `/likes/${postId}`, method: "POST", signal }, options)
 }
 
 export const getLikePostMutationOptions = <TError = ErrorType<unknown>, TContext = unknown>(options?: {
@@ -159,7 +159,7 @@ export const useLikePost = <TError = ErrorType<unknown>, TContext = unknown>(
   return useMutation(mutationOptions, queryClient)
 }
 export const unlikePost = (postId: number, options?: SecondParameter<typeof request>) => {
-  return request<UnlikePost200>({ url: `/api/likes/${postId}`, method: "DELETE" }, options)
+  return request<UnlikePost200>({ url: `/likes/${postId}`, method: "DELETE" }, options)
 }
 
 export const getUnlikePostMutationOptions = <TError = ErrorType<unknown>, TContext = unknown>(options?: {

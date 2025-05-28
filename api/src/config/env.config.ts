@@ -10,7 +10,7 @@ const envSchema = z.object({
   JWT_SECRET: z.string().trim(),
   GOOGLE_CLIENT_ID: z.string().trim(),
   GOOGLE_CLIENT_SECRET: z.string().trim(),
-  GOOGLE_CALLBACK_URI: z.string().default("http://localhost:3333/api/login/google/callback"),
+  GOOGLE_CALLBACK_URI: z.string().default("http://localhost:3333/login/google/callback"),
   FRONTEND_URL: z.string().default("http://localhost:3000"),
   RESEND_API_KEY: z.string().trim(),
   HASH_SECRET: z.string().trim(),

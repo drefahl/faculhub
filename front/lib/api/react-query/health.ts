@@ -25,11 +25,11 @@ import type { ErrorType } from "../../utils/axios"
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1]
 
 export const health = (options?: SecondParameter<typeof request>, signal?: AbortSignal) => {
-  return request<Health200>({ url: `/api/health`, method: "GET", signal }, options)
+  return request<Health200>({ url: `/health`, method: "GET", signal }, options)
 }
 
 export const getHealthQueryKey = () => {
-  return [`/api/health`] as const
+  return [`/health`] as const
 }
 
 export const getHealthQueryOptions = <

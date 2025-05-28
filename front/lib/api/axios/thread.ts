@@ -20,16 +20,16 @@ import { requestSafe } from "../../utils/axios"
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1]
 
 export const listThreads = (params: ListThreadsParams, options?: SecondParameter<typeof requestSafe>) => {
-  return requestSafe<ListThreads200>({ url: `/api/threads/`, method: "GET", params }, options)
+  return requestSafe<ListThreads200>({ url: `/threads/`, method: "GET", params }, options)
 }
 export const createThread = (createThreadBody: CreateThreadBody, options?: SecondParameter<typeof requestSafe>) => {
   return requestSafe<CreateThread200>(
-    { url: `/api/threads/`, method: "POST", headers: { "Content-Type": "application/json" }, data: createThreadBody },
+    { url: `/threads/`, method: "POST", headers: { "Content-Type": "application/json" }, data: createThreadBody },
     options,
   )
 }
 export const getThreadById = (id: number, options?: SecondParameter<typeof requestSafe>) => {
-  return requestSafe<GetThreadById200>({ url: `/api/threads/${id}`, method: "GET" }, options)
+  return requestSafe<GetThreadById200>({ url: `/threads/${id}`, method: "GET" }, options)
 }
 export const updateThread = (
   id: number,
@@ -37,17 +37,12 @@ export const updateThread = (
   options?: SecondParameter<typeof requestSafe>,
 ) => {
   return requestSafe<UpdateThread200>(
-    {
-      url: `/api/threads/${id}`,
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      data: updateThreadBody,
-    },
+    { url: `/threads/${id}`, method: "PATCH", headers: { "Content-Type": "application/json" }, data: updateThreadBody },
     options,
   )
 }
 export const deleteThread = (id: number, options?: SecondParameter<typeof requestSafe>) => {
-  return requestSafe<DeleteThread200>({ url: `/api/threads/${id}`, method: "DELETE" }, options)
+  return requestSafe<DeleteThread200>({ url: `/threads/${id}`, method: "DELETE" }, options)
 }
 export type ListThreadsResult = NonNullable<Awaited<ReturnType<typeof listThreads>>>
 export type CreateThreadResult = NonNullable<Awaited<ReturnType<typeof createThread>>>
