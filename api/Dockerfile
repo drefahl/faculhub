@@ -36,4 +36,7 @@ ENV HASH_SECRET=$HASH_SECRET
 
 ENV PORT=5001
 ENV HOSTNAME="0.0.0.0"
-CMD ["node", "dist/src/index.js"]
+
+CMD ["sh", "-c", "echo '📦 Aplicando migrations' && pnpm prisma migrate deploy && echo '🚀 Iniciando API' && node dist/src/index.js"]
+
+
