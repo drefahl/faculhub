@@ -18,24 +18,19 @@ import { requestSafe } from "../../utils/axios"
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1]
 
 export const listCategories = (options?: SecondParameter<typeof requestSafe>) => {
-  return requestSafe<ListCategories200Item[]>({ url: `/api/categories/`, method: "GET" }, options)
+  return requestSafe<ListCategories200Item[]>({ url: `/categories/`, method: "GET" }, options)
 }
 export const createCategory = (
   createCategoryBody: CreateCategoryBody,
   options?: SecondParameter<typeof requestSafe>,
 ) => {
   return requestSafe<void>(
-    {
-      url: `/api/categories/`,
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      data: createCategoryBody,
-    },
+    { url: `/categories/`, method: "POST", headers: { "Content-Type": "application/json" }, data: createCategoryBody },
     options,
   )
 }
 export const getCategoryById = (id: number, options?: SecondParameter<typeof requestSafe>) => {
-  return requestSafe<GetCategoryById200>({ url: `/api/categories/${id}`, method: "GET" }, options)
+  return requestSafe<GetCategoryById200>({ url: `/categories/${id}`, method: "GET" }, options)
 }
 export const updateCategory = (
   id: number,
@@ -44,7 +39,7 @@ export const updateCategory = (
 ) => {
   return requestSafe<UpdateCategory200>(
     {
-      url: `/api/categories/${id}`,
+      url: `/categories/${id}`,
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       data: updateCategoryBody,
@@ -53,7 +48,7 @@ export const updateCategory = (
   )
 }
 export const deleteCategory = (id: number, options?: SecondParameter<typeof requestSafe>) => {
-  return requestSafe<DeleteCategory200>({ url: `/api/categories/${id}`, method: "DELETE" }, options)
+  return requestSafe<DeleteCategory200>({ url: `/categories/${id}`, method: "DELETE" }, options)
 }
 export type ListCategoriesResult = NonNullable<Awaited<ReturnType<typeof listCategories>>>
 export type CreateCategoryResult = NonNullable<Awaited<ReturnType<typeof createCategory>>>

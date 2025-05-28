@@ -11,6 +11,6 @@ import { requestSafe } from "../../utils/axios"
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1]
 
 export const health = (options?: SecondParameter<typeof requestSafe>) => {
-  return requestSafe<Health200>({ url: `/api/health`, method: "GET" }, options)
+  return requestSafe<Health200>({ url: `/health`, method: "GET" }, options)
 }
 export type HealthResult = NonNullable<Awaited<ReturnType<typeof health>>>

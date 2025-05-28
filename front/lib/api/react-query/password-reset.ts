@@ -21,7 +21,7 @@ export const requestPasswordReset = (
 ) => {
   return request<void>(
     {
-      url: `/api/password-reset/request`,
+      url: `/password-reset/request`,
       method: "POST",
       headers: { "Content-Type": "application/json" },
       data: requestPasswordResetBody,
@@ -96,7 +96,7 @@ export const resetPassword = (
 ) => {
   return request<void>(
     {
-      url: `/api/password-reset/reset`,
+      url: `/password-reset/reset`,
       method: "POST",
       headers: { "Content-Type": "application/json" },
       data: resetPasswordBody,

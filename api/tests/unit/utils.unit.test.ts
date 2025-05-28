@@ -20,10 +20,10 @@ describe("Cookie options util", () => {
   })
 
   it("overrides options correctly", async () => {
-    const overrides = { secure: true, path: "/api" }
+    const overrides = { secure: true, path: "/" }
     const opts = createCookieOptions(overrides)
     expect(opts.secure).toBe(true)
-    expect(opts.path).toBe("/api")
+    expect(opts.path).toBe("/")
   })
 })
 

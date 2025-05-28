@@ -52,7 +52,7 @@ export function LoginForm() {
   }
 
   const handleGoogleSignIn = () => {
-    window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/api/login/google`
+    window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/login/google`
   }
 
   return (

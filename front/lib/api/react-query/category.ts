@@ -38,11 +38,11 @@ import type { ErrorType } from "../../utils/axios"
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1]
 
 export const listCategories = (options?: SecondParameter<typeof request>, signal?: AbortSignal) => {
-  return request<ListCategories200Item[]>({ url: `/api/categories/`, method: "GET", signal }, options)
+  return request<ListCategories200Item[]>({ url: `/categories/`, method: "GET", signal }, options)
 }
 
 export const getListCategoriesQueryKey = () => {
-  return [`/api/categories/`] as const
+  return [`/categories/`] as const
 }
 
 export const getListCategoriesQueryOptions = <
@@ -132,7 +132,7 @@ export const createCategory = (
 ) => {
   return request<void>(
     {
-      url: `/api/categories/`,
+      url: `/categories/`,
       method: "POST",
       headers: { "Content-Type": "application/json" },
       data: createCategoryBody,
@@ -190,11 +190,11 @@ export const useCreateCategory = <TError = ErrorType<unknown>, TContext = unknow
   return useMutation(mutationOptions, queryClient)
 }
 export const getCategoryById = (id: number, options?: SecondParameter<typeof request>, signal?: AbortSignal) => {
-  return request<GetCategoryById200>({ url: `/api/categories/${id}`, method: "GET", signal }, options)
+  return request<GetCategoryById200>({ url: `/categories/${id}`, method: "GET", signal }, options)
 }
 
 export const getGetCategoryByIdQueryKey = (id: number) => {
-  return [`/api/categories/${id}`] as const
+  return [`/categories/${id}`] as const
 }
 
 export const getGetCategoryByIdQueryOptions = <
@@ -303,7 +303,7 @@ export const updateCategory = (
 ) => {
   return request<UpdateCategory200>(
     {
-      url: `/api/categories/${id}`,
+      url: `/categories/${id}`,
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       data: updateCategoryBody,
@@ -371,7 +371,7 @@ export const useUpdateCategory = <TError = ErrorType<UpdateCategory404>, TContex
   return useMutation(mutationOptions, queryClient)
 }
 export const deleteCategory = (id: number, options?: SecondParameter<typeof request>) => {
-  return request<DeleteCategory200>({ url: `/api/categories/${id}`, method: "DELETE" }, options)
+  return request<DeleteCategory200>({ url: `/categories/${id}`, method: "DELETE" }, options)
 }
 
 export const getDeleteCategoryMutationOptions = <TError = ErrorType<DeleteCategory404>, TContext = unknown>(options?: {

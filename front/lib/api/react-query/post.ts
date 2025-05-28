@@ -38,7 +38,7 @@ import type { ErrorType } from "../../utils/axios"
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1]
 
 export const recordPostView = (id: number, options?: SecondParameter<typeof request>) => {
-  return request<RecordPostView200>({ url: `/api/posts/${id}/view`, method: "PATCH" }, options)
+  return request<RecordPostView200>({ url: `/posts/${id}/view`, method: "PATCH" }, options)
 }
 
 export const getRecordPostViewMutationOptions = <TError = ErrorType<unknown>, TContext = unknown>(options?: {
@@ -77,11 +77,11 @@ export const useRecordPostView = <TError = ErrorType<unknown>, TContext = unknow
   return useMutation(mutationOptions, queryClient)
 }
 export const listPosts = (params: ListPostsParams, options?: SecondParameter<typeof request>, signal?: AbortSignal) => {
-  return request<ListPosts200>({ url: `/api/posts/`, method: "GET", params, signal }, options)
+  return request<ListPosts200>({ url: `/posts/`, method: "GET", params, signal }, options)
 }
 
 export const getListPostsQueryKey = (params: ListPostsParams) => {
-  return [`/api/posts/`, ...(params ? [params] : [])] as const
+  return [`/posts/`, ...(params ? [params] : [])] as const
 }
 
 export const getListPostsQueryOptions = <TData = Awaited<ReturnType<typeof listPosts>>, TError = ErrorType<unknown>>(
@@ -170,13 +170,7 @@ export const createPost = (
   signal?: AbortSignal,
 ) => {
   return request<CreatePost201>(
-    {
-      url: `/api/posts/`,
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      data: createPostBody,
-      signal,
-    },
+    { url: `/posts/`, method: "POST", headers: { "Content-Type": "application/json" }, data: createPostBody, signal },
     options,
   )
 }
@@ -217,11 +211,11 @@ export const useCreatePost = <TError = ErrorType<unknown>, TContext = unknown>(
   return useMutation(mutationOptions, queryClient)
 }
 export const getPostById = (id: number, options?: SecondParameter<typeof request>, signal?: AbortSignal) => {
-  return request<GetPostById200>({ url: `/api/posts/${id}`, method: "GET", signal }, options)
+  return request<GetPostById200>({ url: `/posts/${id}`, method: "GET", signal }, options)
 }
 
 export const getGetPostByIdQueryKey = (id: number) => {
-  return [`/api/posts/${id}`] as const
+  return [`/posts/${id}`] as const
 }
 
 export const getGetPostByIdQueryOptions = <
@@ -313,7 +307,7 @@ export function useGetPostById<TData = Awaited<ReturnType<typeof getPostById>>, 
 
 export const updatePost = (id: number, updatePostBody: UpdatePostBody, options?: SecondParameter<typeof request>) => {
   return request<UpdatePost200>(
-    { url: `/api/posts/${id}`, method: "PATCH", headers: { "Content-Type": "application/json" }, data: updatePostBody },
+    { url: `/posts/${id}`, method: "PATCH", headers: { "Content-Type": "application/json" }, data: updatePostBody },
     options,
   )
 }
@@ -376,7 +370,7 @@ export const useUpdatePost = <TError = ErrorType<unknown>, TContext = unknown>(
   return useMutation(mutationOptions, queryClient)
 }
 export const deletePost = (id: number, options?: SecondParameter<typeof request>) => {
-  return request<DeletePost200>({ url: `/api/posts/${id}`, method: "DELETE" }, options)
+  return request<DeletePost200>({ url: `/posts/${id}`, method: "DELETE" }, options)
 }
 
 export const getDeletePostMutationOptions = <TError = ErrorType<unknown>, TContext = unknown>(options?: {

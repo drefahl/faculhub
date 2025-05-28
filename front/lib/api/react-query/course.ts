@@ -27,71 +27,12 @@ import type { ErrorType } from "../../utils/axios"
 
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1]
 
-export const createCourse = (
-  createCourseBody: CreateCourseBody,
-  options?: SecondParameter<typeof request>,
-  signal?: AbortSignal,
-) => {
-  return request<CreateCourse201>(
-    {
-      url: `/api/courses/`,
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      data: createCourseBody,
-      signal,
-    },
-    options,
-  )
-}
-
-export const getCreateCourseMutationOptions = <TError = ErrorType<unknown>, TContext = unknown>(options?: {
-  mutation?: UseMutationOptions<Awaited<ReturnType<typeof createCourse>>, TError, { data: CreateCourseBody }, TContext>
-  request?: SecondParameter<typeof request>
-}): UseMutationOptions<Awaited<ReturnType<typeof createCourse>>, TError, { data: CreateCourseBody }, TContext> => {
-  const mutationKey = ["createCourse"]
-  const { mutation: mutationOptions, request: requestOptions } = options
-    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey }, request: undefined }
-
-  const mutationFn: MutationFunction<Awaited<ReturnType<typeof createCourse>>, { data: CreateCourseBody }> = (
-    props,
-  ) => {
-    const { data } = props ?? {}
-
-    return createCourse(data, requestOptions)
-  }
-
-  return { mutationFn, ...mutationOptions }
-}
-
-export type CreateCourseMutationResult = NonNullable<Awaited<ReturnType<typeof createCourse>>>
-export type CreateCourseMutationBody = CreateCourseBody
-export type CreateCourseMutationError = ErrorType<unknown>
-
-export const useCreateCourse = <TError = ErrorType<unknown>, TContext = unknown>(
-  options?: {
-    mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof createCourse>>,
-      TError,
-      { data: CreateCourseBody },
-      TContext
-    >
-    request?: SecondParameter<typeof request>
-  },
-  queryClient?: QueryClient,
-): UseMutationResult<Awaited<ReturnType<typeof createCourse>>, TError, { data: CreateCourseBody }, TContext> => {
-  const mutationOptions = getCreateCourseMutationOptions(options)
-
-  return useMutation(mutationOptions, queryClient)
-}
 export const listCourses = (options?: SecondParameter<typeof request>, signal?: AbortSignal) => {
-  return request<ListCourses200Item[]>({ url: `/api/courses/`, method: "GET", signal }, options)
+  return request<ListCourses200Item[]>({ url: `/courses/`, method: "GET", signal }, options)
 }
 
 export const getListCoursesQueryKey = () => {
-  return [`/api/courses/`] as const
+  return [`/courses/`] as const
 }
 
 export const getListCoursesQueryOptions = <
@@ -174,12 +115,71 @@ export function useListCourses<TData = Awaited<ReturnType<typeof listCourses>>, 
   return query
 }
 
+export const createCourse = (
+  createCourseBody: CreateCourseBody,
+  options?: SecondParameter<typeof request>,
+  signal?: AbortSignal,
+) => {
+  return request<CreateCourse201>(
+    {
+      url: `/courses/`,
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      data: createCourseBody,
+      signal,
+    },
+    options,
+  )
+}
+
+export const getCreateCourseMutationOptions = <TError = ErrorType<unknown>, TContext = unknown>(options?: {
+  mutation?: UseMutationOptions<Awaited<ReturnType<typeof createCourse>>, TError, { data: CreateCourseBody }, TContext>
+  request?: SecondParameter<typeof request>
+}): UseMutationOptions<Awaited<ReturnType<typeof createCourse>>, TError, { data: CreateCourseBody }, TContext> => {
+  const mutationKey = ["createCourse"]
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined }
+
+  const mutationFn: MutationFunction<Awaited<ReturnType<typeof createCourse>>, { data: CreateCourseBody }> = (
+    props,
+  ) => {
+    const { data } = props ?? {}
+
+    return createCourse(data, requestOptions)
+  }
+
+  return { mutationFn, ...mutationOptions }
+}
+
+export type CreateCourseMutationResult = NonNullable<Awaited<ReturnType<typeof createCourse>>>
+export type CreateCourseMutationBody = CreateCourseBody
+export type CreateCourseMutationError = ErrorType<unknown>
+
+export const useCreateCourse = <TError = ErrorType<unknown>, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof createCourse>>,
+      TError,
+      { data: CreateCourseBody },
+      TContext
+    >
+    request?: SecondParameter<typeof request>
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<Awaited<ReturnType<typeof createCourse>>, TError, { data: CreateCourseBody }, TContext> => {
+  const mutationOptions = getCreateCourseMutationOptions(options)
+
+  return useMutation(mutationOptions, queryClient)
+}
 export const getCourseById = (id: number, options?: SecondParameter<typeof request>, signal?: AbortSignal) => {
-  return request<void>({ url: `/api/courses/${id}`, method: "GET", signal }, options)
+  return request<void>({ url: `/courses/${id}`, method: "GET", signal }, options)
 }
 
 export const getGetCourseByIdQueryKey = (id: number) => {
-  return [`/api/courses/${id}`] as const
+  return [`/courses/${id}`] as const
 }
 
 export const getGetCourseByIdQueryOptions = <
@@ -270,7 +270,7 @@ export function useGetCourseById<TData = Awaited<ReturnType<typeof getCourseById
 }
 
 export const updateCourse = (id: number, options?: SecondParameter<typeof request>) => {
-  return request<void>({ url: `/api/courses/${id}`, method: "PATCH" }, options)
+  return request<void>({ url: `/courses/${id}`, method: "PATCH" }, options)
 }
 
 export const getUpdateCourseMutationOptions = <TError = ErrorType<unknown>, TContext = unknown>(options?: {
@@ -309,7 +309,7 @@ export const useUpdateCourse = <TError = ErrorType<unknown>, TContext = unknown>
   return useMutation(mutationOptions, queryClient)
 }
 export const deleteCourse = (id: number, options?: SecondParameter<typeof request>) => {
-  return request<void>({ url: `/api/courses/${id}`, method: "DELETE" }, options)
+  return request<void>({ url: `/courses/${id}`, method: "DELETE" }, options)
 }
 
 export const getDeleteCourseMutationOptions = <TError = ErrorType<unknown>, TContext = unknown>(options?: {

@@ -10,26 +10,26 @@ import { requestSafe } from "../../utils/axios"
 
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1]
 
+export const listCourses = (options?: SecondParameter<typeof requestSafe>) => {
+  return requestSafe<ListCourses200Item[]>({ url: `/courses/`, method: "GET" }, options)
+}
 export const createCourse = (createCourseBody: CreateCourseBody, options?: SecondParameter<typeof requestSafe>) => {
   return requestSafe<CreateCourse201>(
-    { url: `/api/courses/`, method: "POST", headers: { "Content-Type": "application/json" }, data: createCourseBody },
+    { url: `/courses/`, method: "POST", headers: { "Content-Type": "application/json" }, data: createCourseBody },
     options,
   )
 }
-export const listCourses = (options?: SecondParameter<typeof requestSafe>) => {
-  return requestSafe<ListCourses200Item[]>({ url: `/api/courses/`, method: "GET" }, options)
-}
 export const getCourseById = (id: number, options?: SecondParameter<typeof requestSafe>) => {
-  return requestSafe<void>({ url: `/api/courses/${id}`, method: "GET" }, options)
+  return requestSafe<void>({ url: `/courses/${id}`, method: "GET" }, options)
 }
 export const updateCourse = (id: number, options?: SecondParameter<typeof requestSafe>) => {
-  return requestSafe<void>({ url: `/api/courses/${id}`, method: "PATCH" }, options)
+  return requestSafe<void>({ url: `/courses/${id}`, method: "PATCH" }, options)
 }
 export const deleteCourse = (id: number, options?: SecondParameter<typeof requestSafe>) => {
-  return requestSafe<void>({ url: `/api/courses/${id}`, method: "DELETE" }, options)
+  return requestSafe<void>({ url: `/courses/${id}`, method: "DELETE" }, options)
 }
-export type CreateCourseResult = NonNullable<Awaited<ReturnType<typeof createCourse>>>
 export type ListCoursesResult = NonNullable<Awaited<ReturnType<typeof listCourses>>>
+export type CreateCourseResult = NonNullable<Awaited<ReturnType<typeof createCourse>>>
 export type GetCourseByIdResult = NonNullable<Awaited<ReturnType<typeof getCourseById>>>
 export type UpdateCourseResult = NonNullable<Awaited<ReturnType<typeof updateCourse>>>
 export type DeleteCourseResult = NonNullable<Awaited<ReturnType<typeof deleteCourse>>>

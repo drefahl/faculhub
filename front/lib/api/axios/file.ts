@@ -9,6 +9,6 @@ import { requestSafe } from "../../utils/axios"
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1]
 
 export const getFileById = (id: string, options?: SecondParameter<typeof requestSafe>) => {
-  return requestSafe<void>({ url: `/api/files/${id}`, method: "GET" }, options)
+  return requestSafe<void>({ url: `/files/${id}`, method: "GET" }, options)
 }
 export type GetFileByIdResult = NonNullable<Awaited<ReturnType<typeof getFileById>>>

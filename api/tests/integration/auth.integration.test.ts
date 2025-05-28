@@ -20,7 +20,7 @@ describe("Login API Integration Tests", () => {
   })
 
   beforeEach(async () => {
-    const registerRes = await request(app.server).post("/api/users").send(userData)
+    const registerRes = await request(app.server).post("/users").send(userData)
 
     if (registerRes.status !== 201) {
       throw new Error("Error creating user")
@@ -31,10 +31,10 @@ describe("Login API Integration Tests", () => {
     await app.close()
   })
 
-  describe("POST /api/login", () => {
+  describe("POST /login", () => {
     it("should login with valid credentials and return a valid token", async () => {
       const response = await request(app.server)
-        .post("/api/login")
+        .post("/login")
         .send({ email: userData.email, password: userData.password })
 
       expect(response.status).toBe(200)

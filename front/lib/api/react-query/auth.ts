@@ -21,7 +21,7 @@ import type {
 } from "@tanstack/react-query"
 
 import type {
-  GetApiLoginGoogleCallback401,
+  GetLoginGoogleCallback401,
   Login200,
   Login401,
   LoginBody,
@@ -35,11 +35,11 @@ import type { ErrorType } from "../../utils/axios"
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1]
 
 export const googleLogin = (options?: SecondParameter<typeof request>, signal?: AbortSignal) => {
-  return request<void>({ url: `/api/login/google`, method: "GET", signal }, options)
+  return request<void>({ url: `/login/google`, method: "GET", signal }, options)
 }
 
 export const getGoogleLoginQueryKey = () => {
-  return [`/api/login/google`] as const
+  return [`/login/google`] as const
 }
 
 export const getGoogleLoginQueryOptions = <
@@ -124,7 +124,7 @@ export function useGoogleLogin<TData = Awaited<ReturnType<typeof googleLogin>>, 
 
 export const login = (loginBody: LoginBody, options?: SecondParameter<typeof request>, signal?: AbortSignal) => {
   return request<Login200>(
-    { url: `/api/login`, method: "POST", headers: { "Content-Type": "application/json" }, data: loginBody, signal },
+    { url: `/login`, method: "POST", headers: { "Content-Type": "application/json" }, data: loginBody, signal },
     options,
   )
 }
@@ -164,49 +164,49 @@ export const useLogin = <TError = ErrorType<Login401>, TContext = unknown>(
 
   return useMutation(mutationOptions, queryClient)
 }
-export const getApiLoginGoogleCallback = (options?: SecondParameter<typeof request>, signal?: AbortSignal) => {
-  return request<unknown>({ url: `/api/login/google/callback`, method: "GET", signal }, options)
+export const getLoginGoogleCallback = (options?: SecondParameter<typeof request>, signal?: AbortSignal) => {
+  return request<unknown>({ url: `/login/google/callback`, method: "GET", signal }, options)
 }
 
-export const getGetApiLoginGoogleCallbackQueryKey = () => {
-  return [`/api/login/google/callback`] as const
+export const getGetLoginGoogleCallbackQueryKey = () => {
+  return [`/login/google/callback`] as const
 }
 
-export const getGetApiLoginGoogleCallbackQueryOptions = <
-  TData = Awaited<ReturnType<typeof getApiLoginGoogleCallback>>,
-  TError = ErrorType<GetApiLoginGoogleCallback401>,
+export const getGetLoginGoogleCallbackQueryOptions = <
+  TData = Awaited<ReturnType<typeof getLoginGoogleCallback>>,
+  TError = ErrorType<GetLoginGoogleCallback401>,
 >(options?: {
-  query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiLoginGoogleCallback>>, TError, TData>>
+  query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getLoginGoogleCallback>>, TError, TData>>
   request?: SecondParameter<typeof request>
 }) => {
   const { query: queryOptions, request: requestOptions } = options ?? {}
 
-  const queryKey = queryOptions?.queryKey ?? getGetApiLoginGoogleCallbackQueryKey()
+  const queryKey = queryOptions?.queryKey ?? getGetLoginGoogleCallbackQueryKey()
 
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiLoginGoogleCallback>>> = ({ signal }) =>
-    getApiLoginGoogleCallback(requestOptions, signal)
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getLoginGoogleCallback>>> = ({ signal }) =>
+    getLoginGoogleCallback(requestOptions, signal)
 
   return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
-    Awaited<ReturnType<typeof getApiLoginGoogleCallback>>,
+    Awaited<ReturnType<typeof getLoginGoogleCallback>>,
     TError,
     TData
   > & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
-export type GetApiLoginGoogleCallbackQueryResult = NonNullable<Awaited<ReturnType<typeof getApiLoginGoogleCallback>>>
-export type GetApiLoginGoogleCallbackQueryError = ErrorType<GetApiLoginGoogleCallback401>
+export type GetLoginGoogleCallbackQueryResult = NonNullable<Awaited<ReturnType<typeof getLoginGoogleCallback>>>
+export type GetLoginGoogleCallbackQueryError = ErrorType<GetLoginGoogleCallback401>
 
-export function useGetApiLoginGoogleCallback<
-  TData = Awaited<ReturnType<typeof getApiLoginGoogleCallback>>,
-  TError = ErrorType<GetApiLoginGoogleCallback401>,
+export function useGetLoginGoogleCallback<
+  TData = Awaited<ReturnType<typeof getLoginGoogleCallback>>,
+  TError = ErrorType<GetLoginGoogleCallback401>,
 >(
   options: {
-    query: Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiLoginGoogleCallback>>, TError, TData>> &
+    query: Partial<UseQueryOptions<Awaited<ReturnType<typeof getLoginGoogleCallback>>, TError, TData>> &
       Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getApiLoginGoogleCallback>>,
+          Awaited<ReturnType<typeof getLoginGoogleCallback>>,
           TError,
-          Awaited<ReturnType<typeof getApiLoginGoogleCallback>>
+          Awaited<ReturnType<typeof getLoginGoogleCallback>>
         >,
         "initialData"
       >
@@ -214,17 +214,17 @@ export function useGetApiLoginGoogleCallback<
   },
   queryClient?: QueryClient,
 ): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApiLoginGoogleCallback<
-  TData = Awaited<ReturnType<typeof getApiLoginGoogleCallback>>,
-  TError = ErrorType<GetApiLoginGoogleCallback401>,
+export function useGetLoginGoogleCallback<
+  TData = Awaited<ReturnType<typeof getLoginGoogleCallback>>,
+  TError = ErrorType<GetLoginGoogleCallback401>,
 >(
   options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiLoginGoogleCallback>>, TError, TData>> &
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getLoginGoogleCallback>>, TError, TData>> &
       Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getApiLoginGoogleCallback>>,
+          Awaited<ReturnType<typeof getLoginGoogleCallback>>,
           TError,
-          Awaited<ReturnType<typeof getApiLoginGoogleCallback>>
+          Awaited<ReturnType<typeof getLoginGoogleCallback>>
         >,
         "initialData"
       >
@@ -232,28 +232,28 @@ export function useGetApiLoginGoogleCallback<
   },
   queryClient?: QueryClient,
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApiLoginGoogleCallback<
-  TData = Awaited<ReturnType<typeof getApiLoginGoogleCallback>>,
-  TError = ErrorType<GetApiLoginGoogleCallback401>,
+export function useGetLoginGoogleCallback<
+  TData = Awaited<ReturnType<typeof getLoginGoogleCallback>>,
+  TError = ErrorType<GetLoginGoogleCallback401>,
 >(
   options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiLoginGoogleCallback>>, TError, TData>>
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getLoginGoogleCallback>>, TError, TData>>
     request?: SecondParameter<typeof request>
   },
   queryClient?: QueryClient,
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
-export function useGetApiLoginGoogleCallback<
-  TData = Awaited<ReturnType<typeof getApiLoginGoogleCallback>>,
-  TError = ErrorType<GetApiLoginGoogleCallback401>,
+export function useGetLoginGoogleCallback<
+  TData = Awaited<ReturnType<typeof getLoginGoogleCallback>>,
+  TError = ErrorType<GetLoginGoogleCallback401>,
 >(
   options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiLoginGoogleCallback>>, TError, TData>>
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getLoginGoogleCallback>>, TError, TData>>
     request?: SecondParameter<typeof request>
   },
   queryClient?: QueryClient,
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-  const queryOptions = getGetApiLoginGoogleCallbackQueryOptions(options)
+  const queryOptions = getGetLoginGoogleCallbackQueryOptions(options)
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
     queryKey: DataTag<QueryKey, TData, TError>
@@ -265,11 +265,11 @@ export function useGetApiLoginGoogleCallback<
 }
 
 export const refresh = (options?: SecondParameter<typeof request>, signal?: AbortSignal) => {
-  return request<Refresh200>({ url: `/api/refresh`, method: "GET", signal }, options)
+  return request<Refresh200>({ url: `/refresh`, method: "GET", signal }, options)
 }
 
 export const getRefreshQueryKey = () => {
-  return [`/api/refresh`] as const
+  return [`/refresh`] as const
 }
 
 export const getRefreshQueryOptions = <

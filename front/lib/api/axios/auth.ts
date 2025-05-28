@@ -11,21 +11,21 @@ import { requestSafe } from "../../utils/axios"
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1]
 
 export const googleLogin = (options?: SecondParameter<typeof requestSafe>) => {
-  return requestSafe<void>({ url: `/api/login/google`, method: "GET" }, options)
+  return requestSafe<void>({ url: `/login/google`, method: "GET" }, options)
 }
 export const login = (loginBody: LoginBody, options?: SecondParameter<typeof requestSafe>) => {
   return requestSafe<Login200>(
-    { url: `/api/login`, method: "POST", headers: { "Content-Type": "application/json" }, data: loginBody },
+    { url: `/login`, method: "POST", headers: { "Content-Type": "application/json" }, data: loginBody },
     options,
   )
 }
-export const getApiLoginGoogleCallback = (options?: SecondParameter<typeof requestSafe>) => {
-  return requestSafe<unknown>({ url: `/api/login/google/callback`, method: "GET" }, options)
+export const getLoginGoogleCallback = (options?: SecondParameter<typeof requestSafe>) => {
+  return requestSafe<unknown>({ url: `/login/google/callback`, method: "GET" }, options)
 }
 export const refresh = (options?: SecondParameter<typeof requestSafe>) => {
-  return requestSafe<Refresh200>({ url: `/api/refresh`, method: "GET" }, options)
+  return requestSafe<Refresh200>({ url: `/refresh`, method: "GET" }, options)
 }
 export type GoogleLoginResult = NonNullable<Awaited<ReturnType<typeof googleLogin>>>
 export type LoginResult = NonNullable<Awaited<ReturnType<typeof login>>>
-export type GetApiLoginGoogleCallbackResult = NonNullable<Awaited<ReturnType<typeof getApiLoginGoogleCallback>>>
+export type GetLoginGoogleCallbackResult = NonNullable<Awaited<ReturnType<typeof getLoginGoogleCallback>>>
 export type RefreshResult = NonNullable<Awaited<ReturnType<typeof refresh>>>

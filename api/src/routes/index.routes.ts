@@ -11,37 +11,28 @@ import { threadRoutes } from "./thread.route"
 import { userRoutes } from "./user.route"
 
 export function registerRoutes(app: FastifyInstance) {
-  app.register(
-    async (fastifyInstance) => {
-      fastifyInstance.addHook("onRequest", attachUser)
+  app.register(async (fastifyInstance) => {
+    fastifyInstance.addHook("onRequest", attachUser)
 
-      fastifyInstance.register(publicRoutes)
-    },
-    { prefix: "/api" },
-  )
+    fastifyInstance.register(publicRoutes)
+  })
 
-  app.register(
-    async (fastifyInstance) => {
-      fastifyInstance.addHook("onRequest", verifyJwt)
+  app.register(async (fastifyInstance) => {
+    fastifyInstance.addHook("onRequest", verifyJwt)
 
-      fastifyInstance.register(authRoutes)
-      fastifyInstance.register(commentRoutes, { prefix: "/comments" })
-      fastifyInstance.register(likeRoutes, { prefix: "/likes" })
-      fastifyInstance.register(postRoutes, { prefix: "/posts" })
-      fastifyInstance.register(threadRoutes, { prefix: "/threads" })
-      fastifyInstance.register(userRoutes, { prefix: "/users" })
-    },
-    { prefix: "/api" },
-  )
+    fastifyInstance.register(authRoutes)
+    fastifyInstance.register(commentRoutes, { prefix: "/comments" })
+    fastifyInstance.register(likeRoutes, { prefix: "/likes" })
+    fastifyInstance.register(postRoutes, { prefix: "/posts" })
+    fastifyInstance.register(threadRoutes, { prefix: "/threads" })
+    fastifyInstance.register(userRoutes, { prefix: "/users" })
+  })
 
-  app.register(
-    async (fastifyInstance) => {
-      fastifyInstance.addHook("onRequest", verifyJwt)
-      fastifyInstance.addHook("onRequest", adminCheck)
+  app.register(async (fastifyInstance) => {
+    fastifyInstance.addHook("onRequest", verifyJwt)
+    fastifyInstance.addHook("onRequest", adminCheck)
 
-      fastifyInstance.register(categoryRoutes, { prefix: "/categories" })
-      fastifyInstance.register(courseRoutes, { prefix: "/courses" })
-    },
-    { prefix: "/api" },
-  )
+    fastifyInstance.register(categoryRoutes, { prefix: "/categories" })
+    fastifyInstance.register(courseRoutes, { prefix: "/courses" })
+  })
 }

@@ -11,7 +11,7 @@ import { requestSafe } from "../../utils/axios"
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1]
 
 export const getCommentById = (id: number, options?: SecondParameter<typeof requestSafe>) => {
-  return requestSafe<void>({ url: `/api/comments/${id}`, method: "GET" }, options)
+  return requestSafe<void>({ url: `/comments/${id}`, method: "GET" }, options)
 }
 export const updateComment = (
   id: number,
@@ -20,7 +20,7 @@ export const updateComment = (
 ) => {
   return requestSafe<void>(
     {
-      url: `/api/comments/${id}`,
+      url: `/comments/${id}`,
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       data: updateCommentBody,
@@ -29,11 +29,11 @@ export const updateComment = (
   )
 }
 export const deleteComment = (id: number, options?: SecondParameter<typeof requestSafe>) => {
-  return requestSafe<void>({ url: `/api/comments/${id}`, method: "DELETE" }, options)
+  return requestSafe<void>({ url: `/comments/${id}`, method: "DELETE" }, options)
 }
 export const createComment = (createCommentBody: CreateCommentBody, options?: SecondParameter<typeof requestSafe>) => {
   return requestSafe<void>(
-    { url: `/api/comments/`, method: "POST", headers: { "Content-Type": "application/json" }, data: createCommentBody },
+    { url: `/comments/`, method: "POST", headers: { "Content-Type": "application/json" }, data: createCommentBody },
     options,
   )
 }
