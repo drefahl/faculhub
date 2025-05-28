@@ -24,12 +24,12 @@ export function UserAccountNav() {
 
   if (!session?.id) {
     return (
-      <div className="flex gap-2">
-        <Button variant="ghost" size="sm" asChild>
+      <div className="flex gap-1 sm:gap-2">
+        <Button variant="ghost" size="sm" asChild className="text-xs sm:text-sm px-2 sm:px-3">
           <Link href="/login">Entrar</Link>
         </Button>
 
-        <Button size="sm" asChild>
+        <Button size="sm" asChild className="text-xs sm:text-sm px-2 sm:px-3">
           <Link href="/register">Registrar</Link>
         </Button>
       </div>
@@ -42,14 +42,14 @@ export function UserAccountNav() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+        <Button variant="ghost" className="relative h-8 w-8 rounded-full flex-shrink-0">
           <Avatar className="h-8 w-8">
             <AvatarImage src={getProfilePicUrl(session.picture) || ""} alt={session.name || "Avatar"} />
             <AvatarFallback>{initials}</AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
+      <DropdownMenuContent align="end" className="w-56">
         <div className="flex items-center justify-start gap-2 p-2">
           <div className="flex flex-col space-y-1 leading-none">
             {name && <p className="font-medium">{name}</p>}
