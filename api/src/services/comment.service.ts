@@ -22,7 +22,7 @@ export class CommentService {
     const thread = await this.threadRepository.getThreadById(threadId)
     if (!thread) throw new NotFoundError("Thread not found")
 
-    this.threadRepository.updateThread(threadId, { lastInteraction: new Date() })
+    await this.threadRepository.updateThread(threadId, { lastInteraction: new Date() })
 
     return this.commentRepository.createComment({
       ...commentData,
