@@ -24,5 +24,5 @@ export function isOnlyUsingCredentials(providers?: string[]): boolean {
 export function getProfilePicUrl(profilePicId: string | null | undefined): string | null {
   if (!profilePicId) return null
 
-  return `${process.env.NEXT_PUBLIC_API_URL}/api/files/${profilePicId}`
+  return `${process.env.NEXT_PUBLIC_API_URL}/files/${profilePicId}`
 }
