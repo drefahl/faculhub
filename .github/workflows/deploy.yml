@@ -104,7 +104,6 @@ jobs:
   build_front:
     if: ${{ github.ref == 'refs/heads/main' }}
     name: 🐳 Build Frontend
-    needs: build_api
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
