@@ -100,6 +100,8 @@ jobs:
         tags: |
             ${{ env.DOCKER_REGISTRY }}/faculhub-api:${{ github.sha }}
             ${{ env.DOCKER_REGISTRY }}/faculhub-api:latest
+        cache-from: type=registry,ref=${{ env.DOCKER_REGISTRY }}/faculhub-api:build-cache
+        cache-to: type=registry,ref=${{ env.DOCKER_REGISTRY }}/faculhub-api:build-cache,mode=max
 
   build_front:
     if: ${{ github.ref == 'refs/heads/main' }}
@@ -127,4 +129,6 @@ jobs:
         tags: |
             ${{ env.DOCKER_REGISTRY }}/faculhub-front:${{ github.sha }}
             ${{ env.DOCKER_REGISTRY }}/faculhub-front:latest
+        cache-from: type=registry,ref=${{ env.DOCKER_REGISTRY }}/faculhub-api:build-cache
+        cache-to: type=registry,ref=${{ env.DOCKER_REGISTRY }}/faculhub-api:build-cache,mode=max
 
