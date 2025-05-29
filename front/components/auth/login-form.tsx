@@ -15,6 +15,7 @@ import * as z from "zod"
 import { Input } from "../form/input"
 import { PasswordInput } from "../form/password"
 import { GoogleIcon } from "../icons/google-icon"
+import { useSession } from "../providers/session-provider"
 import { SubmitButton } from "../submit-button"
 import { Separator } from "../ui/separator"
 
@@ -27,6 +28,7 @@ type LoginFormValues = z.infer<typeof loginFormValidationSchema>
 
 export function LoginForm() {
   const router = useRouter()
+  const { refreshSession } = useSession()
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginFormValidationSchema),
@@ -48,6 +50,7 @@ export function LoginForm() {
     const { token } = response
 
     await setTokenCookie(token)
+    await refreshSession()
     sendGAEvent("event", "login_success", { method: "email" })
 
     toast.success("Login realizado com sucesso!", { description: "Bem-vindo de volta!" })

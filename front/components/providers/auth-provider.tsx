@@ -5,5 +5,5 @@ import { SessionProvider } from "./session-provider"
 export async function AuthProvider({ children }: { children: React.ReactNode }) {
   const session = await getSession()
 
-  return <SessionProvider session={session}>{children}</SessionProvider>
+  return <SessionProvider initialSession={session}>{children}</SessionProvider>
 }

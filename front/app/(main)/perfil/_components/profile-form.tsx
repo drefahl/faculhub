@@ -7,6 +7,7 @@ import * as z from "zod"
 
 import { Input } from "@/components/form/input"
 import { Select } from "@/components/form/select"
+import { useSession } from "@/components/providers/session-provider"
 import { SubmitButton } from "@/components/submit-button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -14,10 +15,8 @@ import { Form } from "@/components/ui/form"
 import type { GetUserProfile200 } from "@/lib/api/axios/generated.schemas"
 import { useListCourses } from "@/lib/api/react-query/course"
 import { useUpdateUserProfile } from "@/lib/api/react-query/user"
-import { refreshToken } from "@/lib/utils/token"
 import { getProfilePicUrl, getUserInitials } from "@/lib/utils/user.utils"
 import { enrollmentNumberSchema } from "@/lib/validations/enrollment-number"
-import { useRouter } from "next/navigation"
 import { ProfileImageUpload } from "./profile-image-upload"
 
 interface ProfileFormProps {
@@ -35,8 +34,7 @@ const profileFormSchema = z.object({
 type ProfileFormValues = z.infer<typeof profileFormSchema>
 
 export function ProfileForm({ profile }: ProfileFormProps) {
-  const router = useRouter()
-
+  const { session, refreshSession } = useSession()
   const { mutate: updateProfile, isPending } = useUpdateUserProfile()
   const { data: courses } = useListCourses()
 
@@ -54,11 +52,10 @@ export function ProfileForm({ profile }: ProfileFormProps) {
       { data },
       {
         onSuccess: async () => {
-          await refreshToken()
+          await refreshSession()
           toast.success("Perfil atualizado", {
             description: "Suas informações pessoais foram atualizadas com sucesso.",
           })
-          router.refresh()
         },
         onError: (error) => {
           toast.error("Erro ao atualizar perfil", {
@@ -81,7 +78,7 @@ export function ProfileForm({ profile }: ProfileFormProps) {
       <CardContent className="space-y-6">
         <div className="flex flex-col items-center space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0">
           <Avatar className="h-24 w-24">
-            <AvatarImage src={getProfilePicUrl(profile.profilePicId) || ""} alt={profile.name || "Avatar"} />
+            <AvatarImage src={getProfilePicUrl(session?.picture) || ""} alt={profile.name || "Avatar"} />
             <AvatarFallback className="text-2xl">{initials}</AvatarFallback>
           </Avatar>
 

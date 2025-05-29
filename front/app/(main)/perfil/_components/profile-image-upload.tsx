@@ -1,10 +1,9 @@
 "use client"
 
+import { useSession } from "@/components/providers/session-provider"
 import { Button } from "@/components/ui/button"
 import { uploadProfileImage, useDeleteProfileImage } from "@/lib/api/react-query/user"
-import { refreshToken } from "@/lib/utils/token"
 import { Trash2, Upload } from "lucide-react"
-import { useRouter } from "next/navigation"
 import type React from "react"
 import { useRef, useState } from "react"
 import { toast } from "sonner"
@@ -12,7 +11,7 @@ import { toast } from "sonner"
 export function ProfileImageUpload() {
   const [isUploading, setIsUploading] = useState(false)
 
-  const router = useRouter()
+  const { refreshSession } = useSession()
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const { mutate: removeImage, isPending: isRemoving } = useDeleteProfileImage()
@@ -41,14 +40,12 @@ export function ProfileImageUpload() {
       setIsUploading(true)
 
       await uploadProfileImage({ data: formData })
-      await refreshToken()
+      await refreshSession()
       toast.success("Imagem atualizada", { description: "Sua foto de perfil foi atualizada com sucesso." })
 
       if (fileInputRef.current) {
         fileInputRef.current.value = ""
       }
-
-      router.refresh()
     } catch (error) {
       toast.error("Erro ao fazer upload", { description: "Erro ao fazer upload da imagem" })
     } finally {
@@ -59,9 +56,8 @@ export function ProfileImageUpload() {
   const handleRemoveImage = () => {
     removeImage(undefined, {
       onSuccess: async () => {
-        await refreshToken()
+        await refreshSession()
         toast.success("Imagem removida", { description: "Sua foto de perfil foi removida com sucesso." })
-        router.refresh()
       },
       onError: (error) => {
         toast.error("Erro ao remover imagem", { description: error.message || "Erro ao remover a imagem" })

@@ -9,17 +9,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { signOut } from "@/lib/utils/token"
 import { getProfilePicUrl, getUserInitials } from "@/lib/utils/user.utils"
 import { sendGAEvent } from "@next/third-parties/google"
 import { LogOut, User } from "lucide-react"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
 import { useSession } from "./providers/session-provider"
 
 export function UserAccountNav() {
-  const { session } = useSession()
-  const router = useRouter()
+  const { session, signOut } = useSession()
 
   if (!session?.id) {
     return (
@@ -80,7 +77,6 @@ export function UserAccountNav() {
             event.preventDefault()
             sendGAEvent("event", "logout", {})
             await signOut()
-            router.refresh()
           }}
         >
           <LogOut className="h-4 w-4" />

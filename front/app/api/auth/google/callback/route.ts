@@ -15,8 +15,11 @@ export async function GET(request: Request) {
   if (redirectTo) {
     await deleteCookie("redirectTo")
 
-    return redirect(redirectTo)
+    const redirectUrl = new URL(redirectTo)
+    redirectUrl.searchParams.set("auth_success", "true")
+
+    return redirect(redirectUrl.toString())
   }
 
-  return redirect("/")
+  return redirect("/?auth_success=true")
 }

@@ -8,23 +8,22 @@ import * as z from "zod"
 
 import { Input } from "@/components/form/input"
 import { PasswordInput } from "@/components/form/password"
+import { useSession } from "@/components/providers/session-provider"
 import { SubmitButton } from "@/components/submit-button"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Form } from "@/components/ui/form"
 import { useUpdateUserProfile } from "@/lib/api/react-query/user"
-import { refreshToken } from "@/lib/utils/token"
 import { isGoogleAccount, isUsingCredentials } from "@/lib/utils/user.utils"
 import { passwordSchemaRegistration } from "@/lib/validations/password-schema"
 import type { Session } from "@/types"
-import { useRouter } from "next/navigation"
 
 interface PasswordFormProps {
   session: Session
 }
 
 export function PasswordForm({ session }: PasswordFormProps) {
-  const router = useRouter()
+  const { refreshSession } = useSession()
 
   const { mutate: updatePassword } = useUpdateUserProfile()
 
@@ -73,14 +72,13 @@ export function PasswordForm({ session }: PasswordFormProps) {
       },
       {
         onSuccess: async () => {
-          await refreshToken()
+          await refreshSession()
           toast.success(isUsingAuthCredentials ? "Senha atualizada" : "Senha definida", {
             description: isUsingAuthCredentials
               ? "Sua senha foi atualizada com sucesso."
               : "Sua senha foi definida com sucesso.",
           })
           form.reset()
-          router.refresh()
         },
         onError: (error) => {
           toast.error("Erro", {

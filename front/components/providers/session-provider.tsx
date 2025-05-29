@@ -1,29 +1,84 @@
 "use client"
 
+import { signOut as logOut, refreshToken } from "@/lib/utils/token"
 import type { Session } from "@/types"
-import { createContext, useContext } from "react"
-import type { ReactNode } from "react"
+import { useRouter } from "next/navigation"
+import { createContext, useContext, useEffect, useState } from "react"
 
 interface SessionContextType {
   session: Session | null
+  isLoading: boolean
+  refreshSession: () => Promise<void>
+  signOut: () => Promise<void>
 }
 
-const SessionContext = createContext<SessionContextType | undefined>(undefined)
+const SessionContext = createContext<SessionContextType>({
+  session: null,
+  isLoading: true,
+  refreshSession: async () => {},
+  signOut: async () => {},
+})
 
-export const useSession = (): SessionContextType => {
-  const context = useContext(SessionContext)
-  if (context === undefined) {
-    throw new Error("useSession must be used within a SessionProvider")
-  }
-
-  return context
+export function useSession() {
+  return useContext(SessionContext)
 }
 
 interface SessionProviderProps {
-  session: Session | null
-  children: ReactNode
+  children: React.ReactNode
+  initialSession: Session | null
 }
 
-export const SessionProvider = ({ session, children }: SessionProviderProps) => {
-  return <SessionContext.Provider value={{ session }}>{children}</SessionContext.Provider>
+export function SessionProvider({ children, initialSession }: SessionProviderProps) {
+  const [session, setSession] = useState<Session | null>(initialSession)
+  const [isLoading, setIsLoading] = useState(false)
+
+  const router = useRouter()
+
+  const refreshSession = async () => {
+    setIsLoading(true)
+
+    try {
+      const newToken = await refreshToken()
+      if (!newToken) {
+        setSession(null)
+        return
+      }
+
+      const { decodeToken, getTokenCookie } = await import("@/lib/utils/token")
+      const token = await getTokenCookie()
+      const newSession = await decodeToken(token)
+      setSession(newSession)
+    } catch (error) {
+      console.error("Failed to refresh session:", error)
+      setSession(null)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const signOut = async () => {
+    await logOut()
+    setSession(null)
+    router.refresh()
+  }
+
+  useEffect(() => {
+    const checkForAuthRedirect = () => {
+      const url = new URL(window.location.href)
+      const authSuccess = url.searchParams.get("auth_success")
+      if (authSuccess) {
+        url.searchParams.delete("auth_success")
+        window.history.replaceState({}, document.title, url.toString())
+        refreshSession()
+      }
+    }
+
+    checkForAuthRedirect()
+  }, [])
+
+  return (
+    <SessionContext.Provider value={{ session, isLoading, refreshSession, signOut }}>
+      {children}
+    </SessionContext.Provider>
+  )
 }
