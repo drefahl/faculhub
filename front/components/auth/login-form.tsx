@@ -7,6 +7,7 @@ import { getCookie } from "@/lib/utils/cookie.utils"
 import { setTokenCookie } from "@/lib/utils/token"
 import { passwordSchemaLogin } from "@/lib/validations/password-schema"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { sendGAEvent } from "@next/third-parties/google"
 import { useRouter } from "next/navigation"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
@@ -36,22 +37,42 @@ export function LoginForm() {
   })
 
   async function onSubmit({ email, password }: LoginFormValues) {
+    sendGAEvent({
+      event: "login_started",
+      params: { method: "email" },
+    })
+
     const [error, response] = await login({ email, password })
     if (error) {
-      toast.error("Erro ao fazer login", { description: "Verifique suas credenciais e tente novamente." })
+      sendGAEvent({
+        event: "login_failure",
+        params: { error_code: error.code ?? "unknown" },
+      })
+      toast.error("Erro ao fazer login", {
+        description: "Verifique suas credenciais e tente novamente.",
+      })
       return
     }
 
     const { token } = response
 
     await setTokenCookie(token)
+    sendGAEvent({
+      event: "login_success",
+      params: { method: "email" },
+    })
+
     toast.success("Login realizado com sucesso!", { description: "Bem-vindo de volta!" })
 
     const redirectTo = await getCookie("redirectTo")
     router.push(redirectTo || "/")
   }
 
-  const handleGoogleSignIn = () => {
+  function handleGoogleSignIn() {
+    sendGAEvent({
+      event: "login_started",
+      params: { method: "google" },
+    })
     window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/login/google`
   }
 

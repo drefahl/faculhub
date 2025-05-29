@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import type { Disciplina } from "@/types/grade"
+import { sendGAEvent } from "@next/third-parties/google"
 import html2canvas from "html2canvas"
 import { jsPDF } from "jspdf"
 import { Download, Plus, Trash2 } from "lucide-react"
@@ -93,6 +94,10 @@ export function WeeklySchedule({ selectedDisciplinas, allDisciplinas }: WeeklySc
     setTempDisciplinaId("")
     setTempDay("")
     setIsAddClassDialogOpen(true)
+
+    sendGAEvent({
+      event: "schedule_add_modal_opened",
+    })
   }
 
   const handleEditClass = (scheduleClass: ScheduledClass) => {
@@ -102,6 +107,11 @@ export function WeeklySchedule({ selectedDisciplinas, allDisciplinas }: WeeklySc
     setTempStartTime(scheduleClass.startTime)
     setTempEndTime(scheduleClass.endTime)
     setIsAddClassDialogOpen(true)
+
+    sendGAEvent({
+      event: "schedule_edit_clicked",
+      params: { schedule_id: scheduleClass.id },
+    })
   }
 
   const hasTimeConflict = (a: ScheduledClass, b: ScheduledClass): boolean =>
@@ -141,8 +151,25 @@ export function WeeklySchedule({ selectedDisciplinas, allDisciplinas }: WeeklySc
 
     if (currentSchedule) {
       setScheduledClasses((prev) => prev.map((c) => (c.id === currentSchedule.id ? newClass : c)))
+      sendGAEvent({
+        event: "schedule_updated",
+        params: {
+          schedule_id: currentSchedule.id,
+          subject: newClass.disciplinaCodigo,
+          day: newClass.day,
+        },
+      })
     } else {
       setScheduledClasses((prev) => [...prev, newClass])
+
+      sendGAEvent({
+        event: "schedule_created",
+        params: {
+          schedule_id: newClass.id,
+          subject: newClass.disciplinaCodigo,
+          day: newClass.day,
+        },
+      })
     }
 
     setIsAddClassDialogOpen(false)
@@ -150,6 +177,11 @@ export function WeeklySchedule({ selectedDisciplinas, allDisciplinas }: WeeklySc
 
   const handleRemoveClass = (id: string) => {
     setScheduledClasses((prev) => prev.filter((c) => c.id !== id))
+
+    sendGAEvent({
+      event: "schedule_removed",
+      params: { schedule_id: id },
+    })
   }
 
   const handleExport = async () => {
@@ -186,6 +218,11 @@ export function WeeklySchedule({ selectedDisciplinas, allDisciplinas }: WeeklySc
           link.href = canvas.toDataURL("image/png")
           link.click()
         }
+
+        sendGAEvent({
+          event: "schedule_exported",
+          params: { format: exportFormat },
+        })
       } else if (exportFormat === "csv") {
         let csvContent = "Dia,Horário Início,Horário Fim,Código,Disciplina\n"
         scheduledClasses.forEach((cls) => {
@@ -196,6 +233,11 @@ export function WeeklySchedule({ selectedDisciplinas, allDisciplinas }: WeeklySc
         link.href = URL.createObjectURL(blob)
         link.download = `${scheduleName}.csv`
         link.click()
+
+        sendGAEvent({
+          event: "schedule_exported",
+          params: { format: "csv" },
+        })
       }
       setIsExportDialogOpen(false)
     } catch (error) {

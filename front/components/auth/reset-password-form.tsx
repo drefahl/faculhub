@@ -4,6 +4,7 @@ import { Form } from "@/components/ui/form"
 import { resetPassword } from "@/lib/api/axios/password-reset"
 import { passwordSchema } from "@/shared/schemas/common.schema"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { sendGAEvent } from "@next/third-parties/google"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
@@ -35,15 +36,23 @@ export function ResetPasswordForm() {
   })
 
   async function onSubmit({ password }: FormSchema) {
+    sendGAEvent({
+      event: "password_reset_started",
+      params: { token_present: !!tokenFromUrl },
+    })
+
     const [err] = await resetPassword({ password, token: tokenFromUrl })
 
     if (err) {
-      toast.error("Ocorreu um erro ao redefinir sua senha. Verifique o token e tente novamente.", {
+      toast.error("Erro ao redefinir sua senha. Verifique o token e tente novamente.", {
         description: "Se o problema persistir, entre em contato com o suporte.",
       })
       return
     }
 
+    sendGAEvent({
+      event: "password_reset_completed",
+    })
     toast.success("Senha redefinida com sucesso!", {
       description: "Você já pode fazer login com sua nova senha.",
     })
