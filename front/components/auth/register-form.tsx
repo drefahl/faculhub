@@ -8,7 +8,6 @@ import * as z from "zod"
 import { Button } from "@/components/ui/button"
 import type { ListCourses200Item } from "@/lib/api/axios/generated.schemas"
 import { createUser } from "@/lib/api/axios/user"
-import { enrollmentNumberSchema } from "@/lib/validations/enrollment-number"
 import { passwordSchemaRegistration } from "@/lib/validations/password-schema"
 import { toast } from "sonner"
 import { Input } from "../form/input"
@@ -23,7 +22,6 @@ const registrationFormSchema = z
     password: passwordSchemaRegistration,
     confirmPassword: z.string().min(1, { message: "Confirme sua senha." }),
     courseId: z.coerce.number().int().positive().optional(),
-    enrollmentNumber: enrollmentNumberSchema,
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "As senhas não coincidem",
@@ -47,7 +45,6 @@ export function RegisterForm({ courses }: RegisterFormProps) {
       password: "",
       confirmPassword: "",
       courseId: undefined,
-      enrollmentNumber: "",
     },
   })
 
@@ -84,19 +81,6 @@ export function RegisterForm({ courses }: RegisterFormProps) {
             }))}
           />
         )}
-
-        <Input
-          type="text"
-          name="enrollmentNumber"
-          label="Matrícula"
-          placeholder="Número de matrícula"
-          maxLength={10}
-          description="Número de matrícula fornecido pela instituição"
-          autoComplete="off"
-          autoCapitalize="off"
-          autoCorrect="off"
-          spellCheck="false"
-        />
 
         <PasswordInput name="password" label="Senha" placeholder="******" />
 

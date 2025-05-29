@@ -230,4 +230,15 @@ describe("UserService Integration", () => {
 
     expect(updated.enrollmentNumber).toBe(newEnrollment)
   })
+
+  it("should allow creating a user without enrollment number", async () => {
+    const newUser = await userService.createUser({
+      email: "noenrollment@test.com",
+      name: "No Enrollment",
+      password,
+      courseId,
+    })
+
+    expect(newUser.enrollmentNumber).toBeNull()
+  })
 })
