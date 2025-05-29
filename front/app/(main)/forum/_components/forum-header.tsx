@@ -2,11 +2,19 @@
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import {
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectSeparator,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { useListCategories } from "@/lib/api/react-query/category"
 import { sendGAEvent } from "@next/third-parties/google"
 import { Select } from "@radix-ui/react-select"
-import { Plus, Search } from "lucide-react"
+import { Plus, Search, X } from "lucide-react"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
@@ -107,20 +115,29 @@ export function CategoryFilter() {
     const categoryParam = searchParams.get("categoryId")
     if (categoryParam) {
       setSelectedCategory(Number(categoryParam))
+    } else {
+      setSelectedCategory(null)
     }
   }, [searchParams])
 
   const handleCategoryChange = (categoryId: string) => {
-    setSelectedCategory((prev) => (prev === Number(categoryId) ? null : Number(categoryId)))
-
-    const params = new URLSearchParams(window.location.search)
-    if (categoryId) {
-      params.set("categoryId", categoryId)
-    } else {
+    if (categoryId === "clear") {
+      setSelectedCategory(null)
+      const params = new URLSearchParams(window.location.search)
       params.delete("categoryId")
+
+      sendGAEvent("event", "forum_filter_category_cleared", {})
+
+      window.history.replaceState({}, "", `${window.location.pathname}?${params.toString()}`)
+      router.refresh()
+      return
     }
 
-    sendGAEvent("event", "forum_filter_by_category", { category_id: categoryId || "none" })
+    setSelectedCategory(Number(categoryId))
+    const params = new URLSearchParams(window.location.search)
+    params.set("categoryId", categoryId)
+
+    sendGAEvent("event", "forum_filter_by_category", { category_id: categoryId })
 
     window.history.replaceState({}, "", `${window.location.pathname}?${params.toString()}`)
     router.refresh()
@@ -137,17 +154,31 @@ export function CategoryFilter() {
   if (!categories || categories.length === 0) return null
 
   return (
-    <Select value={selectedCategory?.toString()} onValueChange={handleCategoryChange}>
+    <Select value={selectedCategory?.toString() || ""} onValueChange={handleCategoryChange}>
       <SelectTrigger className="w-full md:w-64">
         <SelectValue placeholder="Selecione uma categoria" />
       </SelectTrigger>
 
       <SelectContent>
-        {categories.map((category) => (
-          <SelectItem key={category.id} value={category.id.toString()}>
-            {category.name}
-          </SelectItem>
-        ))}
+        <SelectGroup>
+          <SelectLabel>Categorias</SelectLabel>
+          {selectedCategory && (
+            <>
+              <SelectItem value="clear">
+                <span className="flex items-center">
+                  <X className="mr-2 h-3 w-3" />
+                  Limpar filtro
+                </span>
+              </SelectItem>
+              <SelectSeparator />
+            </>
+          )}
+          {categories.map((category) => (
+            <SelectItem key={category.id} value={category.id.toString()}>
+              {category.name}
+            </SelectItem>
+          ))}
+        </SelectGroup>
       </SelectContent>
     </Select>
   )
