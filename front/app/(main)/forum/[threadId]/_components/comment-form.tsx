@@ -8,6 +8,7 @@ import { createComment } from "@/lib/api/react-query/comment"
 import { getProfilePicUrl, getUserInitials } from "@/lib/utils/user.utils"
 import type { Session } from "@/types"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { sendGAEvent } from "@next/third-parties/google"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 
@@ -35,8 +36,15 @@ export function CommentForm({ threadId, session }: CommentFormProps) {
   })
 
   const onSubmit = async ({ content }: CommentFormValues) => {
+    sendGAEvent("event", "comment_create_started", {
+      thread_id: threadId,
+      content_length: content.length,
+    })
+
     try {
       await createComment({ threadId, content, authorId: currentUserId })
+
+      sendGAEvent("event", "comment_created", { thread_id: threadId, author_id: currentUserId })
 
       form.reset()
     } catch (error) {

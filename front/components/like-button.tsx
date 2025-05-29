@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { likePost, unlikePost } from "@/lib/api/react-query/like"
 import { cn } from "@/lib/utils"
+import { sendGAEvent } from "@next/third-parties/google"
 import { Heart } from "lucide-react"
 import { useState } from "react"
 
@@ -37,12 +38,24 @@ export function LikeButton({
     try {
       if (liked) {
         await unlikePost(postId)
-        setLikeCount((prev) => Math.max(0, prev - 1))
+        const newCount = Math.max(0, likeCount - 1)
+        setLikeCount(newCount)
         setLiked(false)
+
+        sendGAEvent("event", "post_unliked", {
+          post_id: postId,
+          like_count: newCount,
+        })
       } else {
         await likePost(postId)
-        setLikeCount((prev) => prev + 1)
+        const newCount = likeCount + 1
+        setLikeCount(newCount)
         setLiked(true)
+
+        sendGAEvent("event", "post_liked", {
+          post_id: postId,
+          like_count: newCount,
+        })
       }
     } finally {
       setIsLoading(false)

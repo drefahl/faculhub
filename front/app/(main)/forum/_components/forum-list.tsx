@@ -12,6 +12,7 @@ import type { ListThreads200DataItem, ListThreadsParams } from "@/lib/api/axios/
 import { useListThreads } from "@/lib/api/react-query/thread"
 import { formatDistanceToNow } from "@/lib/utils/date.utils"
 import { getProfilePicUrl, getUserInitials } from "@/lib/utils/user.utils"
+import { sendGAEvent } from "@next/third-parties/google"
 import { MessageSquare } from "lucide-react"
 import { useSearchParams } from "next/navigation"
 
@@ -37,6 +38,17 @@ export function ForumList() {
       setThreads(data.data)
     }
   }, [data])
+
+  useEffect(() => {
+    if (data && data.data.length > 0) {
+      sendGAEvent("event", "forum_threads_view", {
+        page: currentPage,
+        results_count: data.data.length,
+        category_filter: filters.categoryId ?? "none",
+        search_term: filters.search || "none",
+      })
+    }
+  }, [data, currentPage])
 
   const { socket, isConnected } = useSocketContext()
 
@@ -95,7 +107,17 @@ export function ForumList() {
     <div className="space-y-6">
       <div className="grid gap-4">
         {threads.map((discussion) => (
-          <Link key={discussion.id} href={`/forum/${discussion.id}`}>
+          <Link
+            key={discussion.id}
+            href={`/forum/${discussion.id}`}
+            onClick={() =>
+              sendGAEvent("event", "forum_thread_click", {
+                thread_id: discussion.id,
+                title: discussion.title,
+                category_ids: discussion.categories?.map((c) => c.id) ?? [],
+              })
+            }
+          >
             <Card className="transition-all hover:bg-muted/50">
               <CardHeader className="pb-2">
                 <div className="flex items-center justify-between">

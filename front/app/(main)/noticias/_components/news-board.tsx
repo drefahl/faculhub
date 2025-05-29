@@ -1,4 +1,5 @@
 "use client"
+
 import { LikeButton } from "@/components/like-button"
 import { Pagination } from "@/components/pagination"
 import { useSession } from "@/components/providers/session-provider"
@@ -12,6 +13,7 @@ import type { ListPosts200DataItem } from "@/lib/api/axios/generated.schemas"
 import { deletePost, useListPosts } from "@/lib/api/react-query/post"
 import { formatDistanceToNow } from "@/lib/utils/date.utils"
 import { getProfilePicUrl, getUserInitials } from "@/lib/utils/user.utils"
+import { sendGAEvent } from "@next/third-parties/google"
 import { Calendar, Clock, MapPin, MoreVertical, Pin } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
@@ -55,6 +57,12 @@ export function NewsBoard({ type }: { type?: "EVENT" | "NEWS" }) {
   useEffect(() => {
     if (fetchedPosts) {
       setPosts(fetchedPosts.data)
+
+      sendGAEvent("event", "news_board_viewed", {
+        type: type ?? "ALL",
+        page: currentPage,
+        results_count: fetchedPosts.data.length,
+      })
     }
   }, [fetchedPosts])
 
@@ -62,14 +70,18 @@ export function NewsBoard({ type }: { type?: "EVENT" | "NEWS" }) {
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page)
+
+    sendGAEvent("event", "news_pagination_changed", { previous_page: currentPage, new_page: page })
   }
 
   const handleDelete = async (id: number) => {
+    sendGAEvent("event", "news_item_delete_attempt", { post_id: id })
     try {
       await deletePost(id)
+      sendGAEvent("event", "news_item_delete_success", { post_id: id })
       setPosts(posts.filter((post) => post.id !== id))
       toast.success("Post removido com sucesso")
-    } catch (error) {
+    } catch {
       toast.error("Falha ao remover o post")
     }
   }
@@ -133,7 +145,17 @@ export function NewsBoard({ type }: { type?: "EVENT" | "NEWS" }) {
 
                     {post.isPinned && <Pin className="h-4 w-4 text-muted-foreground" />}
                   </div>
-                  <Link href={`/noticias/${post.id}`} className="hover:underline">
+                  <Link
+                    href={`/noticias/${post.id}`}
+                    className="hover:underline"
+                    onClick={() =>
+                      sendGAEvent("event", "news_item_clicked", {
+                        post_id: post.id,
+                        type: post.type,
+                        is_pinned: post.isPinned,
+                      })
+                    }
+                  >
                     <CardTitle className="line-clamp-2">{post.title}</CardTitle>
                   </Link>
                 </div>
@@ -210,7 +232,16 @@ export function NewsBoard({ type }: { type?: "EVENT" | "NEWS" }) {
             </CardFooter>
 
             <div className="p-4 pt-0">
-              <Link href={`/noticias/${post.id}`}>
+              <Link
+                href={`/noticias/${post.id}`}
+                onClick={() =>
+                  sendGAEvent("event", "news_item_clicked", {
+                    post_id: post.id,
+                    type: post.type,
+                    is_pinned: post.isPinned,
+                  })
+                }
+              >
                 <Button variant="ghost" className="w-full">
                   Leia mais
                 </Button>

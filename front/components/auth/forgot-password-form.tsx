@@ -3,9 +3,10 @@
 import { Form } from "@/components/ui/form"
 import { requestPasswordReset } from "@/lib/api/axios/password-reset"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { sendGAEvent } from "@next/third-parties/google"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
-import { z } from "zod"
+import * as z from "zod"
 import { Input } from "../form/input"
 import { SubmitButton } from "../submit-button"
 
@@ -24,6 +25,8 @@ export function ForgotPasswordForm() {
   })
 
   async function onSubmit({ email }: FormSchema) {
+    sendGAEvent("event", "password_reset_requested", { email })
+
     const [err] = await requestPasswordReset({ email })
 
     if (err) {
@@ -33,6 +36,7 @@ export function ForgotPasswordForm() {
       return
     }
 
+    sendGAEvent("event", "password_reset_sent", {})
     toast.success("Email enviado com sucesso!", {
       description: "Verifique sua caixa de entrada para redefinir sua senha.",
     })

@@ -10,6 +10,7 @@ import type { GetThreadById200 } from "@/lib/api/axios/generated.schemas"
 import { useListCategories } from "@/lib/api/react-query/category"
 import { createThread, getListThreadsQueryKey, updateThread } from "@/lib/api/react-query/thread"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { sendGAEvent } from "@next/third-parties/google"
 import { useQueryClient } from "@tanstack/react-query"
 import { useRouter } from "next/navigation"
 import { useForm } from "react-hook-form"
@@ -52,14 +53,26 @@ export function ThreadForm({ thread }: ThreadFormProps) {
         if (!threadId) throw new Error("ID da discussão não encontrado")
 
         await updateThread(threadId, { content, title, categories })
+
+        sendGAEvent("event", "forum_thread_edited", {
+          thread_id: thread?.id,
+          title,
+          categories: categories?.join(","),
+        })
+
         toast.success("Discussão editada com sucesso!", { description: "Sua discussão foi editada no fórum." })
         router.push(`/forum/${threadId}`)
         return
       }
 
       await createThread({ content, title, categories })
-
       await queryClient.invalidateQueries({ queryKey: getListThreadsQueryKey({} as any) })
+
+      sendGAEvent("event", "forum_thread_created", {
+        title,
+        categories: categories?.join(","),
+      })
+
       toast.success("Discussão criada com sucesso!", { description: "Sua discussão foi publicada no fórum." })
       router.push("/forum")
     } catch (error) {

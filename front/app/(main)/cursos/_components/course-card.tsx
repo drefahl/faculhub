@@ -3,7 +3,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
 import { cn } from "@/lib/utils"
 import type { Disciplina } from "@/types/grade"
+import { sendGAEvent } from "@next/third-parties/google"
 import { ExternalLink } from "lucide-react"
+import { useEffect } from "react"
 
 interface CourseCardProps {
   disciplina: Disciplina
@@ -24,6 +26,44 @@ export function CourseCard({
   isSelected = false,
   onToggleSelection,
 }: CourseCardProps) {
+  useEffect(() => {
+    sendGAEvent("event", "course_card_viewed", {
+      course_code: disciplina.codigo,
+      course_name: disciplina.nome,
+    })
+  }, [disciplina.codigo, disciplina.nome])
+
+  const handleCardClick = () => {
+    sendGAEvent("event", "course_card_clicked", { course_code: disciplina.codigo })
+  }
+
+  const handlePrereqClick = (code: string) => {
+    onPrerequisiteClick(code)
+
+    sendGAEvent("event", "prerequisite_clicked", {
+      course_code: disciplina.codigo,
+      prerequisite_code: code,
+    })
+  }
+
+  const handleCoreqClick = (code: string) => {
+    onPrerequisiteClick(code)
+
+    sendGAEvent("event", "corequisite_clicked", {
+      course_code: disciplina.codigo,
+      corequisite_code: code,
+    })
+  }
+
+  const handleToggle = () => {
+    onToggleSelection?.(disciplina.codigo)
+
+    sendGAEvent("event", "selection_toggled", {
+      course_code: disciplina.codigo,
+      selected: !isSelected,
+    })
+  }
+
   const getPrerequisiteNames = (codes: string[] | undefined) => {
     if (!codes) return []
     return codes.map((code) => {
@@ -41,6 +81,7 @@ export function CourseCard({
   return (
     <Card
       id={`course-${disciplina.codigo}`}
+      onClick={handleCardClick}
       className={cn(
         "transition-all duration-300 border",
         isHighlighted ? "ring-2 ring-primary shadow-lg scale-[1.02]" : "",
@@ -50,13 +91,7 @@ export function CourseCard({
       <CardHeader className="pb-2">
         <div className="flex justify-between items-start">
           <div className="flex items-start gap-2">
-            {isSelectionModeActive && (
-              <Checkbox
-                checked={isSelected}
-                onCheckedChange={() => onToggleSelection?.(disciplina.codigo)}
-                className="mt-1"
-              />
-            )}
+            {isSelectionModeActive && <Checkbox checked={isSelected} onCheckedChange={handleToggle} className="mt-1" />}
             <CardTitle className="text-base font-medium">{disciplina.nome}</CardTitle>
           </div>
           <Badge variant="outline">{disciplina.codigo}</Badge>
@@ -75,14 +110,14 @@ export function CourseCard({
               <div>
                 <p className="text-sm font-medium mb-1">Pré-requisitos:</p>
                 <div className="flex flex-wrap gap-1">
-                  {prerequisiteNames.map((prereq) => (
+                  {prerequisiteNames.map((pr) => (
                     <Badge
-                      key={prereq.code}
+                      key={pr.code}
                       variant="secondary"
                       className="cursor-pointer hover:bg-secondary/80 flex items-center gap-1 transition-colors"
-                      onClick={() => onPrerequisiteClick(prereq.code)}
+                      onClick={() => handlePrereqClick(pr.code)}
                     >
-                      {prereq.code}
+                      {pr.code}
                       <ExternalLink className="h-3 w-3 ml-1" />
                     </Badge>
                   ))}
@@ -94,14 +129,14 @@ export function CourseCard({
               <div>
                 <p className="text-sm font-medium mb-1">Co-requisitos:</p>
                 <div className="flex flex-wrap gap-1">
-                  {corequisiteNames.map((coreq) => (
+                  {corequisiteNames.map((cr) => (
                     <Badge
-                      key={coreq.code}
+                      key={cr.code}
                       variant="outline"
                       className="cursor-pointer hover:bg-muted flex items-center gap-1 transition-colors"
-                      onClick={() => onPrerequisiteClick(coreq.code)}
+                      onClick={() => handleCoreqClick(cr.code)}
                     >
-                      {coreq.code}
+                      {cr.code}
                       <ExternalLink className="h-3 w-3 ml-1" />
                     </Badge>
                   ))}

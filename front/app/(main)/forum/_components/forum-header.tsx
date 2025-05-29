@@ -1,9 +1,10 @@
 "use client"
+
 import { Button } from "@/components/ui/button"
-import {} from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
 import { SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useListCategories } from "@/lib/api/react-query/category"
+import { sendGAEvent } from "@next/third-parties/google"
 import { Select } from "@radix-ui/react-select"
 import { Plus, Search } from "lucide-react"
 import Link from "next/link"
@@ -73,6 +74,10 @@ export function ForumSearch({ onSearch, initialQuery = "", placeholder = "Buscar
 
   useEffect(() => {
     onSearch(debouncedQuery)
+
+    if (debouncedQuery.trim().length > 0) {
+      sendGAEvent("event", "forum_search", { search_term: debouncedQuery })
+    }
   }, [debouncedQuery, onSearch])
 
   return (
@@ -114,6 +119,9 @@ export function CategoryFilter() {
     } else {
       params.delete("categoryId")
     }
+
+    sendGAEvent("event", "forum_filter_by_category", { category_id: categoryId || "none" })
+
     window.history.replaceState({}, "", `${window.location.pathname}?${params.toString()}`)
     router.refresh()
   }

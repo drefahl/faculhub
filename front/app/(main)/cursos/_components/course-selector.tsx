@@ -6,8 +6,9 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { cn } from "@/lib/utils"
 import type { GradeCurricular } from "@/types/grade"
+import { sendGAEvent } from "@next/third-parties/google"
 import { Check, ChevronsUpDown, ExternalLink, FileText } from "lucide-react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 interface CourseOption {
   id: string
@@ -24,6 +25,32 @@ interface CourseSelectorProps {
 export function CourseSelector({ courses, selectedCourse, onSelectCourse }: CourseSelectorProps) {
   const [open, setOpen] = useState(false)
 
+  useEffect(() => {
+    if (open) {
+      sendGAEvent("event", "course_selector_opened", {})
+    }
+  }, [open])
+
+  const handleSearch = (value: string) => {
+    sendGAEvent("event", "course_search_typed", { query: value })
+  }
+
+  const handleSelect = (course: CourseOption) => {
+    sendGAEvent("event", "course_selected", {
+      course_id: course.id,
+      course_name: course.name,
+    })
+    onSelectCourse(course)
+    setOpen(false)
+  }
+
+  const handleDocClick = () => {
+    sendGAEvent("event", "reference_doc_opened", {
+      course_id: selectedCourse.id,
+      doc_url: selectedCourse.data.documentoReferencia,
+    })
+  }
+
   return (
     <div className="w-full max-w-md mx-auto">
       <Popover open={open} onOpenChange={setOpen}>
@@ -35,19 +62,12 @@ export function CourseSelector({ courses, selectedCourse, onSelectCourse }: Cour
         </PopoverTrigger>
         <PopoverContent className="w-full p-0">
           <Command>
-            <CommandInput placeholder="Buscar cursos..." />
+            <CommandInput onValueChange={handleSearch} placeholder="Buscar cursos..." />
             <CommandList>
               <CommandEmpty>Nenhum curso encontrado.</CommandEmpty>
               <CommandGroup>
                 {courses.map((course) => (
-                  <CommandItem
-                    key={course.id}
-                    value={course.id}
-                    onSelect={() => {
-                      onSelectCourse(course)
-                      setOpen(false)
-                    }}
-                  >
+                  <CommandItem key={course.id} value={course.id} onSelect={() => handleSelect(course)}>
                     <Check
                       className={cn("mr-2 h-4 w-4", selectedCourse.id === course.id ? "opacity-100" : "opacity-0")}
                     />
@@ -74,6 +94,7 @@ export function CourseSelector({ courses, selectedCourse, onSelectCourse }: Cour
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-1 text-sm text-primary hover:underline"
+                  onClick={handleDocClick}
                 >
                   <FileText className="h-4 w-4" />
                   <span>Documento de Referência</span>

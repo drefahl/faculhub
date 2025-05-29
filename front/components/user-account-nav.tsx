@@ -1,8 +1,6 @@
 "use client"
 
-import Link from "next/link"
-
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -13,8 +11,9 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { signOut } from "@/lib/utils/token"
 import { getProfilePicUrl, getUserInitials } from "@/lib/utils/user.utils"
-import { AvatarImage } from "@radix-ui/react-avatar"
+import { sendGAEvent } from "@next/third-parties/google"
 import { LogOut, User } from "lucide-react"
+import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useSession } from "./providers/session-provider"
 
@@ -25,18 +24,29 @@ export function UserAccountNav() {
   if (!session?.id) {
     return (
       <div className="flex gap-1 sm:gap-2">
-        <Button variant="ghost" size="sm" asChild className="text-xs sm:text-sm px-2 sm:px-3">
+        <Button
+          variant="ghost"
+          size="sm"
+          asChild
+          className="text-xs sm:text-sm px-2 sm:px-3"
+          onClick={() => sendGAEvent("event", "login_started", { method: "link" })}
+        >
           <Link href="/login">Entrar</Link>
         </Button>
 
-        <Button size="sm" asChild className="text-xs sm:text-sm px-2 sm:px-3">
+        <Button
+          size="sm"
+          asChild
+          className="text-xs sm:text-sm px-2 sm:px-3"
+          onClick={() => sendGAEvent("event", "sign_up_started", {})}
+        >
           <Link href="/register">Registrar</Link>
         </Button>
       </div>
     )
   }
 
-  const { name, email } = session
+  const { name, email, picture } = session
   const initials = getUserInitials(name)
 
   return (
@@ -44,7 +54,7 @@ export function UserAccountNav() {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-8 w-8 rounded-full flex-shrink-0">
           <Avatar className="h-8 w-8">
-            <AvatarImage src={getProfilePicUrl(session.picture) || ""} alt={session.name || "Avatar"} />
+            <AvatarImage src={getProfilePicUrl(picture) || ""} alt={name || "Avatar"} />
             <AvatarFallback>{initials}</AvatarFallback>
           </Avatar>
         </Button>
@@ -68,6 +78,7 @@ export function UserAccountNav() {
           className="cursor-pointer flex items-center gap-2"
           onSelect={async (event) => {
             event.preventDefault()
+            sendGAEvent("event", "logout", {})
             await signOut()
             router.refresh()
           }}

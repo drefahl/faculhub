@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button"
 import type { ListCourses200Item } from "@/lib/api/axios/generated.schemas"
 import { createUser } from "@/lib/api/axios/user"
 import { passwordSchemaRegistration } from "@/lib/validations/password-schema"
+import { sendGAEvent } from "@next/third-parties/google"
 import { toast } from "sonner"
 import { Input } from "../form/input"
 import { PasswordInput } from "../form/password"
@@ -49,14 +50,19 @@ export function RegisterForm({ courses }: RegisterFormProps) {
   })
 
   async function onSubmit({ name, email, password, courseId }: RegistrationFormData) {
+    sendGAEvent("event", "sign_up_started", {})
+
     const [error] = await createUser({ name, email, password, courseId })
     if (error) {
       console.error(error)
+
+      sendGAEvent("event", "sign_up_failed", { error_code: error.code ?? "unknown" })
 
       toast.error("Erro ao criar conta", { description: "Verifique os dados e tente novamente." })
       return
     }
 
+    sendGAEvent("event", "sign_up_completed", {})
     toast.success("Conta criada com sucesso!", { description: "Você já pode fazer login." })
     router.push("/login")
   }
