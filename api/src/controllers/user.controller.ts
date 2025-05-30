@@ -29,14 +29,20 @@ export class UserController {
     const data = await request.file()
 
     if (!data) return reply.code(400).send({ message: "File not found" })
-    if (!data.mimetype.startsWith("image/")) return reply.code(400).send({ message: "File is not an image" })
     if (data.file.truncated) return reply.code(400).send({ message: "File is too large" })
+
+    const fileBuffer = await fileStreamToBuffer(data.file)
+    const { fileTypeFromBuffer } = await import("file-type")
+    const fileTypeResult = await fileTypeFromBuffer(fileBuffer)
+    if (!fileTypeResult || !fileTypeResult.mime.startsWith("image/")) {
+      return reply.code(400).send({ message: "Invalid image file" })
+    }
 
     const user = await this.userService.updateUserProfileImage(
       request.user.id,
       data.filename,
       data.mimetype,
-      await fileStreamToBuffer(data.file),
+      fileBuffer,
     )
 
     return reply.send(user)
