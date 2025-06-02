@@ -6,6 +6,7 @@ import { toast } from "sonner"
 import * as z from "zod"
 
 import { Input } from "@/components/form/input"
+import { MarkdownEditor } from "@/components/form/markdown-editor"
 import { Select } from "@/components/form/select"
 import { useSession } from "@/components/providers/session-provider"
 import { SubmitButton } from "@/components/submit-button"
@@ -29,6 +30,7 @@ const profileFormSchema = z.object({
   }),
   courseId: z.coerce.number().int().positive().optional(),
   enrollmentNumber: enrollmentNumberSchema,
+  about: z.string().optional(),
 })
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>
@@ -44,6 +46,7 @@ export function ProfileForm({ profile }: ProfileFormProps) {
       name: profile?.name || "",
       courseId: profile?.courseId || undefined,
       enrollmentNumber: profile?.enrollmentNumber || "",
+      about: profile?.about || "",
     },
   })
 
@@ -116,6 +119,10 @@ export function ProfileForm({ profile }: ProfileFormProps) {
                   }))}
                 />
               )}
+            </div>
+
+            <div>
+              <MarkdownEditor name="about" label="Sobre mim" placeholder="Escreva um pouco sobre você..." />
             </div>
 
             <div className="flex justify-end">

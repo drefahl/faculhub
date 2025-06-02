@@ -2956,12 +2956,17 @@
                       "type": "string",
                       "pattern": "^20(?:1[7-9]|[2-9]\\d)\\d{6}$",
                       "nullable": true
+                    },
+                    "about": {
+                      "type": "string",
+                      "nullable": true
                     }
                   },
                   "required": [
                     "id",
                     "email",
-                    "name"
+                    "name",
+                    "about"
                   ],
                   "additionalProperties": false,
                   "nullable": true
@@ -3192,12 +3197,17 @@
                       "type": "string",
                       "pattern": "^20(?:1[7-9]|[2-9]\\d)\\d{6}$",
                       "nullable": true
+                    },
+                    "about": {
+                      "type": "string",
+                      "nullable": true
                     }
                   },
                   "required": [
                     "id",
                     "email",
-                    "name"
+                    "name",
+                    "about"
                   ],
                   "additionalProperties": false,
                   "nullable": true
@@ -3241,6 +3251,9 @@
                     "type": "string",
                     "pattern": "^20(?:1[7-9]|[2-9]\\d)\\d{6}$",
                     "nullable": true
+                  },
+                  "about": {
+                    "type": "string"
                   },
                   "currentPassword": {
                     "type": "string",
@@ -3298,12 +3311,17 @@
                       "type": "string",
                       "pattern": "^20(?:1[7-9]|[2-9]\\d)\\d{6}$",
                       "nullable": true
+                    },
+                    "about": {
+                      "type": "string",
+                      "nullable": true
                     }
                   },
                   "required": [
                     "id",
                     "email",
-                    "name"
+                    "name",
+                    "about"
                   ],
                   "additionalProperties": false,
                   "nullable": true
@@ -3353,12 +3371,17 @@
                       "type": "string",
                       "pattern": "^20(?:1[7-9]|[2-9]\\d)\\d{6}$",
                       "nullable": true
+                    },
+                    "about": {
+                      "type": "string",
+                      "nullable": true
                     }
                   },
                   "required": [
                     "id",
                     "email",
-                    "name"
+                    "name",
+                    "about"
                   ],
                   "additionalProperties": false,
                   "nullable": true
@@ -3444,12 +3467,17 @@
                       "type": "string",
                       "pattern": "^20(?:1[7-9]|[2-9]\\d)\\d{6}$",
                       "nullable": true
+                    },
+                    "about": {
+                      "type": "string",
+                      "nullable": true
                     }
                   },
                   "required": [
                     "id",
                     "email",
-                    "name"
+                    "name",
+                    "about"
                   ],
                   "additionalProperties": false,
                   "nullable": true

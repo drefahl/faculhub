@@ -39,6 +39,7 @@ export const updateUserSchema = z
     profilePicId: pictureSchema,
     courseId: courseIdSchema,
     enrollmentNumber: enrollmentNumberSchema,
+    about: z.string().optional(),
     currentPassword: passwordSchema.optional(),
     newPassword: passwordSchema.optional(),
     confirmPassword: passwordSchema.optional(),
@@ -66,6 +67,7 @@ export const ResponseGetUserSchema = z
     profilePicId: pictureSchema,
     courseId: courseIdSchema,
     enrollmentNumber: enrollmentNumberSchema,
+    about: z.string().nullable(),
   })
   .nullable()
 

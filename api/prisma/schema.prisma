@@ -24,6 +24,7 @@ model user {
   profilePicId     String?
   courseId         Int?
   course           course?         @relation(fields: [courseId], references: [id])
+  about            String?
   createdAt        DateTime        @default(now())
   updatedAt        DateTime        @updatedAt
   thread           thread[]

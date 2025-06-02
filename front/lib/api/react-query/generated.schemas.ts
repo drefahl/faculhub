@@ -781,6 +781,8 @@ export type CreateUser201 = {
    * @pattern ^20(?:1[7-9]|[2-9]\d)\d{6}$
    */
   enrollmentNumber?: string | null
+  /** @nullable */
+  about: string | null
 } | null
 
 export type Refresh200 = {
@@ -837,6 +839,8 @@ export type GetUserProfile200 = {
    * @pattern ^20(?:1[7-9]|[2-9]\d)\d{6}$
    */
   enrollmentNumber?: string | null
+  /** @nullable */
+  about: string | null
 } | null
 
 export type UpdateUserProfileBodyRole = (typeof UpdateUserProfileBodyRole)[keyof typeof UpdateUserProfileBodyRole]
@@ -863,6 +867,7 @@ export type UpdateUserProfileBody = {
    * @pattern ^20(?:1[7-9]|[2-9]\d)\d{6}$
    */
   enrollmentNumber?: string | null
+  about?: string
   /** @minLength 8 */
   currentPassword?: string
   /** @minLength 8 */
@@ -893,6 +898,8 @@ export type UpdateUserProfile200 = {
    * @pattern ^20(?:1[7-9]|[2-9]\d)\d{6}$
    */
   enrollmentNumber?: string | null
+  /** @nullable */
+  about: string | null
 } | null
 
 /**
@@ -916,6 +923,8 @@ export type UploadProfileImage200 = {
    * @pattern ^20(?:1[7-9]|[2-9]\d)\d{6}$
    */
   enrollmentNumber?: string | null
+  /** @nullable */
+  about: string | null
 } | null
 
 export type UploadProfileImage400 = {
@@ -947,6 +956,8 @@ export type DeleteProfileImage200 = {
    * @pattern ^20(?:1[7-9]|[2-9]\d)\d{6}$
    */
   enrollmentNumber?: string | null
+  /** @nullable */
+  about: string | null
 } | null
 
 export type DeleteProfileImage404 = {
